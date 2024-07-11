@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinylShop", "VinylShop.csproj", "{41FEC121-1AB0-48D6-9352-475CB7C7A94A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinylShop.API", "VinylShop.API\VinylShop.API.csproj", "{F6FD90AD-12E2-42AC-8220-FAECA773302C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinylShop.Core", "VinylShop.Core\VinylShop.Core.csproj", "{B5AE80EC-DF60-495D-81D0-F39F0B9CC697}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +10,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{41FEC121-1AB0-48D6-9352-475CB7C7A94A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{41FEC121-1AB0-48D6-9352-475CB7C7A94A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{41FEC121-1AB0-48D6-9352-475CB7C7A94A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{41FEC121-1AB0-48D6-9352-475CB7C7A94A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6FD90AD-12E2-42AC-8220-FAECA773302C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6FD90AD-12E2-42AC-8220-FAECA773302C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6FD90AD-12E2-42AC-8220-FAECA773302C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6FD90AD-12E2-42AC-8220-FAECA773302C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5AE80EC-DF60-495D-81D0-F39F0B9CC697}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5AE80EC-DF60-495D-81D0-F39F0B9CC697}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5AE80EC-DF60-495D-81D0-F39F0B9CC697}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5AE80EC-DF60-495D-81D0-F39F0B9CC697}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
