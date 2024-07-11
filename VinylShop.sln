@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinylShop", "VinylShop.csproj", "{41FEC121-1AB0-48D6-9352-475CB7C7A94A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinylShop.API", "VinylShop.API.csproj", "{41FEC121-1AB0-48D6-9352-475CB7C7A94A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinylShop.Core", "VinylShop.Core\VinylShop.Core.csproj", "{B1E1B3C4-E6E7-43BB-B868-C3019787B60C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +14,9 @@ Global
 		{41FEC121-1AB0-48D6-9352-475CB7C7A94A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41FEC121-1AB0-48D6-9352-475CB7C7A94A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41FEC121-1AB0-48D6-9352-475CB7C7A94A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1E1B3C4-E6E7-43BB-B868-C3019787B60C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1E1B3C4-E6E7-43BB-B868-C3019787B60C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1E1B3C4-E6E7-43BB-B868-C3019787B60C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1E1B3C4-E6E7-43BB-B868-C3019787B60C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

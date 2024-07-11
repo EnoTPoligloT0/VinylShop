@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>VinylShop</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="VinylShop.Domain\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="VinylShop.Domain\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="VinylShop.Domain\obj\VinylShop.Domain.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="VinylShop.Core\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="VinylShop.Core\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="VinylShop.Core\obj\VinylShop.Core.csproj.nuget.dgspec.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="VinylShop.Core\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="VinylShop.Core\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="VinylShop.Core\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="VinylShop.Core\**" />
+    </ItemGroup>
+
+</Project>
