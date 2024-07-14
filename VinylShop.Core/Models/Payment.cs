@@ -1,13 +1,15 @@
+using CSharpFunctionalExtensions;
+
 namespace VinylShop.Core.Models;
 
 public class Payment
 {
     public Guid PaymentId { get; }
     public Guid OrderId { get; }
+    public Order Order { get; }
     public DateTime PaymentDate { get; }
     public decimal Amount { get; }
     public string PaymentMethod { get; } = string.Empty;
-    public Order Order { get; }
 
     private Payment(Guid paymentId, Guid orderId, Order order, DateTime paymentDate, decimal amount,
         string paymentMethod)
@@ -20,18 +22,22 @@ public class Payment
         PaymentMethod = paymentMethod;
     }
 
-    //todo Validaiton Result
-    public static (Payment Payment, string Error) Create(Guid paymentId, Guid orderId, Order order,
+    //todo ValidationMethod
+    public static Result<Payment> Create(Guid paymentId, Guid orderId, Order order,
         DateTime paymentDate, decimal amount, string paymentMethod)
     {
-        var error = string.Empty;
-
-        if (!string.IsNullOrEmpty(error))
+        if (string.IsNullOrEmpty(paymentMethod))
         {
-            return (null, error);
+            return Result.Failure<Payment>($"'{nameof(paymentMethod)}' can't be null or empty");
+        }
+
+        if (amount <= 0)
+        {
+            return Result.Failure<Payment>("Amount must be greater than zero");
         }
 
         var payment = new Payment(paymentId, orderId, order, paymentDate, amount, paymentMethod);
-        return (payment, null);
+
+        return Result.Success(payment);
     }
 }

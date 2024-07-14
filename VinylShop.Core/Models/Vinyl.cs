@@ -1,11 +1,12 @@
 using System.Security.Cryptography.X509Certificates;
+using CSharpFunctionalExtensions;
 
 namespace VinylShop.Core.Models;
 
 public class Vinyl
 {
     public const int MAX_TITLE_LENGHT = 250;
-    
+
     public Guid VinylId { get; }
     public string Title { get; } = string.Empty;
     public string Artist { get; } = string.Empty;
@@ -31,19 +32,12 @@ public class Vinyl
     }
 
     //todo Validation
-    public static (Vinyl Vinyl, string Erorr) Create(Guid vinylId, string title, string artist, string genre,
+    public static Result<Vinyl> Create(Guid vinylId, string title, string artist, string genre,
         int releaseYear, decimal price, int stock, string description, bool isAvailable)
     {
-        var error = string.Empty;
-
-        if (string.IsNullOrEmpty(title) || title.Length > MAX_TITLE_LENGHT)
-        {
-            error = "Title can not be empty or longer then 250 symbols";
-        }
-
         var vinyl = new Vinyl(vinylId, title, artist, genre, releaseYear, price, stock, description, isAvailable);
 
-        return (vinyl, error);
+        return Result.Success(vinyl);
     }
     //public ICollection<OrderItem> OrderItems { get; set; }
 }

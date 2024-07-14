@@ -1,3 +1,5 @@
+using CSharpFunctionalExtensions;
+
 namespace VinylShop.Core.Models;
 
 public class Shipment
@@ -21,18 +23,22 @@ public class Shipment
     }
 
     //todo Validation
-    public static (Shipment Shipment, string Error) Create(Guid shipmentId, Guid orderId,
-        Order order, DateTime shipmentDate,
+    public static Result<Shipment> Create(Guid shipmentId, Guid orderId, Order order, DateTime shipmentDate,
         string trackingNumber, string shipmentStatus)
     {
-        var error = string.Empty;
-
-        if (!string.IsNullOrEmpty(error))
+        if (string.IsNullOrEmpty(trackingNumber))
         {
-            return (null, error);
+            return Result.Failure<Shipment>($"'{nameof(trackingNumber)}' can't be null or empty");
         }
 
+        if (string.IsNullOrEmpty(shipmentStatus))
+        {
+            return Result.Failure<Shipment>($"'{nameof(shipmentStatus)}' can't be null or empty");
+        }
+
+
         var shipment = new Shipment(shipmentId, orderId, order, shipmentDate, trackingNumber, shipmentStatus);
-        return (shipment, null);
+        
+        return Result.Success(shipment);
     }
 }
