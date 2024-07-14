@@ -3,21 +3,24 @@ namespace VinylShop.Core.Models;
 public class Order
 {
     public Guid Id { get; }
-    public Guid CustomerId { get; }
+    public Guid UserId { get; }
     public DateTime OrderDate { get; }
     public decimal TotalAmount { get; }
+    
+    public User User { get; }
     public List<OrderItem> OrderItems { get; }
 
-    private Order(Guid id, Guid customerId, DateTime orderDate, decimal totalAmount, List<OrderItem> orderItems)
+    private Order(Guid id, Guid userId, DateTime orderDate, decimal totalAmount, List<OrderItem> orderItems)
     {
         Id = id;
-        CustomerId = customerId;
+        UserId = userId;
         OrderDate = orderDate;
         TotalAmount = totalAmount;
         OrderItems = orderItems;
     }
 
-    public static (Order Order, string Error) Create(Guid id, Guid customerId, DateTime orderDate, decimal totalAmount,
+    //todo Validation
+    public static (Order Order, string Error) Create(Guid id, Guid userId, DateTime orderDate, decimal totalAmount,
         List<OrderItem> orderItems)
     {
         var error = string.Empty;
@@ -27,7 +30,7 @@ public class Order
             return (null, error);
         }
 
-        var order = new Order(id, customerId, orderDate, totalAmount, orderItems);
+        var order = new Order(id, userId, orderDate, totalAmount, orderItems);
         return (order, null);
     }
 }

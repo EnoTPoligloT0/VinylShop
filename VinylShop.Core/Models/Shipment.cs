@@ -4,10 +4,10 @@ public class Shipment
 {
     public Guid ShipmentId { get; }
     public Guid OrderId { get; }
-    public Order Order { get; }
     public DateTime ShipmentDate { get; }
-    public string TrackingNumber { get; }
-    public string ShipmentStatus { get; }
+    public string TrackingNumber { get; } = string.Empty;
+    public string ShipmentStatus { get; } = string.Empty;
+    public Order Order { get; }
 
     private Shipment(Guid shipmentId, Guid orderId, Order order, DateTime shipmentDate,
         string trackingNumber, string shipmentStatus)

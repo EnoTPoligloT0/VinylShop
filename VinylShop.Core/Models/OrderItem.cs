@@ -7,6 +7,10 @@ public class OrderItem
     public Guid VinylId { get; }
     public int Quantity { get; } 
     public decimal UnitPrice { get; } 
+    
+    public Order Order { get; }
+    
+    public List<Vinyl> Vinyls { get; }
 
     private OrderItem(Guid id, Guid orderId, Guid vinylId, int quantity, decimal unitPrice)
     {
@@ -17,6 +21,7 @@ public class OrderItem
         UnitPrice = unitPrice;
     }
 
+    //todo Validation
     public static (OrderItem OrderItem, string Error) Create(Guid id, Guid orderId, Guid vinylId, int quantity,
         decimal unitPrice)
     {

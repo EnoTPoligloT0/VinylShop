@@ -4,10 +4,10 @@ public class Payment
 {
     public Guid PaymentId { get; }
     public Guid OrderId { get; }
-    public Order Order { get; }
     public DateTime PaymentDate { get; }
     public decimal Amount { get; }
-    public string PaymentMethod { get; }
+    public string PaymentMethod { get; } = string.Empty;
+    public Order Order { get; }
 
     private Payment(Guid paymentId, Guid orderId, Order order, DateTime paymentDate, decimal amount,
         string paymentMethod)
