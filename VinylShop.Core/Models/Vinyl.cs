@@ -16,9 +16,11 @@ public class Vinyl
     public int Stock { get; }
     public string Description { get; } = string.Empty;
     public bool IsAvailable { get; }
+    
+    public OrderItem? OrderItem { get; }
 
     private Vinyl(Guid vinylId, string title, string artist, string genre, int releaseYear, decimal price,
-        int stock, string description, bool isAvailable)
+        int stock, string description, bool isAvailable, OrderItem orderItem)
     {
         VinylId = vinylId;
         Title = title;
@@ -29,15 +31,15 @@ public class Vinyl
         Stock = stock;
         Description = description;
         IsAvailable = isAvailable;
+        OrderItem = orderItem;
     }
 
     //todo Validation
     public static Result<Vinyl> Create(Guid vinylId, string title, string artist, string genre,
-        int releaseYear, decimal price, int stock, string description, bool isAvailable)
+        int releaseYear, decimal price, int stock, string description, bool isAvailable, OrderItem orderItem)
     {
-        var vinyl = new Vinyl(vinylId, title, artist, genre, releaseYear, price, stock, description, isAvailable);
+        var vinyl = new Vinyl(vinylId, title, artist, genre, releaseYear, price, stock, description, isAvailable, orderItem);
 
         return Result.Success(vinyl);
     }
-    //public ICollection<OrderItem> OrderItems { get; set; }
 }
