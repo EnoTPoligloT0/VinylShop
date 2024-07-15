@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Entities\" />
+      <ProjectReference Include="..\VinylShop.Core\VinylShop.Core.csproj" />
     </ItemGroup>
 
 </Project>
