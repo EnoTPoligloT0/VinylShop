@@ -10,4 +10,8 @@
       <ProjectReference Include="..\VinylShop.Core\VinylShop.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0-preview.6.24327.4" />
+    </ItemGroup>
+
 </Project>
