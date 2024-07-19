@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using VinylShop.DataAccess.Entities;
 
 namespace VinylShop.DataAccess;
@@ -9,24 +10,21 @@ public class VinylShopDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
-    public ApplicationDbContext(IConfiguration configuration)
+    public VinylShopDbContext(IConfiguration configuration)
     {
-        _configuration;
-    }
-    public VinylShopDbContext(DbContextOptions<VinylShopDbContext> options)
-        : base(options)
-    {
+        _configuration = configuration;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(.Configuration.GetConnectionString("Database"));
+        optionsBuilder
+            .UseNpgsql(_configuration.GetConnectionString("Database"))
+            .UseLoggerFactory(CreateLoggerFactory())
+            .EnableSensitiveDataLogging();
     }
     
-    public DbSet<UserEntity> Users { get; set; }
-    public DbSet<OrderEntity> Orders { get; set; }
-    public DbSet<OrderItemEntity> OrderItems { get; set; }
-    public DbSet<VinylEntity> Vinyls { get; set; }
-    public DbSet<ShipmentEntity> Shipment { get; set; }
-    public DbSet<PaymentEntity> Payment { get; set; }
+    public ILoggerFactory CreateLoggerFactory() =>
+        LoggerFactory.Create(builder => { builder.AddConsole(); });
+    
+
 }
