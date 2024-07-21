@@ -15,5 +15,5 @@ public class VinylEntity
     public bool IsAvailable { get; set; }
 
     public Guid OrderItemId { get; set; }
-    public OrderItem? OrderItem { get; set; }
+    public OrderItemEntity? OrderItem { get; set; }
 }
