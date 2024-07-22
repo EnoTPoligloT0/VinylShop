@@ -45,24 +45,5 @@ public class VinylShopDbContext : DbContext
                     .HasForeignKey(v => v.OrderItemId);
             });
         
-        modelBuilder.Entity<UserEntity>(
-            userBuilder =>
-            {
-                userBuilder.ToTable("Users").HasKey(u => u.UserId);
-                userBuilder.Property(u => u.FirstName).IsRequired().HasMaxLength(100);
-                userBuilder.Property(u => u.LastName).IsRequired().HasMaxLength(100);
-                userBuilder.Property(u => u.PasswordHash).IsRequired();
-                userBuilder.Property(u => u.Email).IsRequired().HasMaxLength(100);
-                userBuilder.Property(u => u.PhoneNumber).HasMaxLength(15);
-                userBuilder.Property(u => u.AddressLine1).HasMaxLength(200);
-                userBuilder.Property(u => u.AddressLine2).HasMaxLength(200);
-                userBuilder.Property(u => u.City).HasMaxLength(100);
-                userBuilder.Property(u => u.State).HasMaxLength(100);
-                userBuilder.Property(u => u.ZipCode).HasMaxLength(20);
-
-                userBuilder.HasMany(u => u.Orders)
-                    .WithOne(o => o.User)
-                    .HasForeignKey(o => o.UserId);
-            });
     }
 }
