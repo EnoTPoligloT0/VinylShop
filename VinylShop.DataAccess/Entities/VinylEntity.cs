@@ -14,6 +14,4 @@ public class VinylEntity
     public string Description { get; set; } = string.Empty;
     public bool IsAvailable { get; set; }
 
-    public Guid OrderItemId { get; set; }
-    public OrderItemEntity? OrderItem { get; set; }
 }
