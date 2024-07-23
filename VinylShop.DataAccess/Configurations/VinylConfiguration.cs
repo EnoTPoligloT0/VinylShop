@@ -17,8 +17,6 @@ public class VinylConfiguration : IEntityTypeConfiguration<VinylEntity>
         vinylBuilder.Property(v => v.Stock).IsRequired();
         vinylBuilder.Property(v => v.Description).HasMaxLength(500);
         vinylBuilder.Property(v => v.IsAvailable).IsRequired();
-        vinylBuilder.HasOne(v => v.OrderItem)
-            .WithMany(o => o.Vinyls)
-            .HasForeignKey(v => v.OrderItemId);
+        
     }
 }
