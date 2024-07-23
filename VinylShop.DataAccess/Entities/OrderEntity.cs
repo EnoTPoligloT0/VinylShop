@@ -12,4 +12,7 @@ public class OrderEntity
     public decimal TotalAmount { get;  set;}
 
     public List<OrderItemEntity> OrderItems { get; set; }
+    
+    public List<ShipmentEntity> Shipments { get; set; }
+    public List<PaymentEntity> Payments { get; set; }
 }
