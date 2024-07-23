@@ -28,6 +28,6 @@ public class VinylShopDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(VinylShopDbContext).Assembly);
     }
 }
