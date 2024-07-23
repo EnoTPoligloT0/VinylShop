@@ -17,7 +17,7 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItemEntity>
             .HasForeignKey(oi => oi.OrderId);
 
         orderItemBuilder.HasOne(oi => oi.Vinyl)
-            .WithMany(v => v.OrderItems)
+            .WithMany()
             .HasForeignKey(oi => oi.VinylId);
     }
 }
