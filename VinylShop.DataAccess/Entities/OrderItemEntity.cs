@@ -11,5 +11,5 @@ public class OrderItemEntity
     public int Quantity { get; set;}
     public decimal UnitPrice { get;set; }
 
-    public List<VinylEntity> Vinyls { get; set;}
+    public VinylEntity Vinyl { get; set;}
 }
