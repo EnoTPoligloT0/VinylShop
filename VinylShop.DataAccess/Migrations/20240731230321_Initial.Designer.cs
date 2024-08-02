@@ -13,7 +13,7 @@ namespace VinylShop.DataAccess.Migrations
 {
     [DbContext(typeof(VinylShopDbContext))]
     [Migration("20240731230321_initial")]
-    partial class initial
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
