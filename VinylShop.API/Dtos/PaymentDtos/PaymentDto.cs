@@ -1,4 +1,4 @@
-namespace VinylShop.API.Dtos.PaymentDto;
+namespace VinylShop.API.Dtos.PaymentDtos;
 
 public class PaymentDto
 {
