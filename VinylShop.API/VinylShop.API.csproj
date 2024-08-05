@@ -25,11 +25,4 @@
         <ProjectReference Include="..\VinylShop.DataAccess\VinylShop.DataAccess.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Dtos\OrderDto\" />
-      <Folder Include="Dtos\PaymentDto\" />
-      <Folder Include="Dtos\ShipmentDto\" />
-      <Folder Include="Dtos\UserDto\" />
-    </ItemGroup>
-
 </Project>
