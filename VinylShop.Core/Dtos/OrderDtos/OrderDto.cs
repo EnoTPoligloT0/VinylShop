@@ -1,9 +1,9 @@
-using VinylShop.API.Dtos.OrderItemDtos;
-using VinylShop.API.Dtos.PaymentDtos;
-using VinylShop.API.Dtos.ShipmentDtos;
-using VinylShop.API.Dtos.UserDtos;
+using VinylShop.Core.Dtos.OrderItemDtos;
+using VinylShop.Core.Dtos.PaymentDtos;
+using VinylShop.Core.Dtos.ShipmentDtos;
+using VinylShop.Core.Dtos.UserDtos;
 
-namespace VinylShop.API.Dtos.OrderDtos;
+namespace VinylShop.Core.Dtos.OrderDtos;
 
 public class OrderDto
 {

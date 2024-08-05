@@ -1,4 +1,4 @@
-namespace VinylShop.API.Dtos.ShipmentDtos;
+namespace VinylShop.Core.Dtos.ShipmentDtos;
 
 public class ShipmentDto
 {

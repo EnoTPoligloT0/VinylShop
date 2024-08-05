@@ -1,6 +1,6 @@
-using VinylShop.API.Dtos.OrderDtos;
+using VinylShop.Core.Dtos.OrderDtos;
 
-namespace VinylShop.API.Dtos.UserDtos;
+namespace VinylShop.Core.Dtos.UserDtos;
 
 public class UserDto
 {

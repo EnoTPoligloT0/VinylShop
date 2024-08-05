@@ -1,7 +1,8 @@
-namespace VinylShop.API.Dtos.VinylDto;
+namespace VinylShop.Core.Dtos.VinylDtos;
 
-public class CreateVinylRequestDto
+public class VinylDto
 {
+    public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Artist { get; set; } = string.Empty;
     public string Genre { get; set; } = string.Empty;

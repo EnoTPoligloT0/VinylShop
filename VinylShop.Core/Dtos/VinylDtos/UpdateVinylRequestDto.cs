@@ -1,4 +1,4 @@
-namespace VinylShop.API.Dtos.VinylDto;
+namespace VinylShop.Core.Dtos.VinylDtos;
 
 public class UpdateVinylRequestDto
 {

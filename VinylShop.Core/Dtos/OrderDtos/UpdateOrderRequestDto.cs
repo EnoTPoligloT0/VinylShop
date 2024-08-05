@@ -1,6 +1,6 @@
-using VinylShop.API.Dtos.OrderItemDtos;
+using VinylShop.Core.Dtos.OrderItemDtos;
 
-namespace VinylShop.API.Dtos.OrderDtos;
+namespace VinylShop.Core.Dtos.OrderDtos;
 
 public class UpdateOrderRequestDto
 {

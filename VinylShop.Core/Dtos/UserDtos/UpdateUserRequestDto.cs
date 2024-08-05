@@ -1,11 +1,9 @@
-namespace VinylShop.API.Dtos.UserDtos;
+namespace VinylShop.Core.Dtos.UserDtos;
 
-public class CreateUserRequestDto
+public class UpdateUserRequestDto
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public string PasswordHash { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; }
     public string? AddressLine1 { get; set; }
     public string? AddressLine2 { get; set; }
