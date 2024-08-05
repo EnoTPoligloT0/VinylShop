@@ -1,4 +1,6 @@
+using VinylShop.Core.Dtos.OrderDtos;
 using VinylShop.Core.Models;
+
 
 namespace VinylShop.Core.Interfaces.Repositories;
 
@@ -12,6 +14,5 @@ public interface IOrderRepository
 
     Task<Order> GetById(Guid id);
 
-    Task Update(Guid id, Guid userId, User user, DateTime orderDate, decimal totalAmount,
-        List<OrderItem> orderItems);
+    Task Update(Guid id, UpdateOrderRequestDto updateOrderRequestDto);
 }
