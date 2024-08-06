@@ -65,8 +65,8 @@ public class OrderRepository : IOrderRepository
 
     public async Task Delete(Guid id)
     {
-        await _context.Payment
-            .Where(c => c.PaymentId == id)
+        await _context.Orders
+            .Where(c => c.Id == id)
             .ExecuteDeleteAsync();
     }
 }
