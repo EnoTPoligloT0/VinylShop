@@ -9,5 +9,5 @@ public interface IOrderItemRepository
     Task Delete(Guid id);
     Task<List<OrderItem>> Get();
     Task<OrderItem> GetById(Guid id);
-    Task Update(Guid id, UpdateOrderItemRequestDto updateOrderItemRequestDto);
+    Task Update(Guid id, int quantity);
 }

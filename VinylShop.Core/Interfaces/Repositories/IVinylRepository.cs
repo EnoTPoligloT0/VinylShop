@@ -9,5 +9,6 @@ public interface IVinylRepository
     Task Delete(Guid id);
     Task<List<Vinyl>> Get();
     Task<Vinyl> GetById(Guid id);
-    Task Update(Guid id, UpdateVinylRequestDto updateVinylRequestDto);
+    Task Update(Guid id, string title, string artist, string genre, int releaseYear, decimal price, int stock,
+        string description, bool isAvailable);
 }

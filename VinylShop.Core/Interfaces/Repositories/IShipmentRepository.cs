@@ -9,5 +9,5 @@ public interface IShipmentRepository
     Task Delete(Guid id);
     Task<List<Shipment>> Get();
     Task<Shipment> GetById(Guid id);
-    Task Update(Guid id, UpdateShipmentRequestDto updateShipmentRequestDto);
+    Task Update(Guid id, string trackingNumber, string shipmentStatus);
 }

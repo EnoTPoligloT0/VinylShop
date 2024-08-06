@@ -9,5 +9,7 @@ public interface IUserRepository
     Task Delete(Guid id);
     Task<List<User>> Get();
     Task<User> GetById(Guid id);
-    Task Update(Guid id, UpdateUserRequestDto updateUserRequestDto);
+
+    Task Update(Guid id, string firstName, string lastName, string? phoneNumber, string? addressLine1,
+        string? addressLine2, string? city, string? state, string? zipCode);
 }
