@@ -38,6 +38,8 @@ public class OrderItemRepository : IOrderItemRepository
     {
         var orderItemEntities = await _context.OrderItems
             .AsNoTracking()
+            .Include(o => o.Vinyl)
+            .Include(o => o.Order)
             .ToListAsync();
 
         return _mapper.Map<List<OrderItem>>(orderItemEntities);
@@ -47,6 +49,8 @@ public class OrderItemRepository : IOrderItemRepository
     {
         var orderItemEntity = await _context.OrderItems
             .AsNoTracking()
+            .Include(o => o.Vinyl)
+            .Include(o => o.Order)
             .SingleOrDefaultAsync(c => c.Id == id) ?? throw new Exception();
 
         return _mapper.Map<OrderItem>(orderItemEntity);
