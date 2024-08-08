@@ -9,5 +9,10 @@
     <ItemGroup>
       <PackageReference Include="CSharpFunctionalExtensions" Version="2.42.5" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <Folder Include="Interfaces\Repositories\"/>
+        <Folder Include="Interfaces\Services\"/>
+    </ItemGroup>
 
 </Project>
