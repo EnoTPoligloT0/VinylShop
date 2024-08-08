@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinylShop.Core", "VinylShop
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinylShop.DataAccess", "VinylShop.DataAccess\VinylShop.DataAccess.csproj", "{D0CAF096-2598-42C1-84DA-8857EBF88C1F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinylShop.Application", "VinylShop.Application\VinylShop.Application.csproj", "{7344D89E-9C68-444E-9929-44016910F21E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{D0CAF096-2598-42C1-84DA-8857EBF88C1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0CAF096-2598-42C1-84DA-8857EBF88C1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0CAF096-2598-42C1-84DA-8857EBF88C1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7344D89E-9C68-444E-9929-44016910F21E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7344D89E-9C68-444E-9929-44016910F21E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7344D89E-9C68-444E-9929-44016910F21E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7344D89E-9C68-444E-9929-44016910F21E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
