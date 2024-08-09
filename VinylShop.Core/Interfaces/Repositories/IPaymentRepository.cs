@@ -1,4 +1,3 @@
-using VinylShop.Core.Dtos.PaymentDtos;
 using VinylShop.Core.Models;
 
 namespace VinylShop.Core.Interfaces.Repositories;
