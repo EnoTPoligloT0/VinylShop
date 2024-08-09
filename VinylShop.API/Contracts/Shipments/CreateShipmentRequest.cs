@@ -1,6 +1,6 @@
-namespace VinylShop.Core.Dtos.ShipmentDtos;
+namespace VinylShop.API.Contracts.Shipments;
 
-public class CreateShipmentRequestDto
+public class CreateShipmentRequest
 {
     public Guid OrderId { get; set; }
     public DateTime ShipmentDate { get; set; }

@@ -1,6 +1,6 @@
-namespace VinylShop.Core.Dtos.UserDtos;
+namespace VinylShop.API.Contracts.Users;
 
-public class CreateUserRequestDto
+public class CreateUserRequest
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;

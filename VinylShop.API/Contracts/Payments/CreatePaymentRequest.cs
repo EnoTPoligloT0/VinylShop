@@ -1,6 +1,6 @@
-namespace VinylShop.Core.Dtos.PaymentDtos;
+namespace VinylShop.API.Contracts.Payments;
 
-public class CreatePaymentRequestDto
+public class CreatePaymentRequest
 {
     public Guid OrderId { get; set; }
     public DateTime PaymentDate { get; set; }

@@ -1,6 +1,6 @@
-namespace VinylShop.Core.Dtos.OrderItemDtos;
+namespace VinylShop.API.Contracts.OrderItems;
 
-public class CreateOrderItemRequestDto
+public class CreateOrderItemRequest
 {
     public Guid VinylId { get; set; }
     public int Quantity { get; set; }
