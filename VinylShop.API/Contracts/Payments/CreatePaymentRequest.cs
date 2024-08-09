@@ -1,9 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace VinylShop.API.Contracts.Payments;
 
-public class CreatePaymentRequest
-{
-    public Guid OrderId { get; set; }
-    public DateTime PaymentDate { get; set; }
-    public decimal Amount { get; set; }
-    public string PaymentMethod { get; set; } = string.Empty;
-}
+public record CreatePaymentRequest(
+    [Required] Guid OrderId,
+    [Required] DateTime PaymentDate,
+    [Required] decimal Amount,
+    [Required] string PaymentMethod
+);
