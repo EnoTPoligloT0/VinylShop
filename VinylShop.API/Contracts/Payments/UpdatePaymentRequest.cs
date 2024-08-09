@@ -1,6 +1,6 @@
-namespace VinylShop.Core.Dtos.PaymentDtos;
+namespace VinylShop.API.Contracts.Payments;
 
-public class UpdatePaymentRequestDto
+public class UpdatePaymentRequest
 {
     public DateTime PaymentDate { get; set; }
     public decimal Amount { get; set; }

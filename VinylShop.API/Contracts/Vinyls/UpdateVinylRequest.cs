@@ -1,6 +1,6 @@
-namespace VinylShop.Core.Dtos.VinylDtos;
+namespace VinylShop.API.Contracts.Vinyls;
 
-public class UpdateVinylRequestDto
+public class UpdateVinylRequest
 {
     public string Title { get; set; } = string.Empty;
     public string Artist { get; set; } = string.Empty;

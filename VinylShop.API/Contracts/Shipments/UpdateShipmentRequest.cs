@@ -1,6 +1,6 @@
-namespace VinylShop.Core.Dtos.ShipmentDtos;
+namespace VinylShop.API.Contracts.Shipments;
 
-public class UpdateShipmentRequestDto
+public class UpdateShipmentRequest
 {
     public DateTime ShipmentDate { get; set; }
     public string TrackingNumber { get; set; } = string.Empty;

@@ -1,6 +1,6 @@
-namespace VinylShop.Core.Dtos.OrderItemDtos;
+namespace VinylShop.API.Contracts.OrderItems;
 
-public class UpdateOrderItemRequestDto
+public class UpdateOrderItemRequest
 {
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
