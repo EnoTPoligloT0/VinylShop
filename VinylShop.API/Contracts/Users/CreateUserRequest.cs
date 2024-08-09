@@ -1,15 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace VinylShop.API.Contracts.Users;
 
-public class CreateUserRequest
-{
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
-    public string PasswordHash { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string? PhoneNumber { get; set; }
-    public string? AddressLine1 { get; set; }
-    public string? AddressLine2 { get; set; }
-    public string? City { get; set; }
-    public string? State { get; set; }
-    public string? ZipCode { get; set; }
-}
+public record CreateUserRequest(
+    [Required] string FirstName,
+    [Required] string LastName,
+    [Required] string PasswordHash,
+    [Required] string Email,
+    [Required] string? PhoneNumber,
+    [Required] string? AddressLine1,
+    [Required] string? AddressLine2,
+    [Required] string? City,
+    [Required] string? State,
+    [Required] string? ZipCode
+);
