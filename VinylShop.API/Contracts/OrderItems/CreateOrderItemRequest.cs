@@ -1,8 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace VinylShop.API.Contracts.OrderItems;
 
-public class CreateOrderItemRequest
-{
-    public Guid VinylId { get; set; }
-    public int Quantity { get; set; }
-    public decimal UnitPrice { get; set; }
-}
+public record CreateOrderItemRequest(
+    [Required] Guid VinylId,
+    [Required] int Quantity,
+    [Required] decimal UnitPrice
+);
