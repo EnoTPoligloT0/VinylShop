@@ -1,12 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace VinylShop.API.Contracts.Vinyls;
 
 public record UpdateVinylRequest(
-    string Title,
-    string Artist,
-    string Genre,
-    int ReleaseYear,
-    decimal Price,
-    int Stock,
-    string Description,
-    bool IsAvailable
+    [Required] string Title,
+    [Required] string Artist,
+    [Required] string Genre,
+    [Required] int ReleaseYear,
+    [Required] decimal Price,
+    [Required] int Stock,
+    [Required] string Description,
+    [Required] bool IsAvailable
 );

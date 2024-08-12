@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace VinylShop.API.Contracts.Payments;
 
 public record UpdatePaymentRequest(
-    DateTime PaymentDate,
-    decimal Amount,
-    string PaymentMethod
+    [Required] DateTime PaymentDate,
+    [Required] decimal Amount,
+    [Required] string PaymentMethod
 );
