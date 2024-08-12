@@ -1,4 +1,4 @@
-namespace VinylShop.Core.Dtos.OrderItemDtos;
+namespace VinylShop.API.Contracts.OrderItems;
 
 public class OrderItemDto
 {
