@@ -6,7 +6,7 @@ namespace VinylShop.Application.Services;
 
 public class VinylService : IVinylService
 {
-    public readonly IVinylRepository _vinylRepository;
+    private readonly IVinylRepository _vinylRepository;
 
     public VinylService(IVinylRepository vinylRepository)
     {

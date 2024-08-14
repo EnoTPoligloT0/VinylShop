@@ -6,7 +6,7 @@ namespace VinylShop.Application.Services;
 
 public class PaymentService : IPaymentService
 {
-    public readonly IPaymentRepository _paymentRepository;
+    private readonly IPaymentRepository _paymentRepository;
 
     public PaymentService(IPaymentRepository paymentRepository)
     {

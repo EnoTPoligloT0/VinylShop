@@ -6,7 +6,7 @@ namespace VinylShop.Application.Services;
 
 public class OrderItemService : IOrderItemService
 {
-    public readonly IOrderItemRepository _orderItemsRepository;
+    private readonly IOrderItemRepository _orderItemsRepository;
 
     public OrderItemService(IOrderItemRepository orderItemsRepository)
     {

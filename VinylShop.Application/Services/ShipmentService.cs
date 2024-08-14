@@ -6,7 +6,7 @@ namespace VinylShop.Application.Services;
 
 public class ShipmentService : IShipmentService
 {
-    public readonly IShipmentRepository _shipmentRepository;
+    private readonly IShipmentRepository _shipmentRepository;
 
     public ShipmentService(IShipmentRepository shipmentRepository)
     {
