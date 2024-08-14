@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\VinylShop.Core\VinylShop.Core.csproj" />
+        <ProjectReference Include="..\VinylShop.Application\VinylShop.Application.csproj"> </ProjectReference>
     </ItemGroup>
+
 </Project>
