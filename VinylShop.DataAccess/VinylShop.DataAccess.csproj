@@ -6,9 +6,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\VinylShop.Core\VinylShop.Core.csproj" />
-    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1" />
@@ -22,4 +19,8 @@
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\VinylShop.Application\VinylShop.Application.csproj" />
+    </ItemGroup>
+    
 </Project>

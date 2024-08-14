@@ -1,6 +1,6 @@
-namespace VinylShop.Core.Dtos.VinylDtos;
+namespace VinylShop.API.Contracts.Vinyls;
 
-public class VinylDto
+public class GetVinylResponse
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;

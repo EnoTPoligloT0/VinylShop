@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using VinylShop.Core.Dtos.UserDtos;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Models;
 using VinylShop.DataAccess.Entities;

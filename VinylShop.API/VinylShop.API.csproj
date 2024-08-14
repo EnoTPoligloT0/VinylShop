@@ -23,6 +23,7 @@
     <ItemGroup>
         <ProjectReference Include="..\VinylShop.Core\VinylShop.Core.csproj" />
         <ProjectReference Include="..\VinylShop.DataAccess\VinylShop.DataAccess.csproj" />
+        <ProjectReference Include="..\VinylShop.Application\VinylShop.Application.csproj" />
     </ItemGroup>
 
 </Project>

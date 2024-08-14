@@ -1,11 +1,10 @@
-using VinylShop.Core.Dtos.OrderItemDtos;
 using VinylShop.Core.Models;
 
 namespace VinylShop.Core.Interfaces.Services;
 
 public interface IOrderService
 {
-    Task CreateOrderr(Order order);
+    Task CreateOrder(Order order);
 
     Task DeleteOrder(Guid id);
 
@@ -13,5 +12,5 @@ public interface IOrderService
 
     Task<Order> GetOrderById(Guid id);
 
-    Task UpdateOrder(Guid id, DateTime orderDate, decimal totalAmount, List<UpdateOrderItemRequestDto> orderItems);
+    Task UpdateOrder(Guid id, DateTime orderDate, decimal totalAmount, List<OrderItem> orderItems);
 }

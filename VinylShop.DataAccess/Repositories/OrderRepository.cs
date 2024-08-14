@@ -1,7 +1,5 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using VinylShop.Core.Dtos.OrderDtos;
-using VinylShop.Core.Dtos.OrderItemDtos;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Models;
 using VinylShop.DataAccess.Entities;
@@ -57,7 +55,7 @@ public class OrderRepository : IOrderRepository
     }
 
     public async Task Update(Guid id, DateTime orderDate, decimal totalAmount,
-        List<UpdateOrderItemRequestDto> orderItems)
+        List<OrderItem> orderItems)
     {
         await _context.Orders
             .Where(c => c.Id == id)
