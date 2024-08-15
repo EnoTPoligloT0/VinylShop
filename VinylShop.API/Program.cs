@@ -1,15 +1,36 @@
 using Microsoft.EntityFrameworkCore;
+using VinylShop.Application.Services;
+using VinylShop.Core.Interfaces.Repositories;
+using VinylShop.Core.Interfaces.Services;
+using VinylShop.Application;
+using VinylShop.Infrastructure;
 using VinylShop.DataAccess;
+using VinylShop.DataAccess.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+var services = builder.Services; 
 
 
-builder.Services.AddDbContext<VinylShopDbContext>();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
+
+
+services.AddDbContext<VinylShopDbContext>();
+
+
+services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+services.AddScoped<IOrderRepository, OrderRepository>();
+services.AddScoped<IPaymentRepository, PaymentRepository>();
+services.AddScoped<IShipmentRepository, ShipmentRepository>();
+services.AddScoped<IUserRepository, UserRepository>();
+services.AddScoped<IVinylRepository, VinylRepository>();
+
+services
+    .AddApplication()
+    .AddInfrastructure();
 
 var app = builder.Build();
 
