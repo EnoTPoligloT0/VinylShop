@@ -4,6 +4,17 @@ namespace VinylShop.Core.Models;
 
 public class Order
 {
+    private readonly List<OrderItem> _orderItems = [];
+    private Order(Guid id, Guid userId, User user, DateTime orderDate, decimal totalAmount)
+    {
+        Id = id;
+        UserId = userId;
+        User = user;
+        OrderDate = orderDate;
+        TotalAmount = totalAmount;
+       
+    }
+
     public Guid Id { get; }
     public Guid UserId { get; }
 
@@ -11,23 +22,12 @@ public class Order
     public DateTime OrderDate { get; }
     public decimal TotalAmount { get; }
 
-    public List<OrderItem> OrderItems { get; }
-
-    private Order(Guid id, Guid userId, User user, DateTime orderDate, decimal totalAmount, List<OrderItem> orderItems)
-    {
-        Id = id;
-        UserId = userId;
-        User = user;
-        OrderDate = orderDate;
-        TotalAmount = totalAmount;
-        OrderItems = orderItems;
-    }
-
+    public IReadOnlyList<OrderItem>? OrderItems => _orderItems;
+    
     //todo Validation
-    public static Result<Order> Create(Guid id, Guid userId, User user, DateTime orderDate, decimal totalAmount,
-        List<OrderItem> orderItems)
+    public static Result<Order> Create(Guid id, Guid userId, User user, DateTime orderDate, decimal totalAmount)
     {
-        var order = new Order(id, userId, user, orderDate, totalAmount, orderItems);
+        var order = new Order(id, userId, user, orderDate, totalAmount);
 
         return Result.Success(order);
     }

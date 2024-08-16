@@ -4,6 +4,13 @@ namespace VinylShop.Core.Models;
 
 public class User
 {
+    private readonly List<Order>? _orders = [];
+    private User(Guid userId, string passwordHash, string email)
+    {
+        UserId = userId;
+        PasswordHash = passwordHash;
+        Email = email;
+    }
     public Guid UserId { get; }
     public string? FirstName { get; } = string.Empty;
     public string? LastName { get; } = string.Empty;
@@ -15,18 +22,10 @@ public class User
     public string? City { get; } = string.Empty;
     public string? State { get; } = string.Empty;
     public string? ZipCode { get; } = string.Empty;
-    public List<Order>? Orders { get; }
-    
-    private User(Guid userId, string passwordHash, string email)
-    {
-        UserId = userId;
-        PasswordHash = passwordHash;
-        Email = email;
-        Orders = new List<Order>();
-    }
+    public IReadOnlyList<Order>? Orders => _orders;    
 
     private User(Guid userId, string firstName, string lastName, string passwordHash, string email, string phoneNumber,
-        string addressLine1, string addressLine2, string city, string state, string zipCode, List<Order> orders) : this(userId, passwordHash, email)
+        string addressLine1, string addressLine2, string city, string state, string zipCode) : this(userId, passwordHash, email)
     {
         UserId = userId;
         FirstName = firstName;
@@ -39,7 +38,6 @@ public class User
         City = city;
         State = state;
         ZipCode = zipCode;
-        Orders = orders ?? new List<Order>();
     }
     public static Result<User> CreateForRegistration(Guid userId, string passwordHash, string email)
     {
@@ -59,8 +57,7 @@ public class User
     
     //todo Validation
     public static Result<User> Create(Guid userId, string firstName, string lastName, string passwordHash, string email,
-        string phoneNumber, string addressLine1, string addressLine2, string city, string state, string zipCode,
-        List<Order> orders) 
+        string phoneNumber, string addressLine1, string addressLine2, string city, string state, string zipCode) 
     {
 
         if (string.IsNullOrEmpty(email))
@@ -76,8 +73,8 @@ public class User
 
         var user = new User(
             userId, firstName, lastName, passwordHash, email, phoneNumber, addressLine1, addressLine2, city, state,
-            zipCode,
-            orders);
+            zipCode);
+        
         return Result.Success(user);
     }
 }

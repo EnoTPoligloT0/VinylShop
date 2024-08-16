@@ -4,6 +4,14 @@ namespace VinylShop.Core.Models;
 
 public class OrderItem
 {
+    private readonly List<Vinyl> _vinyls = [];
+    private OrderItem(Guid id, Guid orderId, int quantity, decimal unitPrice)
+    {
+        Id = id;
+        OrderId = orderId;
+        Quantity = quantity;
+        UnitPrice = unitPrice;
+    }
     public Guid Id { get; }
     public Guid OrderId { get; }
 
@@ -12,23 +20,9 @@ public class OrderItem
     public int Quantity { get; }
     public decimal UnitPrice { get; }
 
-    public List<Vinyl> Vinyls { get; }
-
-    private OrderItem(Guid id, Guid orderId, Order order, Guid vinylId, int quantity, decimal unitPrice,
-        List<Vinyl> vinyls)
-    {
-        Id = id;
-        OrderId = orderId;
-        Order = order;
-        VinylId = vinylId;
-        Quantity = quantity;
-        UnitPrice = unitPrice;
-        Vinyls = vinyls;
-    }
-
-    //todo Validation
-    public static Result<OrderItem> Create(Guid id, Guid orderId, Order order, Guid vinylId,
-        int quantity, decimal unitPrice, List<Vinyl> vinyls)
+    public IReadOnlyList<Vinyl>? Vinyls => _vinyls;
+    public static Result<OrderItem> Create(Guid id, Guid orderId,
+        int quantity, decimal unitPrice)
     {
         if (quantity <= 0)
         {
@@ -41,7 +35,7 @@ public class OrderItem
             return Result.Failure<OrderItem>("Unit price must be zero or greater than zero.");
         }
 
-        var orderItem = new OrderItem(id, orderId, order, vinylId, quantity, unitPrice, vinyls);
+        var orderItem = new OrderItem(id, orderId, quantity, unitPrice);
 
         return Result.Success(orderItem);
     }
