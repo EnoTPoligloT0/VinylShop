@@ -11,19 +11,18 @@ public class Shipment
     public string ShipmentStatus { get; } = string.Empty;
     public Order Order { get; }
 
-    private Shipment(Guid shipmentId, Guid orderId, Order order, DateTime shipmentDate,
+    private Shipment(Guid shipmentId, Guid orderId, DateTime shipmentDate,
         string trackingNumber, string shipmentStatus)
     {
         ShipmentId = shipmentId;
         OrderId = orderId;
-        Order = order;
         ShipmentDate = shipmentDate;
         TrackingNumber = trackingNumber;
         ShipmentStatus = shipmentStatus;
     }
 
     //todo Validation
-    public static Result<Shipment> Create(Guid shipmentId, Guid orderId, Order order, DateTime shipmentDate,
+    public static Result<Shipment> Create(Guid shipmentId, Guid orderId,  DateTime shipmentDate,
         string trackingNumber, string shipmentStatus)
     {
         if (string.IsNullOrEmpty(trackingNumber))
@@ -37,7 +36,7 @@ public class Shipment
         }
 
 
-        var shipment = new Shipment(shipmentId, orderId, order, shipmentDate, trackingNumber, shipmentStatus);
+        var shipment = new Shipment(shipmentId, orderId,  shipmentDate, trackingNumber, shipmentStatus);
         
         return Result.Success(shipment);
     }
