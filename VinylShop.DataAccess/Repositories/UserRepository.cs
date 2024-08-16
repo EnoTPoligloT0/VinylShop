@@ -18,7 +18,7 @@ public class UserRepository : IUserRepository
     }
 
 
-    public async Task Create(User user)
+    public async Task Add(User user)
     {
         var userEntity = new UserEntity
         {
@@ -58,6 +58,14 @@ public class UserRepository : IUserRepository
         return _mapper.Map<User>(userEntity);
     }
 
+    public async Task<User> GetByEmail(string email)
+    {
+        var userEntity = await _context.Users
+            .AsNoTracking()
+            .SingleOrDefaultAsync(u => u.Email == email) ?? throw new Exception(); 
+        return _mapper.Map<User>(userEntity);
+    }
+    
     public async Task Update(Guid id, string firstName, string lastName, string? phoneNumber, string? addressLine1,
         string? addressLine2,
         string? city, string? state, string? zipCode)
@@ -75,6 +83,12 @@ public class UserRepository : IUserRepository
                     .SetProperty(user => user.State, state)
                     .SetProperty(user => user.ZipCode, zipCode));
     }
+
+    public Task UpdatePassword(string password)
+    {
+        throw new NotImplementedException();
+    }
+
 
     public async Task Delete(Guid id)
     {
