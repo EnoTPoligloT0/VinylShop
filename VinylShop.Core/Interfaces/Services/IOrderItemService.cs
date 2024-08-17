@@ -6,7 +6,7 @@ public interface IOrderItemService
 {
     Task CreateOrderItem(OrderItem orderItem);
     Task DeleteOrderItem(Guid id);
-    Task<List<OrderItem>> GetOrderItems();
+    Task<List<OrderItem>> GetOrderItems(Guid orderId);
     Task<OrderItem> GetOrderItemById(Guid id);
     Task UpdateOrderItem(Guid id, int quantity);
 }
