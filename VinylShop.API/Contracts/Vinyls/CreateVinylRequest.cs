@@ -10,6 +10,5 @@ public record CreateVinylRequest(
     [Required] decimal Price,
     [Required] int Stock,
     [Required] string Description,
-    [Required] bool IsAvailable,
-    [Required] Guid OrderItemId
+    [Required] bool IsAvailable
 );
