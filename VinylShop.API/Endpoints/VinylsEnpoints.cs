@@ -17,6 +17,7 @@ public static class VinylsEnpoints
         endpoints.MapPost("/", CreateVinyl);
         endpoints.MapGet("/", GetVinyls);
         endpoints.MapGet("/{id:guid}", GetVinylById);
+        endpoints.MapGet("orderItems/{orderItemId:guid}", GetVinylByOrderItemId);
         endpoints.MapPut("/{id:guid}", UpdateVinyl);
         endpoints.MapDelete("/{id:guid}", DeleteVinyl);
 
@@ -49,7 +50,6 @@ public static class VinylsEnpoints
     }
 
     private static async Task<IResult> GetVinyls(
-        [FromBody] GetVinylResponse request,
         VinylService vinylService)
     {
         var vinyls = await vinylService.GetVinyls();
@@ -65,9 +65,9 @@ public static class VinylsEnpoints
             Stock = v.Stock,
             Description = v.Description,
             IsAvailable = v.IsAvailable
-        });
+        }).ToList();
 
-        return Results.Ok(vinyls);
+        return Results.Ok(response);
     }
 
     private static async Task<IResult> GetVinylById(
@@ -91,7 +91,29 @@ public static class VinylsEnpoints
 
         return Results.Ok(response);
     }
+    
+    private static async Task<IResult> GetVinylByOrderItemId(
+        [FromRoute] Guid orderItemId,
+        VinylService vinylService)
+    {
+        var vinyl = await vinylService.GetVinylById(orderItemId);
 
+        var response = new GetVinylByOrderItemResponse()
+        {
+            Id = vinyl.Id,
+            OrderItemId = orderItemId,
+            Title = vinyl.Title,
+            Artist = vinyl.Artist,
+            Genre = vinyl.Genre,
+            ReleaseYear = vinyl.ReleaseYear,
+            Price = vinyl.Price,
+            Stock = vinyl.Stock,
+            Description = vinyl.Description,
+            IsAvailable = vinyl.IsAvailable
+        };
+
+        return Results.Ok(response);
+    }
   
     private static async Task<IResult> UpdateVinyl(
         [FromRoute] Guid id,
