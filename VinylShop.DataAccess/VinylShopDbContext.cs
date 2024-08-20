@@ -9,21 +9,11 @@ namespace VinylShop.DataAccess;
 
 public class VinylShopDbContext : DbContext
 {
-    private readonly IConfiguration _configuration;
-
-    public VinylShopDbContext(IConfiguration configuration)
+    public VinylShopDbContext(DbContextOptions<VinylShopDbContext> options)
+        : base(options)
     {
-        _configuration = configuration;
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder
-            .UseNpgsql(_configuration.GetConnectionString("DefaultConnection"))
-            .UseLoggerFactory(CreateLoggerFactory()) 
-            .EnableSensitiveDataLogging();
-    }
-    
     public DbSet<OrderEntity> Orders { get; set; }
     public DbSet<OrderItemEntity> OrderItems { get; set; }
     public DbSet<PaymentEntity> Payment { get; set; }
@@ -31,14 +21,9 @@ public class VinylShopDbContext : DbContext
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<VinylEntity> Vinyls { get; set; }
 
-    public ILoggerFactory CreateLoggerFactory() =>
-        LoggerFactory.Create(builder =>
-        {
-            builder.AddConsole(); 
-        });
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new OrderConfiguration());
         modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
         modelBuilder.ApplyConfiguration(new VinylConfiguration());
