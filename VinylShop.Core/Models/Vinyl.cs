@@ -6,8 +6,6 @@ namespace VinylShop.Core.Models;
 public class Vinyl
 {
     public Guid Id { get; }
-    public Guid OrderItemId { get; }
-    public OrderItem? OrderItem { get; }
     public string Title { get; } = string.Empty;
     public string Artist { get; } = string.Empty;
     public string Genre { get; } = string.Empty;
