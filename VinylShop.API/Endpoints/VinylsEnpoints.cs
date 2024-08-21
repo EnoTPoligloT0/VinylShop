@@ -13,7 +13,7 @@ public static class VinylsEnpoints
     public static IEndpointRouteBuilder MapVinylEnpoints(this IEndpointRouteBuilder app)
     {
         var endpoints = app.MapGroup("vinyls");
-        
+
         endpoints.MapPost("/", CreateVinyl);
         endpoints.MapGet("/", GetVinyls);
         endpoints.MapGet("/{id:guid}", GetVinylById);
@@ -23,9 +23,10 @@ public static class VinylsEnpoints
 
         return endpoints;
     }
-    
+
     private static async Task<IResult> CreateVinyl(
         [FromBody] CreateVinylRequest request,
+        HttpContext context,
         VinylService vinylService)
     {
         var vinylResult = Vinyl.Create(
@@ -41,11 +42,11 @@ public static class VinylsEnpoints
         );
 
         if (!vinylResult.IsSuccess) return Results.BadRequest(vinylResult.Error);
-        
+
         var vinyl = vinylResult.Value;
-            
+
         await vinylService.CreateVinyl(vinyl);
-            
+
         return Results.Ok(vinyl);
     }
 
@@ -53,19 +54,20 @@ public static class VinylsEnpoints
         VinylService vinylService)
     {
         var vinyls = await vinylService.GetVinyls();
-        
-        var response = vinyls.Select(v => new GetVinylResponse
-        {
-            Id = v.Id,
-            Title = v.Title,
-            Artist = v.Artist,
-            Genre = v.Genre,
-            ReleaseYear = v.ReleaseYear,
-            Price = v.Price,
-            Stock = v.Stock,
-            Description = v.Description,
-            IsAvailable = v.IsAvailable
-        }).ToList();
+
+        var response = vinyls
+            .Select(v => new GetVinylResponse
+        (
+            v.Id,
+            v.Title,
+            v.Artist,
+            v.Genre,
+            v.ReleaseYear,
+            v.Price,
+            v.Stock,
+            v.Description,
+            v.IsAvailable
+        ));
 
         return Results.Ok(response);
     }
@@ -77,44 +79,92 @@ public static class VinylsEnpoints
         var vinyl = await vinylService.GetVinylById(id);
 
         var response = new GetVinylResponse
-        {
-            Id = vinyl.Id,
-            Title = vinyl.Title,
-            Artist = vinyl.Artist,
-            Genre = vinyl.Genre,
-            ReleaseYear = vinyl.ReleaseYear,
-            Price = vinyl.Price,
-            Stock = vinyl.Stock,
-            Description = vinyl.Description,
-            IsAvailable = vinyl.IsAvailable
-        };
+        (
+            id,
+            vinyl.Title,
+            vinyl.Artist,
+            vinyl.Genre,
+            vinyl.ReleaseYear,
+            vinyl.Price,
+            vinyl.Stock,
+            vinyl.Description,
+            vinyl.IsAvailable
+        );
 
         return Results.Ok(response);
     }
-    
+
     private static async Task<IResult> GetVinylByOrderItemId(
         [FromRoute] Guid orderItemId,
         VinylService vinylService)
     {
         var vinyl = await vinylService.GetVinylById(orderItemId);
 
-        var response = new GetVinylByOrderItemResponse()
-        {
-            Id = vinyl.Id,
-            OrderItemId = orderItemId,
-            Title = vinyl.Title,
-            Artist = vinyl.Artist,
-            Genre = vinyl.Genre,
-            ReleaseYear = vinyl.ReleaseYear,
-            Price = vinyl.Price,
-            Stock = vinyl.Stock,
-            Description = vinyl.Description,
-            IsAvailable = vinyl.IsAvailable
-        };
+        var response = new GetVinylByOrderItemResponse
+        (
+            vinyl.Id,
+            orderItemId,
+            vinyl.Title,
+            vinyl.Artist,
+            vinyl.Genre,
+            vinyl.ReleaseYear,
+            vinyl.Price,
+            vinyl.Stock,
+            vinyl.Description,
+            vinyl.IsAvailable
+        );
 
         return Results.Ok(response);
     }
-  
+
+    //todo decision
+    [HttpGet("orders/{orderId:guid}/vinyls")]
+    private static async Task<IResult> GetVinylsInOrder(
+        [FromRoute] Guid orderId,
+        OrderItemService orderItemService,
+        VinylService vinylService)
+    {
+        try
+        {
+            // Retrieve order items
+            var orderItems = await orderItemService.GetOrderItem(orderId);
+            if (!orderItems.Any())
+            {
+                return Results.NotFound("No items found for this order.");
+            }
+
+            // Fetch all vinyl details
+            var vinylIds = orderItems.Select(oi => oi.VinylId).Distinct();
+
+            var vinyls = await vinylService.GetVinyls();
+
+            // Map order items to vinyl details
+            var response = orderItems.Select(oi =>
+            {
+                var vinyl = vinyls.FirstOrDefault(v => v.Id == oi.VinylId);
+                return new
+                {
+                    OrderItemId = oi.Id,
+                    VinylId = vinyl?.Id,
+                    Title = vinyl?.Title,
+                    Artist = vinyl?.Artist,
+                    Genre = vinyl?.Genre,
+                    ReleaseYear = vinyl?.ReleaseYear,
+                    Price = vinyl?.Price,
+                    Quantity = oi.Quantity,
+                    UnitPrice = oi.UnitPrice
+                };
+            });
+
+            return Results.Ok(response);
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions (log them if needed)
+            return Results.Problem("An error occurred while processing your request.");
+        }
+    }
+
     private static async Task<IResult> UpdateVinyl(
         [FromRoute] Guid id,
         [FromBody] UpdateVinylRequest request,

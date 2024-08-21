@@ -1,15 +1,17 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace VinylShop.API.Contracts.Vinyls;
 
-public class GetVinylByOrderItemResponse
-{
-    public Guid Id { get; set; }
-    public Guid OrderItemId { get; set; }
-    public string Title { get; set; } = string.Empty;
-    public string Artist { get; set; } = string.Empty;
-    public string Genre { get; set; } = string.Empty;
-    public int ReleaseYear { get; set; }
-    public decimal Price { get; set; }
-    public int Stock { get; set; }
-    public string Description { get; set; } = string.Empty;
-    public bool IsAvailable { get; set; }
-}
+public record GetVinylByOrderItemResponse
+(
+    [Required] Guid Id,
+    [Required] Guid OrderItemId,
+    [Required] string Title,
+    [Required] string Artist,
+    [Required] string Genre,
+    [Required] int ReleaseYear,
+    [Required] decimal Price,
+    [Required] int Stock,
+    [Required] string Description,
+    [Required] bool IsAvailable
+);
