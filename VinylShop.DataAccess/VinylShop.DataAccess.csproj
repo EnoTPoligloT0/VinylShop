@@ -22,5 +22,9 @@
     <ItemGroup>
         <ProjectReference Include="..\VinylShop.Application\VinylShop.Application.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Migrations\" />
+    </ItemGroup>
     
 </Project>
