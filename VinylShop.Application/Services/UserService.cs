@@ -36,14 +36,15 @@ public class UserService : IUserService
         return token;
         
     }
-
     
-
-    public async Task Register(Guid userId, string passwordHash, string email)
+    public async Task Register( string email, string passwordHash)
     {
         var hashedPassword = _passwordHasher.Generate(passwordHash);
 
-        var userResult = User.CreateForRegistration(userId, hashedPassword, email);
+        var userResult = User.CreateForRegistration(
+            new Guid(),
+            hashedPassword,
+            email);
 
         if (userResult.IsSuccess)
         {
@@ -55,5 +56,20 @@ public class UserService : IUserService
         {
             throw new Exception($"User creation failed:{userResult.Error}");
         }
+    }
+
+    public async Task<List<User>> GetUsers()
+    {
+        return await _userRepository.Get();
+    }
+
+    public async Task<User> GetUserById(Guid id)
+    {
+        return await _userRepository.GetById(id);
+    }
+
+    public async Task<User> GetUserByEmail(string email)
+    {
+        return await _userRepository.GetByEmail(email);
     }
 }

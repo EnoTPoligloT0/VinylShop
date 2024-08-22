@@ -12,15 +12,15 @@ using VinylShop.DataAccess;
 namespace VinylShop.DataAccess.Migrations
 {
     [DbContext(typeof(VinylShopDbContext))]
-    [Migration("20240731230321_initial")]
-    partial class Initial
+    [Migration("20240820020933_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0-preview.1.24081.2")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);

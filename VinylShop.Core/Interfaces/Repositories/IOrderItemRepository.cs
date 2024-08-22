@@ -6,7 +6,7 @@ public interface IOrderItemRepository
 {
     Task Create(OrderItem orderItem);
     Task Delete(Guid id);
-    Task<List<OrderItem>> Get();
+    Task<List<OrderItem>> Get(Guid orderId);
     Task<OrderItem> GetById(Guid id);
     Task Update(Guid id, int quantity);
 }

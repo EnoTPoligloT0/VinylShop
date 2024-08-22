@@ -5,7 +5,6 @@ namespace VinylShop.API.Contracts.Users;
 
 public record RegisterUserRequest
 (
-    [Required]Guid UserId, 
-    [Required]string PasswordHash, 
-    [Required]string Email
+    [Required]string Email,
+    [Required]string PasswordHash
 );
