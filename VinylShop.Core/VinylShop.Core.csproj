@@ -12,7 +12,6 @@
     
     <ItemGroup>
         <Folder Include="Interfaces\Repositories\"/>
-        <Folder Include="Interfaces\Services\"/>
     </ItemGroup>
 
 </Project>
