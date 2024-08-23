@@ -56,6 +56,9 @@ app.MapUsersEndpoints();
 app.MapOrderItemsEndpoints();
 app.MapVinylEnpoints();
 app.MapOrderEndpoints();
+app.MapShipmentEndpoints();
+app.MapPaymentEndpoints();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
