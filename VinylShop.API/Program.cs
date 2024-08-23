@@ -27,10 +27,12 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "VinylShop API", Version = "v1" });
-    // Дополнительные настройки Swagger, если необходимо
 });
 
-services.AddDbContext<VinylShopDbContext>();
+builder.Services.AddDbContext<VinylShopDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetSection("Database:ConnectionStrings:DefaultConnection").Value)
+        .UseLoggerFactory(LoggerFactory.Create(config => config.AddConsole()))
+        .EnableSensitiveDataLogging());
 services.AddAuthorization();
 
 services.AddScoped<IOrderItemRepository, OrderItemRepository>();
@@ -51,8 +53,9 @@ var app = builder.Build();
 
 app.UseAuthorization();
 app.MapUsersEndpoints();
-
-// Configure the HTTP request pipeline.
+app.MapOrderItemsEndpoints();
+app.MapVinylEnpoints();
+app.MapOrderEndpoints();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
