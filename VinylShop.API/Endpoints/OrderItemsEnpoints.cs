@@ -53,7 +53,8 @@ public static class OrderItemsEnpoints
         [FromRoute] Guid orderId,
         OrderItemService orderItemService)
     {
-        var orderItems = await orderItemService.GetOrderItems(orderId);
+        //todo Refactor name of GetOrderItem
+        var orderItems = await orderItemService.GetOrderItem(orderId);
 
         var response = orderItems
             .Select(l => new GetOrderItemResponse(l.Id, l.OrderId, l.VinylId, l.Quantity, l.UnitPrice));
