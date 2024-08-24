@@ -5,10 +5,11 @@ namespace VinylShop.Core.Models;
 public class OrderItem
 {
     private readonly List<Vinyl> _vinyls = [];
-    private OrderItem(Guid id, Guid orderId, int quantity, decimal unitPrice)
+    private OrderItem(Guid id, Guid orderId, Guid vinylId, int quantity, decimal unitPrice)
     {
         Id = id;
         OrderId = orderId;
+        VinylId = vinylId;
         Quantity = quantity;
         UnitPrice = unitPrice;
     }
@@ -21,7 +22,7 @@ public class OrderItem
     public decimal UnitPrice { get; }
 
     public IReadOnlyList<Vinyl>? Vinyls => _vinyls;
-    public static Result<OrderItem> Create(Guid id, Guid orderId,
+    public static Result<OrderItem> Create(Guid id, Guid orderId, Guid vinylId,
         int quantity, decimal unitPrice)
     {
         if (quantity <= 0)
@@ -35,7 +36,7 @@ public class OrderItem
             return Result.Failure<OrderItem>("Unit price must be zero or greater than zero.");
         }
 
-        var orderItem = new OrderItem(id, orderId, quantity, unitPrice);
+        var orderItem = new OrderItem(id, orderId,vinylId, quantity, unitPrice);
 
         return Result.Success(orderItem);
     }
