@@ -9,5 +9,6 @@ public interface IOrderItemService
     //todo Refactor name of GetOrderItem
     Task<List<OrderItem>> GetOrderItem(Guid orderId);
     Task<OrderItem> GetOrderItemById(Guid id);
+    Task<OrderItem> GetOrderItemByOrderId(Guid orderId);
     Task UpdateOrderItem(Guid id, int quantity);
 }
