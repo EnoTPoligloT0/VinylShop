@@ -51,6 +51,15 @@ public class PaymentRepository : IPaymentRepository
         return _mapper.Map<Payment>(paymentEntity);
     }
 
+    public async Task<Payment> GetByOrderId(Guid orderId)
+    {
+        var paymentEntity = await _context.Payment
+            .AsNoTracking()
+            .SingleOrDefaultAsync(c => c.OrderId == orderId);
+        
+        return _mapper.Map<Payment>(paymentEntity);
+    }
+
     public async Task Update(Guid id, decimal amount, string paymentMethod)
     {
         await _context.Payment

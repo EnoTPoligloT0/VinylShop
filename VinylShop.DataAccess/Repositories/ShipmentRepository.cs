@@ -51,6 +51,15 @@ public class ShipmentRepository : IShipmentRepository
         return _mapper.Map<Shipment>(shipmentEntity);
     }
 
+    public async Task<Shipment> GetByOrderId(Guid orderId)
+    {
+        var shipmentEntity = await _context.Shipment
+            .AsNoTracking()
+            .SingleOrDefaultAsync(c => c.OrderId == orderId);
+
+        return _mapper.Map<Shipment>(shipmentEntity);
+    }
+
     public async Task Update(Guid id, string trackingNumber, string shipmentStatus)
     {
         await _context.Shipment

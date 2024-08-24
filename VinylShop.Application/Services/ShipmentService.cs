@@ -28,6 +28,11 @@ public class ShipmentService : IShipmentService
     {
         return await _shipmentRepository.GetById(id);
     }
+    
+    public async Task<Shipment> GetShipmentByOrderId(Guid orderId)
+    {
+        return await _shipmentRepository.GetByOrderId(orderId);
+    }
 
     public async Task UpdateShipment(Guid id, string trackingNumber, string shipmentStatus)
     {
