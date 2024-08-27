@@ -28,7 +28,7 @@ public class OrderItemService : IOrderItemService
     {
         return await _orderItemsRepository.GetById(id);
     }
-    public async Task<OrderItem> GetOrderItemByOrderId(Guid orderId)
+    public async Task<List<OrderItem>> GetOrderItemByOrderId(Guid orderId)
     {
         return await _orderItemsRepository.GetByOrderId(orderId);
     }

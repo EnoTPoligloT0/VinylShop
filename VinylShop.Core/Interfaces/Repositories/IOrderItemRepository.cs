@@ -8,6 +8,6 @@ public interface IOrderItemRepository
     Task Delete(Guid id);
     Task<List<OrderItem>> Get(Guid orderId);
     Task<OrderItem> GetById(Guid id);
-    Task<OrderItem> GetByOrderId(Guid orderId);
+    Task<List<OrderItem>> GetByOrderId(Guid orderId);
     Task Update(Guid id, int quantity);
 }
