@@ -56,18 +56,18 @@ public static class VinylsEnpoints
         var vinyls = await vinylService.GetVinyls();
 
         var response = vinyls
-            .Select(v => new GetVinylResponse
-        (
-            v.Id,
-            v.Title,
-            v.Artist,
-            v.Genre,
-            v.ReleaseYear,
-            v.Price,
-            v.Stock,
-            v.Description,
-            v.IsAvailable
-        ));
+           .Select(v => new GetVinylResponse
+                   (
+                       v.Id,
+                       v.Title,
+                       v.Artist,
+                       v.Genre,
+                       v.ReleaseYear,
+                       v.Price,
+                       v.Stock,
+                       v.Description,
+                       v.IsAvailable
+                   ));
 
         return Results.Ok(response);
     }
