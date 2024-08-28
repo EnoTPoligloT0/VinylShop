@@ -51,14 +51,6 @@ services
 var app = builder.Build();
 
 
-app.UseAuthorization();
-app.MapUsersEndpoints();
-app.MapOrderItemsEndpoints();
-app.MapVinylEnpoints();
-app.MapOrderEndpoints();
-app.MapShipmentEndpoints();
-app.MapPaymentEndpoints();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
