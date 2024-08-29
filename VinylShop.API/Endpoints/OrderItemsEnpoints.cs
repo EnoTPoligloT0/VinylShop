@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using VinylShop.API.Contracts.OrderItems;
+using VinylShop.API.Contracts.Vinyls;
 using VinylShop.Application.Services;
 using VinylShop.Core.Models;
 
@@ -14,11 +15,11 @@ public static class OrderItemsEnpoints
         endpoits.MapPost("orderItem/{orderId:guid}", CreateOrderItem);
 
         endpoits.MapGet("orderItem/order/{orderId:guid}", GetOrderItemByOrderId);
-        
+
         endpoits.MapGet("orderItem/{id:guid}", GetOrderItemById);
-        
+
         endpoits.MapPut("orderItem/{id:guid}", UpdateOrderItem);
-        
+
         endpoits.MapDelete("orderItem/{id:guid}", DeleteOrderItem);
 
         return endpoits;
@@ -33,6 +34,7 @@ public static class OrderItemsEnpoints
         var orderItemResult = OrderItem.Create(
             Guid.NewGuid(),
             orderId,
+            request.VinylId,
             request.Quantity,
             request.UnitPrice
         );
@@ -44,32 +46,71 @@ public static class OrderItemsEnpoints
 
             return Results.Ok(orderItem);
         }
-       
-            return Results.BadRequest(orderItemResult.Error);
-        
+
+        return Results.BadRequest(orderItemResult.Error);
     }
 
     private static async Task<IResult> GetOrderItemByOrderId(
         [FromRoute] Guid orderId,
-        OrderItemService orderItemService)
+        OrderItemService orderItemService,
+        VinylService vinylService)
     {
-        //todo Refactor name of GetOrderItem
-        var orderItems = await orderItemService.GetOrderItem(orderId);
+        var orderItems = await orderItemService.GetOrderItemByOrderId(orderId);
 
-        var response = orderItems
-            .Select(l => new GetOrderItemResponse(l.Id, l.OrderId, l.VinylId, l.Quantity, l.UnitPrice));
+        var responses = new List<GetOrderItemResponse>();
+        
+        foreach (var orderItem in orderItems)
+        {
+            var vinyl = await vinylService.GetVinylById(orderItem.VinylId);
 
-        return Results.Ok(response);
+            var response = new GetOrderItemResponse(
+                orderItem.Id,
+                orderId,
+                orderItem.VinylId,
+                orderItem.Quantity,
+                orderItem.UnitPrice,
+                new GetVinylResponse(
+                    vinyl.Id,
+                    vinyl.Title,
+                    vinyl.Artist,
+                    vinyl.Genre,
+                    vinyl.ReleaseYear,
+                    vinyl.Price,
+                    vinyl.Stock,
+                    vinyl.Description,
+                    vinyl.IsAvailable)
+            );
+            responses.Add(response);
+        }
+        
+        return Results.Ok(responses);
     }
 
     private static async Task<IResult> GetOrderItemById(
         [FromRoute] Guid id,
-        OrderItemService orderItemService)
+        OrderItemService orderItemService,
+        VinylService vinylService)
     {
         var orderItem = await orderItemService.GetOrderItemById(id);
+        var vinyl = await vinylService.GetVinylById(orderItem.VinylId);
 
-        var response = new GetOrderItemResponse(id, orderItem.OrderId, orderItem.VinylId, orderItem.Quantity,
-            orderItem.UnitPrice);
+        var response = new GetOrderItemResponse(
+            id,
+            orderItem.OrderId,
+            orderItem.VinylId,
+            orderItem.Quantity,
+            orderItem.UnitPrice,
+            new GetVinylResponse(
+                vinyl.Id,
+                vinyl.Title,
+                vinyl.Artist,
+                vinyl.Genre,
+                vinyl.ReleaseYear,
+                vinyl.Price,
+                vinyl.Stock,
+                vinyl.Description,
+                vinyl.IsAvailable)
+        );
 
         return Results.Ok(response);
     }
@@ -83,7 +124,7 @@ public static class OrderItemsEnpoints
 
         return Results.Ok();
     }
-    
+
     private static async Task<IResult> DeleteOrderItem(
         [FromRoute] Guid id,
         OrderItemService orderItemService)
