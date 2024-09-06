@@ -7,6 +7,7 @@ using VinylShop.Core.Interfaces.Services;
 using VinylShop.Application;
 using AutoMapper;
 using Microsoft.OpenApi.Models;
+using VinylShop.API.Extensions;
 using VinylShop.Infrastructure;
 using VinylShop.DataAccess;
 using VinylShop.DataAccess.Repositories;
@@ -51,14 +52,6 @@ services
 var app = builder.Build();
 
 
-app.UseAuthorization();
-app.MapUsersEndpoints();
-app.MapOrderItemsEndpoints();
-app.MapVinylEnpoints();
-app.MapOrderEndpoints();
-app.MapShipmentEndpoints();
-app.MapPaymentEndpoints();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -66,6 +59,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.AddMappedEndpoints();
 
 app.Run();
 

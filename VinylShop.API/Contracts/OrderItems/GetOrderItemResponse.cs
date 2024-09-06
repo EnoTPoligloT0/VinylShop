@@ -1,3 +1,6 @@
+using VinylShop.API.Contracts.Vinyls;
+using VinylShop.Core.Models;
+
 namespace VinylShop.API.Contracts.OrderItems;
 
 public record GetOrderItemResponse
@@ -6,5 +9,6 @@ public record GetOrderItemResponse
     Guid OrderId,
     Guid VinylId ,
     int Quantity ,
-    decimal UnitPrice 
+    decimal UnitPrice,
+    GetVinylResponse Vinyl
 );

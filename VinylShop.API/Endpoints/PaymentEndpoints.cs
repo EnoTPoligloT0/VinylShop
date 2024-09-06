@@ -10,9 +10,9 @@ public static class PaymentEndpoints
 {
     public static IEndpointRouteBuilder MapPaymentEndpoints(this IEndpointRouteBuilder app)
     {
-        var endpoints = app.MapGroup("shipments");
+        var endpoints = app.MapGroup("payments");
 
-        endpoints.MapPost("/", CreatePayment);
+        endpoints.MapPost("/{orderId:guid}", CreatePayment);
         endpoints.MapGet("/{id:guid}", GetPaymentById);
         endpoints.MapGet("/order/{orderId:guid}", GetPaymentByOrderId);
         endpoints.MapPut("/{id:guid}", UpdatePayment);
@@ -65,7 +65,7 @@ public static class PaymentEndpoints
         [FromRoute] Guid orderId,
         [FromServices] PaymentService paymentService)
     {
-        var payment = await paymentService.GetPaymentById(orderId);
+        var payment = await paymentService.GetPaymentByOrderId(orderId);
 
         var response = new GetPaymentResponse
         (

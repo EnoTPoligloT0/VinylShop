@@ -54,6 +54,16 @@ public class OrderItemRepository : IOrderItemRepository
 
         return _mapper.Map<OrderItem>(orderItemEntity);
     }
+    public async Task<List<OrderItem>> GetByOrderId(Guid orderId)
+    {
+        var orderItemEntity = await _context.OrderItems
+            .AsNoTracking()
+            .Where(c => c.OrderId == orderId)
+            .Include(o => o.Vinyl)
+            .ToListAsync();
+        
+        return _mapper.Map<List<OrderItem>>(orderItemEntity);
+    }
 
     public async Task Update(Guid id, int quantity)
     {

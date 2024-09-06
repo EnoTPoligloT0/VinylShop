@@ -12,7 +12,7 @@ public static class ShipmentEndpoints
     {
         var endpoints = app.MapGroup("shipments");
 
-        endpoints.MapPost("/", CreateShipment);
+        endpoints.MapPost("/{orderId:guid}", CreateShipment);
         endpoints.MapGet("/{id:guid}", GetShipmentById);
         endpoints.MapGet("/order/{orderId:guid}", GetShipmentByOrderId);
         endpoints.MapPut("/{id:guid}", UpdateShipment);
@@ -64,12 +64,12 @@ public static class ShipmentEndpoints
         [FromRoute] Guid orderId,
         [FromServices] ShipmentService shipmentService)
     {
-        var shipment = await shipmentService.GetShipmentById(orderId);
+        var shipment = await shipmentService.GetShipmentByOrderId(orderId);
 
         var response = new GetShipmentResponse
         (
-            shipment.OrderId,
-            shipment.OrderId,
+            shipment.ShipmentId,
+            orderId,
             shipment.ShipmentDate,
             shipment.TrackingNumber,
             shipment.ShipmentStatus

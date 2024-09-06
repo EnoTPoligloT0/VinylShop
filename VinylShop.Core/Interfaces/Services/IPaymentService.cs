@@ -8,5 +8,6 @@ public interface IPaymentService
     Task DeletePayment(Guid id);
     Task<List<Payment>> GetPayments();
     Task<Payment> GetPaymentById(Guid id);
+    Task<Payment> GetPaymentByOrderId(Guid orderId);
     Task UpdatePayment(Guid id, decimal amount, string paymentMethod);
 }

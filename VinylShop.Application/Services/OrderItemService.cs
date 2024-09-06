@@ -28,12 +28,16 @@ public class OrderItemService : IOrderItemService
     {
         return await _orderItemsRepository.GetById(id);
     }
+    public async Task<List<OrderItem>> GetOrderItemByOrderId(Guid orderId)
+    {
+        return await _orderItemsRepository.GetByOrderId(orderId);
+    }
 
     public async Task UpdateOrderItem(Guid id, int quantity)
     {
-         await _orderItemsRepository.Update(id, quantity);
+        await _orderItemsRepository.Update(id, quantity);
     }
-    
+
     public async Task DeleteOrderItem(Guid id)
     {
         await _orderItemsRepository.Delete(id);

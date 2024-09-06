@@ -8,5 +8,6 @@ public interface IPaymentRepository
     Task Delete(Guid id);
     Task<List<Payment>> Get();
     Task<Payment> GetById(Guid id);
+    Task<Payment> GetByOrderId(Guid orderId);
     Task Update(Guid id, decimal amount, string paymentMethod);
 }

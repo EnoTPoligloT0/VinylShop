@@ -11,7 +11,7 @@ public record GetOrderResponse(
     GetUserResponse GetUser,
     DateTime OrderDate,
     decimal TotalAmount,
-    List<GetOrderItemResponse> OrderItems,
-    List<GetPaymentResponse> Payments,
-    List<GetShipmentResponse> Shipments
+    List<GetOrderItemResponse>? OrderItems,
+    GetPaymentResponse? Payment,
+    GetShipmentResponse? Shipment
 );
