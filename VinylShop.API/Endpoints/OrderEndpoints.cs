@@ -17,11 +17,14 @@ public static class OrderEndpoints
         var endpoints = app.MapGroup("orders");
 
         endpoints.MapPost("/", CreateOrder);
-        
+
         endpoints.MapGet("/{orderId:guid}", GetOrderById);
-        // endpoints.MapGet("/", GetAllOrders);
+        
+        endpoints.MapGet("/", GetOrders);
+        
         // endpoints.MapPut("/{orderId:guid}", UpdateOrder);
-        // endpoints.MapDelete("/{orderId:guid}", DeleteOrder);
+
+        endpoints.MapDelete("/{orderId:guid}", DeleteOrder);
 
         return endpoints;
     }
@@ -46,14 +49,14 @@ public static class OrderEndpoints
         return Results.Ok(order);
 
     }
-     private static async Task<IResult> GetOrderById(
-            [FromRoute] Guid orderId,
-            [FromServices] OrderService orderService,
-            [FromServices] OrderItemService orderItemService,
-            [FromServices] PaymentService paymentService,
-            [FromServices] ShipmentService shipmentService,
-            [FromServices] UserService userService,
-            [FromServices] VinylService vinylService)
+    private static async Task<IResult> GetOrderById(
+        [FromRoute] Guid orderId,
+        [FromServices] OrderService orderService,
+        [FromServices] OrderItemService orderItemService,
+        [FromServices] PaymentService paymentService,
+        [FromServices] ShipmentService shipmentService,
+        [FromServices] UserService userService,
+        [FromServices] VinylService vinylService)
     {
         var order = await orderService.GetOrderById(orderId);
 
@@ -114,5 +117,34 @@ public static class OrderEndpoints
 
         return Results.Ok(response);
     }
-     
+
+    private static async Task<IResult> GetOrders(
+            OrderService orderService
+        )
+    {
+        var orders = await orderService.GetOrders();
+
+        var response = orders
+            .Select(o => new GetOrdersResponse
+            (
+                o.Id,
+                o.UserId,
+                o.OrderDate,
+                o.TotalAmount
+            ));
+
+        return Results.Ok(response);
+    }
+    
+    //todo updateorder addorderstatus
+    
+    private static async Task<IResult> DeleteOrder(
+            [FromRoute] Guid id,
+            OrderService orderService
+        )
+    {
+        await orderService.DeleteOrder(id);
+
+        return Results.Ok();
+    }
 }
