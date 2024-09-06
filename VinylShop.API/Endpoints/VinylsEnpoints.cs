@@ -117,53 +117,51 @@ public static class VinylsEnpoints
         return Results.Ok(response);
     }
 
-    //todo decision
-    [HttpGet("orders/{orderId:guid}/vinyls")]
-    private static async Task<IResult> GetVinylsInOrder(
-        [FromRoute] Guid orderId,
-        OrderItemService orderItemService,
-        VinylService vinylService)
-    {
-        try
-        {
-            // Retrieve order items
-            var orderItems = await orderItemService.GetOrderItem(orderId);
-            if (!orderItems.Any())
-            {
-                return Results.NotFound("No items found for this order.");
-            }
-
-            // Fetch all vinyl details
-            var vinylIds = orderItems.Select(oi => oi.VinylId).Distinct();
-
-            var vinyls = await vinylService.GetVinyls();
-
-            // Map order items to vinyl details
-            var response = orderItems.Select(oi =>
-            {
-                var vinyl = vinyls.FirstOrDefault(v => v.Id == oi.VinylId);
-                return new
-                {
-                    OrderItemId = oi.Id,
-                    VinylId = vinyl?.Id,
-                    Title = vinyl?.Title,
-                    Artist = vinyl?.Artist,
-                    Genre = vinyl?.Genre,
-                    ReleaseYear = vinyl?.ReleaseYear,
-                    Price = vinyl?.Price,
-                    Quantity = oi.Quantity,
-                    UnitPrice = oi.UnitPrice
-                };
-            });
-
-            return Results.Ok(response);
-        }
-        catch (Exception ex)
-        {
-            // Handle exceptions (log them if needed)
-            return Results.Problem("An error occurred while processing your request.");
-        }
-    }
+    // //todo decision
+    // [HttpGet("orders/{orderId:guid}/vinyls")]
+    // private static async Task<IResult> GetVinylsInOrder(
+    //     [FromRoute] Guid orderId,
+    //     OrderItemService orderItemService,
+    //     VinylService vinylService)
+    // {
+    //     try
+    //     {
+    //         // Retrieve order items
+    //         var orderItems = await orderItemService.GetOrderItem(orderId);
+    //         if (!orderItems.Any())
+    //         {
+    //             return Results.NotFound("No items found for this order.");
+    //         }
+    //
+    //         var vinylIds = orderItems.Select(oi => oi.VinylId).Distinct();
+    //
+    //         var vinyls = await vinylService.GetVinyls();
+    //
+    //         // Map order items to vinyl details
+    //         var response = orderItems.Select(oi =>
+    //         {
+    //             var vinyl = vinyls.FirstOrDefault(v => v.Id == oi.VinylId);
+    //             return new
+    //             {
+    //                 OrderItemId = oi.Id,
+    //                 VinylId = vinyl?.Id,
+    //                 Title = vinyl?.Title,
+    //                 Artist = vinyl?.Artist,
+    //                 Genre = vinyl?.Genre,
+    //                 ReleaseYear = vinyl?.ReleaseYear,
+    //                 Price = vinyl?.Price,
+    //                 Quantity = oi.Quantity,
+    //                 UnitPrice = oi.UnitPrice
+    //             };
+    //         });
+    //
+    //         return Results.Ok(response);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return Results.Problem("An error occurred while processing your request.");
+    //     }
+    // }
 
     private static async Task<IResult> UpdateVinyl(
         [FromRoute] Guid id,
