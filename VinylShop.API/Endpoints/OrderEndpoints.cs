@@ -139,11 +139,11 @@ public static class OrderEndpoints
     //todo updateorder addorderstatus
     
     private static async Task<IResult> DeleteOrder(
-            [FromRoute] Guid id,
+            [FromRoute] Guid orderId,
             OrderService orderService
         )
     {
-        await orderService.DeleteOrder(id);
+        await orderService.DeleteOrder(orderId);
 
         return Results.Ok();
     }
