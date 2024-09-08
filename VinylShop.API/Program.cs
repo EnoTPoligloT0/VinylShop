@@ -6,8 +6,11 @@ using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Interfaces.Services;
 using VinylShop.Application;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using VinylShop.API.Extensions;
+using VinylShop.API.Infrastructure;
 using VinylShop.Infrastructure;
 using VinylShop.DataAccess;
 using VinylShop.DataAccess.Repositories;
@@ -18,23 +21,40 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, loggerConfig) =>
     loggerConfig.ReadFrom.Configuration(context.Configuration));
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-var services = builder.Services; 
+
+var services = builder.Services;
+var configuration = builder.Configuration;
+
+
+
+services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
+services.Configure<AuthorizationOptions>(configuration.GetSection(nameof(AuthorizationOptions)));
+services.AddApiAuthentication(builder.Services.BuildServiceProvider()
+    .GetRequiredService<IOptions<JwtOptions>>());
 
 services.AddAutoMapper(typeof(DataBaseMappings)); 
 
 services.AddEndpointsApiExplorer();
+
+services.AddExceptionHandler<GlobalExceptionHandler>();
+
 services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "VinylShop API", Version = "v1" });
 });
 
+services
+    .AddApplication()
+    .AddInfrastructure();
+
+
 builder.Services.AddDbContext<VinylShopDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetSection("Database:ConnectionStrings:DefaultConnection").Value)
         .UseLoggerFactory(LoggerFactory.Create(config => config.AddConsole()))
         .EnableSensitiveDataLogging());
+
 services.AddAuthorization();
+services.AddAuthentication();
 
 services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 services.AddScoped<IOrderRepository, OrderRepository>();
