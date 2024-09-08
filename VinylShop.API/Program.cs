@@ -7,6 +7,7 @@ using VinylShop.Core.Interfaces.Services;
 using VinylShop.Application;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using VinylShop.API.Extensions;
@@ -77,6 +78,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Strict,
+    HttpOnly = HttpOnlyPolicy.Always,
+    Secure = CookieSecurePolicy.Always
+});
 
 app.UseHttpsRedirection();
 
