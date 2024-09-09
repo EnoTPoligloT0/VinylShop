@@ -13,4 +13,6 @@ public interface IUserRepository
         string? addressLine2, string? city, string? state, string? zipCode);
 
     Task UpdatePassword(string password);
+    
+    Task<HashSet<Enums.Permission>> GetUserPermissions(Guid userId);
 }
