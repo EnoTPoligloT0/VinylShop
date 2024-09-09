@@ -16,5 +16,7 @@ public class UserEntity
     public string? State { get;  set;} = string.Empty;
     public string? ZipCode { get;  set;} = string.Empty;
     public List<OrderEntity>? Orders { get;  set;}
+    
+    public ICollection<RoleEntity> Roles { get; set; } = [];
 
 }
