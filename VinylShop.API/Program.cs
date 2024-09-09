@@ -29,7 +29,7 @@ var configuration = builder.Configuration;
 
 
 services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
-services.Configure<AuthorizationOptions>(configuration.GetSection(nameof(AuthorizationOptions)));
+// services.Configure<AuthorizationOptions>(configuration.GetSection(nameof(AuthorizationOptions)));
 services.AddApiAuthentication(builder.Services.BuildServiceProvider()
     .GetRequiredService<IOptions<JwtOptions>>());
 
