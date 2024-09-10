@@ -2,7 +2,9 @@ using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using VinylShop.API.Contracts.Vinyls;
+using VinylShop.API.Extensions;
 using VinylShop.Application.Services;
+using VinylShop.Core.Enums;
 using VinylShop.Core.Models;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
@@ -14,12 +16,18 @@ public static class VinylsEnpoints
     {
         var endpoints = app.MapGroup("vinyls");
 
-        endpoints.MapPost("/", CreateVinyl);
-        endpoints.MapGet("/", GetVinyls);
-        endpoints.MapGet("/{id:guid}", GetVinylById);
-        endpoints.MapGet("orderItems/{orderItemId:guid}", GetVinylByOrderItemId);
-        endpoints.MapPut("/{id:guid}", UpdateVinyl);
-        endpoints.MapDelete("/{id:guid}", DeleteVinyl);
+        endpoints.MapPost("/", CreateVinyl)
+            .RequirePermissions(Permission.Create);
+        endpoints.MapGet("/", GetVinyls)
+            .RequirePermissions(Permission.Read);
+        endpoints.MapGet("/{id:guid}", GetVinylById)
+            .RequirePermissions(Permission.Read);
+        endpoints.MapGet("orderItems/{orderItemId:guid}", GetVinylByOrderItemId)
+            .RequirePermissions(Permission.Read);
+        endpoints.MapPut("/{id:guid}", UpdateVinyl)
+            .RequirePermissions(Permission.Update);
+        endpoints.MapDelete("/{id:guid}", DeleteVinyl)
+            .RequirePermissions(Permission.Delete);
 
         return endpoints;
     }
@@ -56,18 +64,18 @@ public static class VinylsEnpoints
         var vinyls = await vinylService.GetVinyls();
 
         var response = vinyls
-           .Select(v => new GetVinylResponse
-                   (
-                       v.Id,
-                       v.Title,
-                       v.Artist,
-                       v.Genre,
-                       v.ReleaseYear,
-                       v.Price,
-                       v.Stock,
-                       v.Description,
-                       v.IsAvailable
-                   ));
+            .Select(v => new GetVinylResponse
+            (
+                v.Id,
+                v.Title,
+                v.Artist,
+                v.Genre,
+                v.ReleaseYear,
+                v.Price,
+                v.Stock,
+                v.Description,
+                v.IsAvailable
+            ));
 
         return Results.Ok(response);
     }
