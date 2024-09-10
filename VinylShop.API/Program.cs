@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using VinylShop.API;
 using VinylShop.API.Extensions;
 using VinylShop.API.Infrastructure;
 using VinylShop.Infrastructure;
@@ -26,12 +27,11 @@ builder.Host.UseSerilog((context, loggerConfig) =>
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-
+services.AddApiAuthentication(configuration);
 
 services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
-// services.Configure<AuthorizationOptions>(configuration.GetSection(nameof(AuthorizationOptions)));
-services.AddApiAuthentication(builder.Services.BuildServiceProvider()
-    .GetRequiredService<IOptions<JwtOptions>>());
+services.Configure<AuthorizationOption>(configuration.GetSection(nameof(AuthorizationOptions)));
+
 
 services.AddAutoMapper(typeof(DataBaseMappings)); 
 
@@ -64,7 +64,7 @@ services
     .AddApplication()
     .AddInfrastructure();
 
-
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
@@ -74,6 +74,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+    
+app.UseSerilogRequestLogging();
+
+app.UseExceptionHandler();
+
+app.UseMiddleware<RequestLogContextMiddleware>();
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
