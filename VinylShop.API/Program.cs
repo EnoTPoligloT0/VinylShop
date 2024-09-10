@@ -44,10 +44,6 @@ services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "VinylShop API", Version = "v1" });
 });
 
-services
-    .AddApplication()
-    .AddInfrastructure();
-
 
 builder.Services.AddDbContext<VinylShopDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetSection("Database:ConnectionStrings:DefaultConnection").Value)
