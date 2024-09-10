@@ -1,6 +1,6 @@
 ﻿namespace VinylShop.DataAccess;
 
-public class AuthorizationOptions
+public class AuthorizationOption
 {
     public RolePermissions[] RolePermissions { get; set; } = [];
 }
