@@ -26,9 +26,12 @@ public static class ApiExtensions
 
     public static void AddApiAuthentication(
         this IServiceCollection services,
-        IOptions<JwtOptions> jwtOptions)
+        IConfiguration configuration)
     {
-        services.AddAuthentication(options =>
+        var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+        
+        services
+            .AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -38,16 +41,17 @@ public static class ApiExtensions
             {
                 options.RequireHttpsMetadata = true;
                 options.SaveToken = true;
-                
-                options.TokenValidationParameters = new()
+
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtOptions.Value.SecretKey))
+                        Encoding.UTF8.GetBytes(jwtOptions!.SecretKey))
                 };
-                
+
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
@@ -58,7 +62,6 @@ public static class ApiExtensions
                     }
                 };
             });
-
         services.AddAuthorization();
         
         services.AddScoped<IPermissionService, PermissionService>();
