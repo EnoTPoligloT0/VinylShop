@@ -29,6 +29,8 @@ public class VinylShopDbContext(DbContextOptions<VinylShopDbContext> options,
         modelBuilder.ApplyConfiguration(new ShipmentConfiguration());
         modelBuilder.ApplyConfiguration(new PaymentConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new RoleConfiguration());
+        modelBuilder.ApplyConfiguration(new PermissionConfiguration());
         modelBuilder.ApplyConfiguration(new RolePermissionConfiguration(authOptions.Value));
     }
 }
