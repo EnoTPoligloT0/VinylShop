@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using VinylShop.Core.Enums;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Models;
 using VinylShop.DataAccess.Entities;
@@ -20,6 +21,10 @@ public class UserRepository : IUserRepository
 
     public async Task Add(User user)
     {
+        var roleEntity = await _context.Roles
+                             .SingleOrDefaultAsync(r => r.Id == (int)Role.User)
+                         ?? throw new InvalidOperationException();
+        
         var userEntity = new UserEntity
         {
             UserId = user.UserId,
@@ -33,6 +38,7 @@ public class UserRepository : IUserRepository
             City = user.City,
             State = user.State,
             ZipCode = user.ZipCode,
+            Roles = [roleEntity]
         };
         await _context.Users.AddAsync(userEntity);
         await _context.SaveChangesAsync();
@@ -87,6 +93,22 @@ public class UserRepository : IUserRepository
     public Task UpdatePassword(string password)
     {
         throw new NotImplementedException();
+    }
+    public async Task<HashSet<Permission>> GetUserPermissions(Guid userId)
+    {
+        var roles = await _context.Users
+            .AsNoTracking()
+            .Include(u => u.Roles)
+            .ThenInclude(r => r.Permissions)
+            .Where(u => u.UserId == userId)
+            .Select(u => u.Roles)
+            .ToArrayAsync();
+
+        return roles
+            .SelectMany(r => r)
+            .SelectMany(r => r.Permissions)
+            .Select(p => (Permission)p.Id)
+            .ToHashSet();
     }
 
 

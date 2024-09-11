@@ -22,14 +22,16 @@ public static class UsersEnpoints
         return app;
     }
 
-    
+
 
     private static async Task<IResult> Login(
         LoginUserRequest request,
-        UserService userService)
+        UserService userService,
+        HttpContext context)
     {
         var token = await userService.Login(request.Email, request.Password);
-
+        
+        context.Response.Cookies.Append("secretCookie", token );
         return Results.Ok(token);
     }
 
@@ -62,9 +64,12 @@ public static class UsersEnpoints
 
         return Results.Ok(response);
     }
-    
+
     private static async Task<IResult> GetUsers(
-        UserService userService)
+            [FromBody] LoginUserRequest request, 
+            UserService userService,
+            HttpContext context
+        )
     {
         var users = await userService.GetUsers();
 

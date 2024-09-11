@@ -19,7 +19,11 @@ public class JwtProvider : IJwtProvider
 
     public string Generate(User user)
     {
-        Claim[] claims = [new("userId", user.UserId.ToString())];
+        Claim[] claims = 
+        [
+            new("userId", user.UserId.ToString()),
+            new ("Admin", "true")
+        ];
         
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)),
@@ -34,5 +38,4 @@ public class JwtProvider : IJwtProvider
 
         return tokenValue;
     }
-    
 }
