@@ -30,7 +30,7 @@ var configuration = builder.Configuration;
 services.AddApiAuthentication(configuration);
 
 services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
-services.Configure<AuthorizationOption>(configuration.GetSection(nameof(AuthorizationOptions)));
+services.Configure<AuthorizationOption>(configuration.GetSection(nameof(AuthorizationOption)));
 
 
 services.AddAutoMapper(typeof(DataBaseMappings)); 
@@ -46,7 +46,7 @@ services.AddSwaggerGen(c =>
 
 
 builder.Services.AddDbContext<VinylShopDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetSection("Database:ConnectionStrings:DefaultConnection").Value)
+    options.UseNpgsql(builder.Configuration.GetSection("Database:ConnectionStrings:VinylShopDbContext").Value)
         .UseLoggerFactory(LoggerFactory.Create(config => config.AddConsole()))
         .EnableSensitiveDataLogging());
 
@@ -61,6 +61,7 @@ services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IVinylRepository, VinylRepository>();
 
 services
+    .AddPersistence(configuration)
     .AddApplication()
     .AddInfrastructure();
 
