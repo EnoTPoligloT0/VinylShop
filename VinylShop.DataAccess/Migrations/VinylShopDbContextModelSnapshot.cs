@@ -22,21 +22,6 @@ namespace VinylShop.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("PermissionEntityRoleEntity", b =>
-                {
-                    b.Property<int>("PermissionsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RolesId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("PermissionsId", "RolesId");
-
-                    b.HasIndex("RolesId");
-
-                    b.ToTable("PermissionEntityRoleEntity");
-                });
-
             modelBuilder.Entity("VinylShop.DataAccess.Entities.OrderEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -128,6 +113,28 @@ namespace VinylShop.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PermissionEntity");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Read"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Create"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Update"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Delete"
+                        });
                 });
 
             modelBuilder.Entity("VinylShop.DataAccess.Entities.RoleEntity", b =>
@@ -145,6 +152,18 @@ namespace VinylShop.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "User"
+                        });
                 });
 
             modelBuilder.Entity("VinylShop.DataAccess.Entities.RolePermissionEntity", b =>
@@ -156,6 +175,8 @@ namespace VinylShop.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
 
                     b.ToTable("RolePermissionEntity");
                 });
@@ -301,21 +322,6 @@ namespace VinylShop.DataAccess.Migrations
                     b.ToTable("Vinyls", (string)null);
                 });
 
-            modelBuilder.Entity("PermissionEntityRoleEntity", b =>
-                {
-                    b.HasOne("VinylShop.DataAccess.Entities.PermissionEntity", null)
-                        .WithMany()
-                        .HasForeignKey("PermissionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VinylShop.DataAccess.Entities.RoleEntity", null)
-                        .WithMany()
-                        .HasForeignKey("RolesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("VinylShop.DataAccess.Entities.OrderEntity", b =>
                 {
                     b.HasOne("VinylShop.DataAccess.Entities.UserEntity", "User")
@@ -355,6 +361,21 @@ namespace VinylShop.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("VinylShop.DataAccess.Entities.RolePermissionEntity", b =>
+                {
+                    b.HasOne("VinylShop.DataAccess.Entities.PermissionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VinylShop.DataAccess.Entities.RoleEntity", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VinylShop.DataAccess.Entities.ShipmentEntity", b =>
