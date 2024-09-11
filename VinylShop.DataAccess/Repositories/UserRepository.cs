@@ -21,6 +21,10 @@ public class UserRepository : IUserRepository
 
     public async Task Add(User user)
     {
+        var roleEntity = await _context.Roles
+                             .SingleOrDefaultAsync(r => r.Id == (int)Role.User)
+                         ?? throw new InvalidOperationException();
+        
         var userEntity = new UserEntity
         {
             UserId = user.UserId,
@@ -34,6 +38,7 @@ public class UserRepository : IUserRepository
             City = user.City,
             State = user.State,
             ZipCode = user.ZipCode,
+            Roles = [roleEntity]
         };
         await _context.Users.AddAsync(userEntity);
         await _context.SaveChangesAsync();
