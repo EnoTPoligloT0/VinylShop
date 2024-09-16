@@ -16,6 +16,14 @@ const config: Config = {
         'warning-yellow': '#FFD700',       // Golden Yellow
         'light-gray': '#F5F5F5',    // Light Gray
       },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+      },
+      fontWeight: {
+        regular: '400',  
+        medium: '500',
+        semibold: '600',
+      }
     },
   },
   plugins: [],
