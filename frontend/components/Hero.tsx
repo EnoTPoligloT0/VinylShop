@@ -1,15 +1,15 @@
 import React from 'react';
 import Image from "next/image";
-
+//todo add animations to buttons and make better responsive 
 function Hero() {
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto mt-4 ">
             <div className="grid grid-cols-12 gap-4 lg:max-h-[1000px]">
                 
                 <div className="col-span-12 lg:col-span-8 lg:pl-16 bg-gradient-to-r from-gray-900 to-soft-purple lg:relative rounded-lg">
                     <div className="flex flex-col lg:flex-row items-center lg:items-start ">
 
-                        <div className="lg:h-72 lg:pt-36 sm:pt-10 z-20 relative">
+                        <div className="lg:h-72 lg:pt-36 py-4 px-4 sm:pt-10 z-20 relative">
                             <div >
                                 <h1 className="md:w-2/3 text-5xl font-semibold text-white mb-7">
                                     Iconic & New Vinyls
