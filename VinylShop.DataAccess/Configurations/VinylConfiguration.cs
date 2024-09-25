@@ -17,6 +17,6 @@ public class VinylConfiguration : IEntityTypeConfiguration<VinylEntity>
         vinylBuilder.Property(v => v.Stock).IsRequired();
         vinylBuilder.Property(v => v.Description).HasMaxLength(500);
         vinylBuilder.Property(v => v.IsAvailable).IsRequired();
-        
+        vinylBuilder.Property(v => v.Image).HasColumnType("bytea"); 
     }
 }
