@@ -300,6 +300,10 @@ namespace VinylShop.DataAccess.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<byte[]>("Image")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("boolean");
 
