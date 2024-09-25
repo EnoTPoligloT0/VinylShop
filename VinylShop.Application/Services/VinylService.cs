@@ -1,3 +1,4 @@
+using CSharpFunctionalExtensions;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Interfaces.Services;
 using VinylShop.Core.Models;
@@ -33,6 +34,25 @@ public class VinylService : IVinylService
     {
         await _vinylRepository.Update(id, title, artist, genre, releaseYear, price, stock, description, isAvailable);
     }
+    
+    public async Task<Result> UpdateVinylImage(Guid vinylId, string imageBase64)
+    {
+        var vinyl = await _vinylRepository.GetById(vinylId);
+        if (vinyl == null)
+        {
+            return Result.Failure("Vinyl not found.");
+        }
+
+        // Convert Base64 back to byte array
+        byte[] imageData = Convert.FromBase64String(imageBase64);
+
+        // Call the repository to update the image
+        await _vinylRepository.UpdateImage(vinylId, imageData);
+
+        return Result.Success();
+    }
+
+
 
     public async Task DeleteVinyl(Guid id)
     {
