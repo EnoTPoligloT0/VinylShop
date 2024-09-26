@@ -8,6 +8,7 @@ using VinylShop.Application;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using VinylShop.API;
@@ -42,6 +43,12 @@ services.AddExceptionHandler<GlobalExceptionHandler>();
 services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "VinylShop API", Version = "v1" });
+    c.EnableAnnotations(); 
+    c.MapType<IFormFile>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Format = "binary" // This is important for file uploads
+    });
 });
 
 
@@ -52,6 +59,11 @@ builder.Services.AddDbContext<VinylShopDbContext>(options =>
 
 services.AddAuthorization();
 services.AddAuthentication();
+
+services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10MB limit
+});
 
 services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 services.AddScoped<IOrderRepository, OrderRepository>();
@@ -76,12 +88,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-    
+app.UseDeveloperExceptionPage(); 
+
 app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();
 
 app.UseMiddleware<RequestLogContextMiddleware>();
+
+app.UseRouting(); 
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
