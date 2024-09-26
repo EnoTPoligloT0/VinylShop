@@ -11,5 +11,6 @@ public record GetVinylResponse(
     [Required] decimal Price,
     [Required] int Stock,
     [Required] string Description,
-    [Required] bool IsAvailable
+    [Required] bool IsAvailable,
+    string? ImageBase64
 );
