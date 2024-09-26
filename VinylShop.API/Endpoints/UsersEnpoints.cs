@@ -66,7 +66,6 @@ public static class UsersEnpoints
     }
 
     private static async Task<IResult> GetUsers(
-            [FromBody] LoginUserRequest request, 
             UserService userService,
             HttpContext context
         )
