@@ -17,9 +17,12 @@ public static class VinylsEnpoints
         var endpoints = app.MapGroup("vinyls");
 
         endpoints.MapPost("/", CreateVinyl)
-            .RequirePermissions(Permission.Create);
+            .RequirePermissions(Permission.Create)
+            .AllowAnonymous()
+            .DisableAntiforgery();
         endpoints.MapGet("/", GetVinyls)
-            .RequirePermissions(Permission.Read);
+            .RequirePermissions(Permission.Read)
+            .AllowAnonymous();
         endpoints.MapGet("/{id:guid}", GetVinylById)
             .RequirePermissions(Permission.Read);
         endpoints.MapGet("orderItems/{orderItemId:guid}", GetVinylByOrderItemId)
@@ -28,15 +31,35 @@ public static class VinylsEnpoints
             .RequirePermissions(Permission.Update);
         endpoints.MapDelete("/{id:guid}", DeleteVinyl)
             .RequirePermissions(Permission.Delete);
+        endpoints.MapPost("/{vinylId:guid}/upload-image", UploadVinylImage)
+            .AllowAnonymous()
+            .DisableAntiforgery();
 
         return endpoints;
     }
 
     private static async Task<IResult> CreateVinyl(
-        [FromBody] CreateVinylRequest request,
-        HttpContext context,
+        [FromForm] CreateVinylRequest request,
         VinylService vinylService)
     {
+        if (request == null)
+        {
+            return Results.BadRequest("Request cannot be null.");
+        }
+
+        if (request.ImageFile == null || request.ImageFile.Length == 0)
+        {
+            return Results.BadRequest("Image file is required.");
+        }
+
+        // Convert the uploaded file to a byte array
+        byte[] imageData;
+        using (var memoryStream = new MemoryStream())
+        {
+            await request.ImageFile.CopyToAsync(memoryStream);
+            imageData = memoryStream.ToArray();
+        }
+
         var vinylResult = Vinyl.Create(
             Guid.NewGuid(),
             request.Title,
@@ -46,16 +69,51 @@ public static class VinylsEnpoints
             request.Price,
             request.Stock,
             request.Description,
-            request.IsAvailable
+            request.IsAvailable,
+            Convert.ToBase64String(imageData)
         );
 
-        if (!vinylResult.IsSuccess) return Results.BadRequest(vinylResult.Error);
+        if (vinylResult.IsFailure)
+        {
+            return Results.BadRequest(vinylResult.Error);
+        }
 
         var vinyl = vinylResult.Value;
-
         await vinylService.CreateVinyl(vinyl);
 
         return Results.Ok(vinyl);
+    }
+    
+    private static async Task<IResult> UploadVinylImage(
+        [FromRoute] Guid vinylId,
+        IFormFile imageFile,
+        VinylService vinylService)
+    {
+        if (imageFile == null || imageFile.Length == 0)
+        {
+            return Results.BadRequest("Image file is required.");
+        }
+
+        // Convert the uploaded file to a byte array
+        byte[] imageData;
+        using (var memoryStream = new MemoryStream())
+        {
+            await imageFile.CopyToAsync(memoryStream);
+            imageData = memoryStream.ToArray();
+        }
+
+        // Optionally, convert to base64 or save directly to your storage
+        string imageBase64 = Convert.ToBase64String(imageData);
+
+        // Here, you can update the vinyl record to store the image data
+        var vinylResult = await vinylService.UpdateVinylImage(vinylId, imageBase64);
+
+        if (vinylResult.IsFailure)
+        {
+            return Results.BadRequest(vinylResult.Error);
+        }
+
+        return Results.Ok();
     }
 
     private static async Task<IResult> GetVinyls(
