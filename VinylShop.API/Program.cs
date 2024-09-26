@@ -107,6 +107,9 @@ app.UseCookiePolicy(new CookiePolicyOptions
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.AddMappedEndpoints();
 
 app.Run();
