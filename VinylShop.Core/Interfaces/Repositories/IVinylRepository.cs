@@ -10,4 +10,5 @@ public interface IVinylRepository
     Task<Vinyl> GetById(Guid id);
     Task Update(Guid id, string title, string artist, string genre, int releaseYear, decimal price, int stock,
         string description, bool isAvailable);
+    Task UpdateImage(Guid vinylId, byte[] imageData);
 }

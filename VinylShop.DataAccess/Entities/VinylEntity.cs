@@ -13,5 +13,6 @@ public class VinylEntity
     public int Stock { get; set; }
     public string Description { get; set; } = string.Empty;
     public bool IsAvailable { get; set; }
+    public byte[]? Image { get; set; }
 
 }

@@ -29,10 +29,21 @@ public class VinylRepository : IVinylRepository
             Price = vinyl.Price,
             Stock = vinyl.Stock,
             Description = vinyl.Description,
-            IsAvailable = vinyl.IsAvailable
+            IsAvailable = vinyl.IsAvailable,
+            Image = vinyl.Image
         };
         await _context.Vinyls.AddAsync(vinylEntity);
         await _context.SaveChangesAsync();
+    }
+    
+    public async Task UpdateImage(Guid vinylId, byte[] imageData)
+    {
+        var vinylEntity = await _context.Vinyls.SingleOrDefaultAsync(v => v.Id == vinylId);
+        if (vinylEntity != null)
+        {
+            vinylEntity.Image = imageData; // Assuming you have an Image property of type byte[]
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task<List<Vinyl>> Get()

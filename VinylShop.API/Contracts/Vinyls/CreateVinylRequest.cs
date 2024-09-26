@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using Swashbuckle.AspNetCore.Annotations;
+
 
 namespace VinylShop.API.Contracts.Vinyls;
 
@@ -10,5 +12,6 @@ public record CreateVinylRequest(
     [Required] decimal Price,
     [Required] int Stock,
     [Required] string Description,
-    [Required] bool IsAvailable
-);
+    [Required] bool IsAvailable,
+    IFormFile ImageFile
+); 

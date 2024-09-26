@@ -13,6 +13,7 @@ public class DataBaseMappings : Profile
         CreateMap<PaymentEntity, Payment>();
         CreateMap<ShipmentEntity, Shipment>();
         CreateMap<UserEntity, User>();
-        CreateMap<VinylEntity, Vinyl>();
+        CreateMap<VinylEntity, Vinyl>()
+            .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image));;
     }
 }
