@@ -88,7 +88,8 @@ public static class OrderEndpoints
                     vinyl.Price,
                     vinyl.Stock,
                     vinyl.Description,
-                    vinyl.IsAvailable)
+                    vinyl.IsAvailable,
+                    Convert.ToBase64String(vinyl.Image))
             ));
         }
 

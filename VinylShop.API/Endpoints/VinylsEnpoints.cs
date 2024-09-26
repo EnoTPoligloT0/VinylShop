@@ -132,7 +132,8 @@ public static class VinylsEnpoints
                 v.Price,
                 v.Stock,
                 v.Description,
-                v.IsAvailable
+                v.IsAvailable,
+                Convert.ToBase64String(v.Image)
             ));
 
         return Results.Ok(response);
@@ -154,7 +155,8 @@ public static class VinylsEnpoints
             vinyl.Price,
             vinyl.Stock,
             vinyl.Description,
-            vinyl.IsAvailable
+            vinyl.IsAvailable,
+            Convert.ToBase64String(vinyl.Image)
         );
 
         return Results.Ok(response);
@@ -177,7 +179,8 @@ public static class VinylsEnpoints
             vinyl.Price,
             vinyl.Stock,
             vinyl.Description,
-            vinyl.IsAvailable
+            vinyl.IsAvailable,
+            Convert.ToBase64String(vinyl.Image)
         );
 
         return Results.Ok(response);

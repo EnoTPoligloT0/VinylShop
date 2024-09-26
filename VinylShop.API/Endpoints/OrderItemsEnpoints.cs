@@ -78,7 +78,8 @@ public static class OrderItemsEnpoints
                     vinyl.Price,
                     vinyl.Stock,
                     vinyl.Description,
-                    vinyl.IsAvailable)
+                    vinyl.IsAvailable,
+                    Convert.ToBase64String(vinyl.Image))
             );
             responses.Add(response);
         }
@@ -109,7 +110,8 @@ public static class OrderItemsEnpoints
                 vinyl.Price,
                 vinyl.Stock,
                 vinyl.Description,
-                vinyl.IsAvailable)
+                vinyl.IsAvailable,
+                Convert.ToBase64String(vinyl.Image))
         );
 
         return Results.Ok(response);
