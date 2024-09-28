@@ -24,6 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, loggerConfig) =>
     loggerConfig.ReadFrom.Configuration(context.Configuration));
+builder.Services.AddControllers();
 
 var services = builder.Services;
 var configuration = builder.Configuration;
@@ -104,6 +105,13 @@ app.UseCookiePolicy(new CookiePolicyOptions
     HttpOnly = HttpOnlyPolicy.Always,
     Secure = CookieSecurePolicy.Always
 });
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .CreateLogger();
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
