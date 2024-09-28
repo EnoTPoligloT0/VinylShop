@@ -40,6 +40,7 @@ public static class VinylsEnpoints
 
     private static async Task<IResult> CreateVinyl(
         [FromForm] CreateVinylRequest request,
+        IFormFile ImageFile,
         VinylService vinylService)
     {
         if (request == null)
@@ -47,7 +48,7 @@ public static class VinylsEnpoints
             return Results.BadRequest("Request cannot be null.");
         }
 
-        if (request.ImageFile == null || request.ImageFile.Length == 0)
+        if (ImageFile == null || ImageFile.Length == 0)
         {
             return Results.BadRequest("Image file is required.");
         }
@@ -56,7 +57,7 @@ public static class VinylsEnpoints
         byte[] imageData;
         using (var memoryStream = new MemoryStream())
         {
-            await request.ImageFile.CopyToAsync(memoryStream);
+            await ImageFile.CopyToAsync(memoryStream);
             imageData = memoryStream.ToArray();
         }
 
