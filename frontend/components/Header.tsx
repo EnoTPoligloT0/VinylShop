@@ -1,10 +1,57 @@
-import React from 'react';
+"use client";
+import React, {useState} from 'react';
+import { Vinyl } from "@/app/types/vinyl"
 import Image from "next/image";
 import Link from "next/link";
 //todo transfer sing up/in 1 section below, shopping cart one section below too  
 //todo delete all comments
 //todo change middle section phone responsive with icons and nav from left 
 function Hero() {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState<Vinyl[]>([])
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleSearch = async () => {
+        if (!searchQuery) return;
+
+        setLoading(true);
+        setError('');
+
+        console.log("Searching for:", searchQuery); 
+
+        try {
+            const response = await fetch(`https://localhost:44372/vinyls/search?searchTerm=${encodeURIComponent(searchQuery)}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+
+            console.log("Response status:", response.status);
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log("Search results:", data); 
+            setSearchResults(data);
+        } catch (error) {
+            setError('Search failed. Please try again.');
+            console.error("Search failed:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
+    };
+
+
+
     return (
         <header className="bg-light-gray">
             {/* Top Section: Location & Store Details */}
@@ -49,15 +96,35 @@ function Hero() {
 
                 {/* Search Bar Section */}
                 <div
-                    className="col-start-5 col-span-5 sm:col-start-4 sm:col-span-6"> {/* Adjusting for responsiveness */}
+                    className="col-start-5 col-span-5 sm:col-start-4 sm:col-span-6"> 
                     <div className="flex items-center">
                         <input
                             type="text"
+                            value={searchQuery}
+                            onChange={handleInputChange}
                             placeholder="Search"
                             className="w-full border rounded-l-md px-4 py-2"
                         />
-                        <button className="bg-purple-600 text-white rounded-r-md px-4 py-2 ">Search</button>
+                        <button className="bg-purple-600 text-white rounded-r-md px-4 py-2 " 
+                                onClick={handleSearch}>
+                            Search
+                        </button>
                     </div>
+
+
+                    {loading && <p>Loading...</p>}
+                    {error && <p className="text-red-500">{error}</p>}
+                    {searchResults.length > 0 && (
+                        <ul className="mt-4">
+                            {searchResults.map((result) => (
+                                <li key={result.id} className="py-1">
+                                    <Link href={`/vinyls/${result.id}`}>
+                                        {result.title} by {result.artist}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
 
                 {/* Wishlist and Cart Section */}
@@ -80,17 +147,17 @@ function Hero() {
                     2
                 </span>
                         </Link>
-                        <p className="ml-2 hidden md:block">$57.00</p> {/* Hide price on smaller screens */}
+                        <p className="ml-2 hidden md:block">$57.00</p> 
                     </div>
                 </div>
             </div>
 
 
             {/* Bottom Section: Navigation Menu & Contact Info */}
-            <div className="w-full bg-warning-yellow"> {/* Ensure full width */}
+            <div className="w-full bg-warning-yellow"> 
                 <div
-                    className="container mx-auto grid grid-cols-12 items-center py-4"> {/* Center content using container */}
-                    <ul className="col-span-12 flex justify-start "> {/* Use flex layout for items */}
+                    className="container mx-auto grid grid-cols-12 items-center py-4"> 
+                    <ul className="col-span-12 flex justify-start "> 
                         <li className="flex space-x-4">
                             <Link href="/"
                                   className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105">Home</Link>
