@@ -55,7 +55,6 @@ public static class VinylsEnpoints
             return Results.BadRequest("Image file is required.");
         }
 
-        // Convert the uploaded file to a byte array
         byte[] imageData;
         using (var memoryStream = new MemoryStream())
         {
@@ -97,7 +96,6 @@ public static class VinylsEnpoints
             return Results.BadRequest("Image file is required.");
         }
 
-        // Convert the uploaded file to a byte array
         byte[] imageData;
         using (var memoryStream = new MemoryStream())
         {
@@ -105,10 +103,8 @@ public static class VinylsEnpoints
             imageData = memoryStream.ToArray();
         }
 
-        // Optionally, convert to base64 or save directly to your storage
         string imageBase64 = Convert.ToBase64String(imageData);
 
-        // Here, you can update the vinyl record to store the image data
         var vinylResult = await vinylService.UpdateVinylImage(vinylId, imageBase64);
 
         if (vinylResult.IsFailure)
@@ -190,7 +186,7 @@ public static class VinylsEnpoints
     }
     
     private static async Task<IResult> SearchVinyls(
-        [FromQuery] string searchTerm, // User enters a general search term
+        [FromQuery] string searchTerm,
         VinylService vinylService)
     {
         if (string.IsNullOrWhiteSpace(searchTerm))
@@ -198,10 +194,25 @@ public static class VinylsEnpoints
             return Results.BadRequest("Search term cannot be empty.");
         }
 
-        var results = await vinylService.SearchVinyls(searchTerm);
-        return Results.Ok(results);
+        var vinyls = await vinylService.SearchVinyls(searchTerm);
+        
+        var response = vinyls.Select(v => new GetVinylResponse
+        (
+            v.Id,
+            v.Title,
+            v.Artist,
+            v.Genre,
+            v.ReleaseYear,
+            v.Price,
+            v.Stock,
+            v.Description,
+            v.IsAvailable,
+            Convert.ToBase64String(v.Image) 
+        ));
+        
+        return Results.Ok(response);
     }
-
+    
     // //todo decision
     // [HttpGet("orders/{orderId:guid}/vinyls")]
     // private static async Task<IResult> GetVinylsInOrder(
