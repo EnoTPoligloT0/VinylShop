@@ -29,6 +29,11 @@ public class VinylService : IVinylService
         return await _vinylRepository.GetById(id);
     }
 
+    public async Task<List<Vinyl>> SearchVinyls(string searchTerm)
+    {
+        return await _vinylRepository.Search(searchTerm);
+    }
+
     public async Task UpdateVinyl(Guid id, string title, string artist, string genre, int releaseYear,
         decimal price, int stock, string description, bool isAvailable)
     {

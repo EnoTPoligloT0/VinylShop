@@ -34,6 +34,8 @@ public static class VinylsEnpoints
         endpoints.MapPost("/{vinylId:guid}/upload-image", UploadVinylImage)
             .AllowAnonymous()
             .DisableAntiforgery();
+        endpoints.MapGet("/search", SearchVinyls)
+            .AllowAnonymous();
 
         return endpoints;
     }
@@ -185,6 +187,19 @@ public static class VinylsEnpoints
         );
 
         return Results.Ok(response);
+    }
+    
+    private static async Task<IResult> SearchVinyls(
+        [FromQuery] string searchTerm, // User enters a general search term
+        VinylService vinylService)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return Results.BadRequest("Search term cannot be empty.");
+        }
+
+        var results = await vinylService.SearchVinyls(searchTerm);
+        return Results.Ok(results);
     }
 
     // //todo decision
