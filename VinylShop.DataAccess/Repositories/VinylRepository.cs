@@ -61,6 +61,25 @@ public class VinylRepository : IVinylRepository
             .SingleOrDefaultAsync(v => v.Id == id);
         return _mapper.Map<Vinyl>(vinylEntity);
     }
+    
+    public async Task<List<Vinyl>> Search(string searchTerm)
+    {
+        searchTerm = searchTerm.ToLower();
+
+        var query = _context.Vinyls
+            .Where(v =>
+                    v.Title.ToLower().Contains(searchTerm) ||
+                    v.Artist.ToLower().Contains(searchTerm) ||
+                    v.Genre.ToLower().Contains(searchTerm) ||
+                    v.Description.ToLower().Contains(searchTerm) ||
+                    v.ReleaseYear.ToString().Contains(searchTerm) || // Handle year as string
+                    v.Price.ToString().Contains(searchTerm)           // Handle price as string
+            );
+
+        var vinylEntities = await query.ToListAsync();
+        
+        return _mapper.Map<List<Vinyl>>(vinylEntities);
+    }
 
     public async Task Update(Guid id, string title, string artist, string genre, int releaseYear, decimal price, int stock,
         string description, bool isAvailable)
