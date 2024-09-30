@@ -29,6 +29,14 @@ builder.Services.AddControllers();
 var services = builder.Services;
 var configuration = builder.Configuration;
 
+services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
 services.AddApiAuthentication(configuration);
 
 services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
@@ -114,6 +122,8 @@ Log.Logger = new LoggerConfiguration()
 app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
