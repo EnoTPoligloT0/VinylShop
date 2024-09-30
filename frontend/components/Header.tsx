@@ -1,62 +1,14 @@
 "use client";
-import React, {useState} from 'react';
-import { Vinyl } from "@/app/types/vinyl"
+import React from 'react';
 import Image from "next/image";
 import Link from "next/link";
-//todo transfer sing up/in 1 section below, shopping cart one section below too  
-//todo delete all comments
-//todo change middle section phone responsive with icons and nav from left 
-function Hero() {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState<Vinyl[]>([])
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+import SearchVinyl from "@/components/SearchVinyl";
 
-    const handleSearch = async () => {
-        if (!searchQuery) return;
-
-        setLoading(true);
-        setError('');
-
-        console.log("Searching for:", searchQuery); 
-
-        try {
-            const response = await fetch(`https://localhost:44372/vinyls/search?searchTerm=${encodeURIComponent(searchQuery)}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-            });
-
-            console.log("Response status:", response.status);
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            console.log("Search results:", data); 
-            setSearchResults(data);
-        } catch (error) {
-            setError('Search failed. Please try again.');
-            console.error("Search failed:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
-    };
-
-
-
+function Header() {
     return (
         <header className="bg-light-gray">
             {/* Top Section: Location & Store Details */}
-            <div
-                className="hidden sm:grid container mx-auto  grid-cols-12 items-center py-4"> {/* Changed this to container */}
+            <div className="hidden sm:grid container mx-auto grid-cols-12 items-center py-4">
                 <div className="col-span-6 flex items-center">
                     <p className="text-gray-600 text-sm">
                         <i className="fa fa-map-marker"></i> Store Location: Kraków - ul. Floriańska 12, 31-021
@@ -84,165 +36,69 @@ function Hero() {
                 </div>
             </div>
 
-            {/* Middle Section: Search Bar */}
-            <div className="container mx-auto grid grid-cols-12 items-center py-4"> {/* Container for layout */}
-                {/* Logo Section */}
-                <div className="col-span-2 flex items-center"> {/* Flex for vertical alignment */}
+            {/* Middle Section: SearchVinyl Bar */}
+            <div className="container mx-auto grid grid-cols-12 items-center py-4">
+                <div className="col-span-2 flex items-center">
                     <Link href="/" className="flex items-center">
-                        <Image src="/vinyl-icon.svg" alt="Logo" width={30} height={30}/>
+                        <Image src="/vinyl-icon.svg" alt="Logo" width={30} height={30} />
                         <span className="ml-2 text-black font-semibold text-3xl">Vinyl Shop</span>
                     </Link>
                 </div>
 
-                {/* Search Bar Section */}
-                <div
-                    className="col-start-5 col-span-5 sm:col-start-4 sm:col-span-6"> 
-                    <div className="flex items-center">
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={handleInputChange}
-                            placeholder="Search"
-                            className="w-full border rounded-l-md px-4 py-2"
-                        />
-                        <button className="bg-purple-600 text-white rounded-r-md px-4 py-2 " 
-                                onClick={handleSearch}>
-                            Search
-                        </button>
-                    </div>
-
-
-                    {loading && <p>Loading...</p>}
-                    {error && <p className="text-red-500">{error}</p>}
-                    {searchResults.length > 0 && (
-                        <ul className="mt-4">
-                            {searchResults.map((result) => (
-                                <li key={result.id} className="py-1">
-                                    <Link href={`/vinyls/${result.id}`}>
-                                        {result.title} by {result.artist}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                {/* SearchVinyl Bar Section */}
+                <div className="col-start-4 col-span-6"> {/* Adjusted to span 6 columns */}
+                    <SearchVinyl />
                 </div>
 
                 {/* Wishlist and Cart Section */}
-                <div className="col-start-11 col-span-2 flex justify-end items-center space-x-4">
+                <div className="col-start-11 col-span-2 flex justify-end items-center space-x-4"> {/* Adjusted to start at 10 */}
                     <div>
                         <Link href="/wishlist">
-                            <Image src="/heart.svg" alt="Heart" width={28} height={24}/>
+                            <Image src="/heart.svg" alt="Heart" width={28} height={24} />
                         </Link>
                     </div>
 
                     <div>
-                        <Image src="/divider.svg" alt="Divider" width={1} height={24}/>
+                        <Image src="/divider.svg" alt="Divider" width={1} height={24} />
                     </div>
 
                     <div className="relative flex items-center">
                         <Link href="/cart" className="relative">
-                            <Image src="/bag.svg" alt="Bag" width={26} height={26}/>
-                            <span
-                                className="absolute -top-2 -right-2 bg-purple-600 text-white rounded-full px-2 py-1 text-xs flex items-center justify-center">
-                    2
-                </span>
+                            <Image src="/bag.svg" alt="Bag" width={26} height={26} />
+                            <span className="absolute -top-2 -right-2 bg-purple-600 text-white rounded-full px-2 py-1 text-xs flex items-center justify-center">2</span>
                         </Link>
-                        <p className="ml-2 hidden md:block">$57.00</p> 
+                        <p className="ml-2 hidden md:block">$57.00</p>
                     </div>
                 </div>
             </div>
 
-
             {/* Bottom Section: Navigation Menu & Contact Info */}
-            <div className="w-full bg-warning-yellow"> 
-                <div
-                    className="container mx-auto grid grid-cols-12 items-center py-4"> 
-                    <ul className="col-span-12 flex justify-start "> 
+            <div className="w-full bg-warning-yellow">
+                <div className="container mx-auto grid grid-cols-12 items-center py-4">
+                    <ul className="col-span-12 flex justify-start">
                         <li className="flex space-x-4">
-                            <Link href="/"
-                                  className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105">Home</Link>
+                            <Link href="/" className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105">Home</Link>
                         </li>
                         <li className="flex-1 text-center">
-                            <Link href="/shop"
-                                  className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">
-                                Shop
-                            </Link>
+                            <Link href="/shop" className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">Shop</Link>
                         </li>
                         <li className="flex-1 text-center">
-                            <Link href="/delivery"
-                                  className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">
-                                Delivery
-                            </Link>
+                            <Link href="/delivery" className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">Delivery</Link>
                         </li>
                         <li className="flex-1 text-center">
-                            <Link href="/about"
-                                  className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">
-                                About Us
-                            </Link>
+                            <Link href="/about" className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">About Us</Link>
                         </li>
                         <li className="flex-1 text-center">
-                            <Link href="/contact"
-                                  className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">
-                                Contact Us
-                            </Link>
+                            <Link href="/contact" className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">Contact Us</Link>
                         </li>
                         <li className="flex-1 text-center">
-                            <Link href="/condition"
-                                  className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">
-                                Vinyl condition grading system
-                            </Link>
+                            <Link href="/condition" className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">Vinyl condition grading system</Link>
                         </li>
                     </ul>
                 </div>
             </div>
-
-            {/*bottom-test2*/}
-            {/*<div className="w-full bg-warning-yellow"> /!* Ensure full width *!/*/}
-            {/*    <div className="container mx-auto py-4"> /!* Center content using container *!/*/}
-            {/*        <ul className="flex justify-start space-x-4"> /!* Use flex layout for items *!/*/}
-            {/*            {[*/}
-            {/*                {href: "/", label: "Home"},*/}
-            {/*                {href: "/shop", label: "Shop"},*/}
-            {/*                {href: "/delivery", label: "Delivery"},*/}
-            {/*                {href: "/about", label: "About Us"},*/}
-            {/*                {href: "/contact", label: "Contact Us"},*/}
-            {/*                {href: "/condition", label: "Vinyl Condition Grading System"},*/}
-            {/*            ].map(({href, label}) => (*/}
-            {/*                <li key={href}>*/}
-            {/*                    <Link*/}
-            {/*                        href={href}*/}
-            {/*                        className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg rounded-md px-4 py-2"*/}
-            {/*                    >*/}
-            {/*                        {label}*/}
-            {/*                    </Link>*/}
-            {/*                </li>*/}
-            {/*            ))}*/}
-            {/*        </ul>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
-
-
-            {/*bottom-test*/}
-            {/*<div className="w-full bg-warning-yellow shadow-md"> /!* Add shadow for depth *!/*/}
-            {/*    <div className="container mx-auto py-4"> /!* Center content using container *!/*/}
-            {/*        <ul className="flex justify-between"> /!* Use flex layout for items *!/*/}
-            {/*            {["Home", "Shop", "Delivery", "About Us", "Contact Us", "Vinyl Condition Grading System"].map((item) => (*/}
-            {/*                <li className="flex-1 text-center" key={item}>*/}
-            {/*                    <Link*/}
-            {/*                        href={`/${item.toLowerCase().replace(/\s+/g, '-')}`} // Create dynamic routes*/}
-            {/*                        className="text-black block py-2 hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105" // Add hover effect and transition*/}
-            {/*                    >*/}
-            {/*                        {item}*/}
-            {/*                    </Link>*/}
-            {/*                </li>*/}
-            {/*            ))}*/}
-            {/*        </ul>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
-
-
         </header>
     );
 }
 
-export default Hero;
+export default Header;
