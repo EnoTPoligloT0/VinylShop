@@ -30,7 +30,8 @@ public static class VinylsEnpoints
         endpoints.MapPut("/{id:guid}", UpdateVinyl)
             .RequirePermissions(Permission.Update);
         endpoints.MapDelete("/{id:guid}", DeleteVinyl)
-            .RequirePermissions(Permission.Delete);
+            .RequirePermissions(Permission.Delete)
+            .AllowAnonymous();
         endpoints.MapPost("/{vinylId:guid}/upload-image", UploadVinylImage)
             .AllowAnonymous()
             .DisableAntiforgery();
