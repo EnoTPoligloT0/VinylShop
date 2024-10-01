@@ -1,12 +1,12 @@
 export interface Vinyl {
-    id: string; 
+    id?: string; 
     title: string;
     artist: string;
-    genre: string;
-    releaseYear: number;
+    genre?: string;
+    releaseYear?: number;
     price: number;
-    stock: number;
-    description: string;
-    isAvailable: boolean;
+    stock?: number;
+    description?: string;
+    isAvailable?: boolean;
     imageBase64?: string; 
 }
