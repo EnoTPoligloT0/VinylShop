@@ -40,10 +40,11 @@ const VinylList = () => {
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (
-        <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap gap-4">
             {vinyls.map((vinyl) => (
                 <VinylCard
                     key={vinyl.id}
+                    id={vinyl.id}
                     imageBase64={vinyl.imageBase64}
                     title={vinyl.title}
                     price={vinyl.price}
@@ -53,5 +54,5 @@ const VinylList = () => {
         </div>
     );
 };
-
+//grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-items-center
 export default VinylList;
