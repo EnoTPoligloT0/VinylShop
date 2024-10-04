@@ -4,6 +4,7 @@ import Banner from "./Banner";
 import Categories from "./Categories";
 import SearchVinyl from  "./SearchVinyl"
 import Popular from "./Popular";
+import Footer from "./Footer";
 
 export {
     Hero,
@@ -11,5 +12,6 @@ export {
     Banner,
     Categories,
     SearchVinyl,
-    Popular
+    Popular,
+    Footer
 }

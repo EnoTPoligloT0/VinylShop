@@ -1,5 +1,5 @@
 import React from "react";
-import {Categories, Hero, Header, Banner, Popular} from "@/components";
+import {Categories, Hero, Header, Banner, Popular, Footer} from "@/components";
 
 export default function Home() {
   return (
@@ -9,6 +9,7 @@ export default function Home() {
         <Banner/>
         <Categories/>
         <Popular/>
+        <Footer/>
     </main>
   );
 }
