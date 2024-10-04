@@ -76,7 +76,7 @@ function Footer() {
                         </li>
                     </ul>
                 </div>
-                //todo add blik
+                
                 <div className="col-span-3 text-center">
                     <h3 className="font-semibold mb-3">Secure Payment</h3>
                     <div className="flex justify-center space-x-4">
