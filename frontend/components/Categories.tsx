@@ -15,19 +15,19 @@ function Categories() {
             </div>
 
             <div className="grid grid-cols-3 gap-1 md:gap-12">
-                <div className="flex justify-start">
-                    <Image className={"cursor-pointer"} src={"/rock-cat.png"} alt={"rock-alt"} height={424} width={424}/>
+                <div className="flex justify-start ">
+                    <Image className={"cursor-pointer rounded-2xl"} src={"/rock-cat.png"} alt={"rock-alt"} height={424} width={424}/>
                 </div>
 
                 <div className="flex justify-center">
                     <Link href="/category/pop" passHref>
-                        <Image className={"cursor-pointer"} src={"/pop-cat.png"} alt={"pop-alt"} height={424} width={424}/>
+                        <Image className={"cursor-pointer rounded-2xl"} src={"/pop-cat.png"} alt={"pop-alt"} height={424} width={424}/>
                     </Link>
                 </div>
 
                 <div className="flex justify-end">
                     <Link href="/category/jazz" passHref>
-                        <Image className={"cursor-pointer"} src={"/jazz-cat.png"} alt={"jazz-alt"} height={424} width={424}/>
+                        <Image className={"cursor-pointer rounded-2xl"} src={"/jazz-cat.png"} alt={"jazz-alt"} height={424} width={424}/>
                     </Link>
                 </div>
             </div>
