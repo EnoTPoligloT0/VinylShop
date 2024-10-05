@@ -8,7 +8,7 @@ function Categories() {
 
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-semibold">Popular Categories</h1>
-                <span className="flex items-center space-x-2">
+                <span className="flex items-center space-x-2 cursor-pointer">
                     <p className="font-medium text-royal-purple">View all</p>
                     <Image src="/arrow.svg" alt="Arrow" width={24} height={24}/>
                 </span>
