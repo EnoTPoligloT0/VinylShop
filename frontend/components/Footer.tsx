@@ -4,7 +4,7 @@
     
     function Footer() {
         return (
-            <footer className="bg-light-gray">
+            <footer className="bg-light-gray text-black">
                 <div className="mx-auto grid grid-cols-12 py-8 container ">
     
                     <div className="col-span-3">
