@@ -1,5 +1,5 @@
 import React from "react";
-import {Categories, Hero, Header, Banner, Popular, Footer} from "@/components";
+import {Categories, Hero, Banner, Popular} from "@/components";
 
 export default function Home() {
   return (
