@@ -9,9 +9,11 @@ public static class UsersEnpoints
 {
     public static IEndpointRouteBuilder MapUsersEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPost("register", Register);
+        app.MapPost("register", Register)
+            .AllowAnonymous();
 
-        app.MapPost("login", Login);
+        app.MapPost("login", Login)
+            .AllowAnonymous();
 
         app.MapGet("users/email/{email}", GetByEmail);
 
@@ -21,9 +23,7 @@ public static class UsersEnpoints
 
         return app;
     }
-
-
-
+    
     private static async Task<IResult> Login(
         LoginUserRequest request,
         UserService userService,
@@ -39,7 +39,7 @@ public static class UsersEnpoints
         [FromBody] RegisterUserRequest request,
         UserService usersService)
     {
-        await usersService.Register(request.Email, request.PasswordHash);
+        await usersService.Register(request.Email, request.Password);
 
         return Results.Ok();
     }
