@@ -56,8 +56,13 @@ public static class ApiExtensions
                 {
                     OnMessageReceived = context =>
                     {
-                        context.Token = context.Request.Cookies["secretCookie"];
-
+                        var token = context.Request.Cookies["secretCookie"];
+                        
+                        if (string.IsNullOrEmpty(token))
+                        {
+                            token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+                        }
+                        context.Token = token;
                         return Task.CompletedTask;
                     }
                 };
