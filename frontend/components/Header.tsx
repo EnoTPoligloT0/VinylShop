@@ -73,7 +73,7 @@ function Header() {
                 <div className="container mx-auto grid grid-cols-12 items-center py-4">
                     <ul className="col-span-12 flex justify-start">
                         <li className="flex space-x-4">
-                            <Link href="/" className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105">Home</Link>
+                            <Link href="/" className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105 pl-3">Home</Link>
                         </li>
                         <li className="flex-1 text-center">
                             <Link href="/shop" className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">Shop</Link>
