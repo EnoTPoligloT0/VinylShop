@@ -32,6 +32,7 @@ public static class UsersEnpoints
         var token = await userService.Login(request.Email, request.Password);
         
         context.Response.Cookies.Append("secretCookie", token );
+        
         return Results.Ok(token);
     }
 

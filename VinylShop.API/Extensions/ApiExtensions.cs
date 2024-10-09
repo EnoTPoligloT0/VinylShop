@@ -1,5 +1,4 @@
 using System.Text;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
@@ -25,76 +24,71 @@ public static class ApiExtensions
         app.MapPaymentEndpoints();
     }
 
-   public static void AddApiAuthentication(
-    this IServiceCollection services,
-    IConfiguration configuration)
-{
-    var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
-    
-    services
-        .AddAuthentication(options =>
-        {
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddCookie()
-        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-        {
-            options.RequireHttpsMetadata = true;
-            options.SaveToken = true;
-
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(jwtOptions!.SecretKey))
-            };
-
-            options.Events = new JwtBearerEvents
-            {
-                OnMessageReceived = context =>
-                {
-                    var token = context.Request.Cookies["secretCookie"];
-                    
-                    if (string.IsNullOrEmpty(token))
-                    {
-                        token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-                    }
-                    context.Token = token;
-                    return Task.CompletedTask;
-                }
-            };
-        })
-        .AddGoogle(googleOptions =>
-        {
-            googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-            googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-        });
-
-    services.AddAuthorization();
-    
-    services.AddScoped<IPermissionService, PermissionService>();
-    services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
-
-    services.AddAuthorization(options =>
+    public static void AddApiAuthentication(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        options.AddPolicy("AdminPolicy", policy =>
+        var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+        
+        services
+            .AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = true;
+                options.SaveToken = true;
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(jwtOptions!.SecretKey))
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Token = context.Request.Cookies["secretCookie"];
+                        return Task.CompletedTask;
+                    }
+                };
+            })
+            .AddCookie("Cookies") 
+            .AddGoogle(options =>
+            {
+                options.ClientId = configuration["Authentication:Google:ClientId"];
+                options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                options.CallbackPath = new PathString("/signin-google");
+            });
+
+        services.AddAuthorization();
+
+        services.AddScoped<IPermissionService, PermissionService>();
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+        services.AddAuthorization(options =>
         {
-            policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-            policy.Requirements.Add(new PermissionRequirement(new[] { Permission.Create }));
+            options.AddPolicy("AdminPolicy", policy =>
+            {
+                policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                policy.Requirements.Add(new PermissionRequirement(new[] { Permission.Create }));
+            });
         });
-    });
-}
+    }
 
     public static IEndpointConventionBuilder RequirePermissions<TBuilder>(
         this TBuilder builder, params Permission[] permissions)
         where TBuilder : IEndpointConventionBuilder
     {
-        return builder
-            .RequireAuthorization(pb =>
-                pb.AddRequirements(new PermissionRequirement(permissions)));
+        return builder.RequireAuthorization(pb =>
+            pb.AddRequirements(new PermissionRequirement(permissions)));
     }
 }
