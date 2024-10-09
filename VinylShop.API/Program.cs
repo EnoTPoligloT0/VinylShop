@@ -6,9 +6,12 @@ using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Interfaces.Services;
 using VinylShop.Application;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using VinylShop.API;
@@ -16,8 +19,10 @@ using VinylShop.API.Extensions;
 using VinylShop.API.Infrastructure;
 using VinylShop.Infrastructure;
 using VinylShop.DataAccess;
+using VinylShop.DataAccess.Entities;
 using VinylShop.DataAccess.Repositories;
 using VinylShop.DataAccess.Mappings;
+using VinylShop.Infrastructure.Authentication;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,17 +36,17 @@ var configuration = builder.Configuration;
 
 services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin()
+    options.AddPolicy("AllowSpecificOrigin",
+        corsPolicyBuilder => corsPolicyBuilder.WithOrigins("http://localhost:3000")
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowAnyHeader()
+            .AllowCredentials()); 
 });
 
 services.AddApiAuthentication(configuration);
 
 services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
 services.Configure<AuthorizationOption>(configuration.GetSection(nameof(AuthorizationOption)));
-
 
 services.AddAutoMapper(typeof(DataBaseMappings)); 
 
@@ -67,7 +72,23 @@ builder.Services.AddDbContext<VinylShopDbContext>(options =>
         .EnableSensitiveDataLogging());
 
 services.AddAuthorization();
-services.AddAuthentication();
+services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    })
+    .AddCookie(options =>
+    {
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Use Always for HTTPS
+    })
+    .AddGoogle(options =>
+    {
+        options.ClientId = "your-client-id";
+        options.ClientSecret = "your-client-secret";
+        options.CallbackPath = "/signin-google";
+        options.CorrelationCookie.SameSite = SameSiteMode.None;
+    });
+
 
 services.Configure<FormOptions>(options =>
 {
@@ -80,6 +101,13 @@ services.AddScoped<IPaymentRepository, PaymentRepository>();
 services.AddScoped<IShipmentRepository, ShipmentRepository>();
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IVinylRepository, VinylRepository>();
+
+services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // For HTTPS
+    options.Cookie.SameSite = SameSiteMode.None; // Required for OAuth
+});
+
 
 services
     .AddPersistence(configuration)
@@ -123,10 +151,22 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.Use(async (context, next) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        await next();
+    }
+    else
+    {
+        context.Response.Redirect("/signin-google");
+    }
+});
 
 app.AddMappedEndpoints();
 

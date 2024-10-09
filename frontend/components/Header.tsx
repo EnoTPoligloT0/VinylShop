@@ -7,8 +7,8 @@ import SearchVinyl from "@/components/SearchVinyl";
 function Header() {
     return (
         <header className="bg-light-gray">
-            {/* Top Section: Location & Store Details */}
-            <div className="hidden sm:grid container mx-auto grid-cols-12 items-center py-4">
+            
+            <div className="hidden sm:grid container mx-auto grid-cols-12 items-center py-4 ">
                 <div className="col-span-6 flex items-center">
                     <p className="text-gray-600 text-sm">
                         <i className="fa fa-map-marker"></i> Store Location: Kraków - ul. Floriańska 12, 31-021
@@ -17,7 +17,7 @@ function Header() {
                         <i className="fa fa-phone"></i> (48) 578-320-405
                     </p>
                 </div>
-                <div className="col-span-6 flex justify-end space-x-4">
+                <div className="col-span-6 flex justify-end space-x-4 text-black">
                     <div>
                         <select className="text-sm bg-light-gray">
                             <option>Eng</option>
@@ -31,12 +31,11 @@ function Header() {
                         </select>
                     </div>
                     <div>
-                        <Link href="/signin" className="text-sm">Sign In / Sign Up</Link>
+                        <Link href="/login" className="text-sm">Sign In / Sign Up</Link>
                     </div>
                 </div>
             </div>
 
-            {/* Middle Section: SearchVinyl Bar */}
             <div className="container mx-auto grid grid-cols-12 items-center py-4">
                 <div className="col-span-2 flex items-center">
                     <Link href="/" className="flex items-center">
@@ -45,13 +44,11 @@ function Header() {
                     </Link>
                 </div>
 
-                {/* SearchVinyl Bar Section */}
-                <div className="col-start-4 col-span-6"> {/* Adjusted to span 6 columns */}
+                <div className="col-start-4 col-span-6"> 
                     <SearchVinyl />
                 </div>
 
-                {/* Wishlist and Cart Section */}
-                <div className="col-start-11 col-span-2 flex justify-end items-center space-x-4"> {/* Adjusted to start at 10 */}
+                <div className="col-start-11 col-span-2 flex justify-end items-center space-x-4"> 
                     <div>
                         <Link href="/wishlist">
                             <Image src="/heart.svg" alt="Heart" width={28} height={24} />
@@ -72,12 +69,11 @@ function Header() {
                 </div>
             </div>
 
-            {/* Bottom Section: Navigation Menu & Contact Info */}
             <div className="w-full bg-warning-yellow">
                 <div className="container mx-auto grid grid-cols-12 items-center py-4">
                     <ul className="col-span-12 flex justify-start">
                         <li className="flex space-x-4">
-                            <Link href="/" className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105">Home</Link>
+                            <Link href="/" className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105 pl-3">Home</Link>
                         </li>
                         <li className="flex-1 text-center">
                             <Link href="/shop" className="text-black block hover:text-royal-purple  transition duration-300 ease-in-out transform hover:scale-105">Shop</Link>

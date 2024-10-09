@@ -37,9 +37,9 @@ public class UserService : IUserService
         
     }
     
-    public async Task Register( string email, string passwordHash)
+    public async Task Register( string email, string password)
     {
-        var hashedPassword = _passwordHasher.Generate(passwordHash);
+        var hashedPassword = _passwordHasher.Generate(password);
 
         var userResult = User.CreateForRegistration(
             new Guid(),
