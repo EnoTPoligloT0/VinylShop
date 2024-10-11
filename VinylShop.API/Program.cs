@@ -35,7 +35,7 @@ services.AddCors(options =>
         corsPolicyBuilder => corsPolicyBuilder
             .WithOrigins("https://localhost:3000")
             .AllowAnyMethod()
-            .AllowAnyHeader()
+            .AllowAnyHeader()   
             .AllowCredentials());
 });
 
@@ -125,7 +125,7 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontEnd");
 
 app.UseAuthentication();
 app.UseAuthorization();
