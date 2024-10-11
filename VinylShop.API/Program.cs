@@ -33,7 +33,7 @@ services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontEnd",
         corsPolicyBuilder => corsPolicyBuilder
-            .WithOrigins("https://localhost:3000")
+            .WithOrigins("http://localhost:3000")
             .AllowAnyMethod()
             .AllowAnyHeader()   
             .AllowCredentials());
