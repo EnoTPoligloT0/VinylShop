@@ -2,7 +2,7 @@
     
     import React, {useEffect, useState} from 'react';
     import {useRouter} from 'next/navigation';
-    import {Vinyl} from '@/app/types/vinyl';
+    import {Vinyl} from '@/types/vinyl';
     import Image from 'next/image';
     
     //todo list of tracks after the additional information
