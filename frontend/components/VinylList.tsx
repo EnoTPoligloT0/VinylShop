@@ -1,13 +1,18 @@
 // VinylList.tsx
 "use client";
 import React, { useEffect, useState } from 'react';
-import VinylCard from './VinylCard'; // Adjust the import based on your folder structure
-import { Vinyl } from '@/app/types/vinyl';
+import VinylCard from './VinylCard';
+import { Vinyl } from '@/types/vinyl';
+import { CartItem } from '@/types/cart'; // Import CartItem type
+import Popup from "@/components/Popup";
 
 const VinylList = () => {
     const [vinyls, setVinyls] = useState<Vinyl[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [cart, setCart] = useState<CartItem[]>([]);
+    const [popupMessage, setPopupMessage] = useState<string>('');
+    const [showPopup, setShowPopup] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchVinyls = async () => {
@@ -33,26 +38,60 @@ const VinylList = () => {
             }
         };
 
+        // Load cart from local storage when the component mounts
+        const loadCartFromLocalStorage = () => {
+            const storedCart = localStorage.getItem('cart');
+            if (storedCart) {
+                setCart(JSON.parse(storedCart));
+            }
+        };
+
+        loadCartFromLocalStorage();
         fetchVinyls();
-    }, []); // Empty dependency array to run on component mount
+    }, []);
+
+    const addToCart = (vinylId: string, price: number) => {
+        const newCartItem: CartItem = {
+            id: `cart-${vinylId}`,
+            vinylId: vinylId,
+            quantity: 1,
+            unitPrice: price,
+        };
+
+        // Update cart and save to local storage
+        const updatedCart = [...cart, newCartItem];
+        setCart(updatedCart);
+        localStorage.setItem('cart', JSON.stringify(updatedCart)); // Save to local storage
+
+        setPopupMessage(`Vinyl added to cart!`);
+        setShowPopup(true);
+        console.log(`Vinyl with ID ${vinylId} added to cart. Current cart:`, updatedCart);
+    };
+
+    const closePopup = () => {
+        setShowPopup(false);
+    };
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (
-    <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4">
             {vinyls.map((vinyl) => (
                 <VinylCard
                     key={vinyl.id}
-                    id={vinyl.id}
+                    id={vinyl.id!}
                     imageBase64={vinyl.imageBase64}
                     title={vinyl.title}
                     price={vinyl.price}
-                    artist={vinyl.artist} // Ensure artist is passed here
+                    artist={vinyl.artist}
+                    addToCart={addToCart}
                 />
             ))}
+
+            {showPopup && <Popup message={popupMessage} onClose={closePopup} />}
         </div>
     );
 };
-//grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-items-center
+
 export default VinylList;
