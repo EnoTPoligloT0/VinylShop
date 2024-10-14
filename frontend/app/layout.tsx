@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Header, Footer } from "@/components";
 import "./globals.css";
+import {CartProvider} from "@/context/CartContext";
 
 
 export const metadata: Metadata = {
@@ -26,9 +27,12 @@ export default function RootLayout({
       </head>
       
       <body className="font-poppins antialiased">
-        <Header/>
-        <main>{children}</main>
-        <Footer/>
+
+      <CartProvider>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+      </CartProvider>
       </body>
       
       </html>
