@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { Vinyl } from '@/app/types/vinyl';
+import { Vinyl } from '@/types/vinyl';
 import Link from 'next/link';
 
 const SearchVinyl = () => {
