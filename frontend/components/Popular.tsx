@@ -5,7 +5,7 @@ import Image from "next/image";
 function Popular() {
     return (
         
-        <div className="container mx-auto mt-16">
+        <div className="container mx-auto mt-16 mb-10">
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-semibold">Popular Products</h1>
                 <span className="flex items-center space-x-2">

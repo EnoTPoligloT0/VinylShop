@@ -8,5 +8,9 @@ export interface Vinyl {
     stock?: number;
     description?: string;
     isAvailable?: boolean;
-    imageBase64?: string; 
+    imageBase64?: string;
+    addToCart?: (id: string, price:number) => void;
+}
+export interface VinylCardProps extends Vinyl {
+    addToCart?: (id: string, price: number) => void;
 }

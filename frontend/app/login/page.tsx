@@ -1,8 +1,8 @@
 'use client';
 
-import {useState} from "react";
+import { useState } from "react";
 import api from '../../utils/api'; // Adjust the path as needed
-import {useRouter} from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from "next/link";
 
 const LoginPage = () => {
@@ -14,13 +14,26 @@ const LoginPage = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await api.post('/login', {email, password});
-            console.log(response.data); // Handle success response
-            router.push('/dashboard'); // Redirect after successful login
+            const response = await api.post('/login', { email, password });
+
+            const cookies = response.headers['set-cookie'];
+            if (Array.isArray(cookies)) {
+                cookies.forEach(cookie => {
+                    document.cookie = cookie; // Set each cookie in the browser
+                    console.log('Cookie set:', cookie);
+                });
+            } else if (typeof cookies === 'string') {
+                document.cookie = cookies;
+                console.log('Cookie set:', cookies);
+            }
+
+            console.log(response.data); 
+            router.push('/'); 
         } catch (err) {
             setError('Invalid email or password');
         }
     };
+
 
     return (
         <main className="flex-grow flex items-center justify-center">
@@ -60,7 +73,7 @@ const LoginPage = () => {
 
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center">
-                            <input id="remember" type="checkbox" className="mr-2 leading-tight"/>
+                            <input id="remember" type="checkbox" className="mr-2 leading-tight" />
                             <label className="text-sm text-gray-600" htmlFor="remember">
                                 Remember me
                             </label>
@@ -86,7 +99,6 @@ const LoginPage = () => {
                 </form>
             </div>
         </main>
-
     );
 };
 
