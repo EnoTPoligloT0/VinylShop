@@ -1,5 +1,3 @@
-using CSharpFunctionalExtensions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using VinylShop.API.Contracts.Vinyls;
 using VinylShop.API.Extensions;
@@ -24,7 +22,8 @@ public static class VinylsEnpoints
             .RequirePermissions(Permission.Read)
             .AllowAnonymous();
         endpoints.MapGet("/{id:guid}", GetVinylById)
-            .RequirePermissions(Permission.Read);
+            .RequirePermissions(Permission.Read)
+            .AllowAnonymous();
         endpoints.MapGet("orderItems/{orderItemId:guid}", GetVinylByOrderItemId)
             .RequirePermissions(Permission.Read);
         endpoints.MapPut("/{id:guid}", UpdateVinyl)
@@ -86,7 +85,7 @@ public static class VinylsEnpoints
 
         return Results.Ok(vinyl);
     }
-    
+
     private static async Task<IResult> UploadVinylImage(
         [FromRoute] Guid vinylId,
         IFormFile imageFile,
@@ -185,7 +184,7 @@ public static class VinylsEnpoints
 
         return Results.Ok(response);
     }
-    
+
     private static async Task<IResult> SearchVinyls(
         [FromQuery] string searchTerm,
         VinylService vinylService)
@@ -196,7 +195,7 @@ public static class VinylsEnpoints
         }
 
         var vinyls = await vinylService.SearchVinyls(searchTerm);
-        
+
         var response = vinyls.Select(v => new GetVinylResponse
         (
             v.Id,
@@ -208,12 +207,12 @@ public static class VinylsEnpoints
             v.Stock,
             v.Description,
             v.IsAvailable,
-            Convert.ToBase64String(v.Image) 
+            Convert.ToBase64String(v.Image)
         ));
-        
+
         return Results.Ok(response);
     }
-    
+
     // //todo decision
     // [HttpGet("orders/{orderId:guid}/vinyls")]
     // private static async Task<IResult> GetVinylsInOrder(
