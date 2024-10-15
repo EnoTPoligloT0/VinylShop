@@ -23,7 +23,7 @@ public static class ApiExtensions
         app.MapShipmentEndpoints();
         app.MapPaymentEndpoints();
     }
-
+    
     public static void AddApiAuthentication(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -60,14 +60,14 @@ public static class ApiExtensions
                         return Task.CompletedTask;
                     }
                 };
-            })
-            .AddCookie("Cookies") 
-            .AddGoogle(options =>
-            {
-                options.ClientId = configuration["Authentication:Google:ClientId"];
-                options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-                options.CallbackPath = new PathString("/signin-google");
             });
+            // .AddCookie("Cookies") 
+            // .AddGoogle(options =>
+            // {
+            //     options.ClientId = configuration["Authentication:Google:ClientId"];
+            //     options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+            //     options.CallbackPath = new PathString("/signin-google");
+            // });
 
         services.AddAuthorization();
 
