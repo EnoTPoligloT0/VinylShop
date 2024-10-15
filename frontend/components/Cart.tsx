@@ -37,7 +37,7 @@ const Cart = () => {
     };
 
     return (
-        <div className="container mx-auto p-8 bg-gray-50 rounded-xl shadow-md mt-5">
+        <main className="container mx-auto p-8 bg-gray-50 rounded-xl shadow-md my-5">
             <h1 className="text-4xl font-bold text-purple-700 mb-6">Your Cart</h1>
             <ul className="space-y-4">
                 {vinylDetails.map((vinyl) => {
@@ -71,7 +71,7 @@ const Cart = () => {
                 })}
             </ul>
             {cart.length === 0 && <p className="text-gray-600 text-center mt-4">Your cart is empty.</p>}
-        </div>
+        </main>
     );
 };
 
