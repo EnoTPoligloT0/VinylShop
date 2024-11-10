@@ -16,10 +16,11 @@ public static class OrderEndpoints
     {
         var endpoints = app.MapGroup("orders");
 
-        endpoints.MapPost("/", CreateOrder);
+        endpoints.MapPost("/", CreateOrder)
+            .AllowAnonymous();
 
         endpoints.MapGet("/{orderId:guid}", GetOrderById);
-        
+
         endpoints.MapGet("/", GetOrders);
         
         // endpoints.MapPut("/{orderId:guid}", UpdateOrder);
@@ -34,9 +35,15 @@ public static class OrderEndpoints
         HttpContext context,
         OrderService orderServices)
     {
+        var userIdClaim = context.User.Claims.FirstOrDefault(c => c.Type == "userId");
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Results.Unauthorized();
+        }
+
         var orderResult = Order.Create(
             Guid.NewGuid(),
-            request.UserId,
+            userId,
             request.OrderDate,
             request.TotalAmount
         );
