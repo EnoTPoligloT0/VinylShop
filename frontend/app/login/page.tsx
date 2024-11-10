@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from "react";
+import Cookies from 'js-cookie';
 import api from '../../utils/api'; // Adjust the path as needed
 import { useRouter } from 'next/navigation';
-import Link from "next/link";
+import {jwtDecode} from "jwt-decode";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -16,24 +17,30 @@ const LoginPage = () => {
         try {
             const response = await api.post('/login', { email, password });
 
-            const cookies = response.headers['set-cookie'];
-            if (Array.isArray(cookies)) {
-                cookies.forEach(cookie => {
-                    document.cookie = cookie; // Set each cookie in the browser
-                    console.log('Cookie set:', cookie);
-                });
-            } else if (typeof cookies === 'string') {
-                document.cookie = cookies;
-                console.log('Cookie set:', cookies);
-            }
+            console.log("Login API response:", response);
 
-            console.log(response.data); 
-            router.push('/'); 
+            const token = response.data;
+            if (token) {
+                Cookies.remove('secretCookie');
+
+                Cookies.set('secretCookie', token, { expires: 1, path: '/', sameSite: 'Lax' });
+                console.log('Token set in cookie:', token);
+
+                const decodedToken: any = jwtDecode(token);
+                console.log("Decoded Token:", decodedToken);
+                if (decodedToken?.userId) {
+                    router.push('/');
+                } else {
+                    setError('Failed to retrieve userId from token');
+                }
+            } else {
+                setError('Failed to retrieve token from the API response');
+            }
         } catch (err) {
+            console.error("Login error:", err);
             setError('Invalid email or password');
         }
     };
-
 
     return (
         <main className="flex-grow flex items-center justify-center">
@@ -55,7 +62,6 @@ const LoginPage = () => {
                             required
                         />
                     </div>
-
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                             Password
@@ -70,32 +76,12 @@ const LoginPage = () => {
                             required
                         />
                     </div>
-
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center">
-                            <input id="remember" type="checkbox" className="mr-2 leading-tight" />
-                            <label className="text-sm text-gray-600" htmlFor="remember">
-                                Remember me
-                            </label>
-                        </div>
-                        <Link href="#" className="text-sm text-gray-600 hover:underline">
-                            Forgot Password?
-                        </Link>
-                    </div>
-
                     <button
                         type="submit"
                         className="mt-4 w-full bg-purple-600 text-white p-4 rounded-lg font-semibold hover:bg-deep-purple"
                     >
                         Login
                     </button>
-
-                    <div className="mt-4 text-center">
-                        Don’t have an account?{" "}
-                        <Link href="/register" className="text-purple-600 hover:underline">
-                            Register
-                        </Link>
-                    </div>
                 </form>
             </div>
         </main>
