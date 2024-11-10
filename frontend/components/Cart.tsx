@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { CartItem } from "@/types/cart";
 import { Vinyl } from "@/types/vinyl";
+import Link from 'next/link';
+import Cookies from "js-cookie";
 
 const Cart = () => {
     const [cart, setCart] = useState<CartItem[]>(() => {
@@ -11,6 +13,9 @@ const Cart = () => {
     const [vinylDetails, setVinylDetails] = useState<Vinyl[]>([]);
 
     useEffect(() => {
+        const token = Cookies.get('secretCookie');
+
+        console.log("Token from cookie:", token);
         const fetchVinylDetails = async () => {
             const vinylIds = cart.map(item => item.vinylId);
             const promises = vinylIds.map(id => axios.get(`https://localhost:44372/vinyls/${id}`));
@@ -22,18 +27,70 @@ const Cart = () => {
         if (cart.length > 0) {
             fetchVinylDetails();
         } else {
-            setVinylDetails([]); // Clear vinyl details when cart is empty
+            setVinylDetails([]);
         }
     }, [cart]);
 
     const handleRemoveFromCart = (vinylId: string) => {
         const updatedCart = cart.filter(item => item.vinylId !== vinylId);
         setCart(updatedCart);
-        localStorage.setItem('cart', JSON.stringify(updatedCart)); // Update local storage
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
 
-        // Update vinyl details immediately after removing the item
         const updatedVinylDetails = vinylDetails.filter(vinyl => vinyl.id !== vinylId);
         setVinylDetails(updatedVinylDetails);
+    };
+
+    const  handleCheckout = async () => {
+        try {
+            const totalAmount = cart.reduce(
+                (total, item) => total + item.unitPrice * item.quantity, 0
+            );
+
+            const token = Cookies.get('secretCookie');
+            if (!token) {
+                console.error("No token found!");
+                return;
+            }
+
+            const orderResponse = await axios.post(
+                'https://localhost:44372/orders',
+                {
+                    orderDate: new Date(),
+                    totalAmount
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    withCredentials: true,
+                }
+            );
+
+            const orderId = orderResponse.data.id;
+
+            for (const item of cart) {
+                await axios.post(
+                    `https://localhost:44372/orderItems/orderItem/${orderId}`,
+                    {
+                        vinylId: item.vinylId,
+                        quantity: item.quantity,
+                        unitPrice: item.unitPrice,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                        withCredentials: true,
+                    }
+                );
+            }
+
+            setCart([]);
+            localStorage.removeItem('cart');
+            setVinylDetails([]);
+        } catch (error) {
+            console.error('Checkout failed:', error);
+        }
     };
 
     return (
@@ -59,11 +116,7 @@ const Cart = () => {
                                     <p className="text-gray-700 font-bold">${vinyl.price.toFixed(2)}</p>
                                 </div>
                             </div>
-                            <button onClick={() => {
-                                if (vinyl.id) { // Check if vinyl.id is defined
-                                    handleRemoveFromCart(vinyl.id);
-                                }
-                            }}>
+                            <button onClick={() => handleRemoveFromCart(vinyl.id)}>
                                 Remove from Cart
                             </button>
                         </li>
@@ -71,6 +124,24 @@ const Cart = () => {
                 })}
             </ul>
             {cart.length === 0 && <p className="text-gray-600 text-center mt-4">Your cart is empty.</p>}
+
+            {cart.length > 0 && (
+                <div className="flex space-x-4 mt-6">
+                    <button
+                        className="bg-purple-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={handleCheckout}
+                    >
+                        Checkout
+                    </button>
+
+                    {/* Button to navigate to the checkout page */}
+                    <Link href="/checkout">
+                        <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded">
+                            Go to Checkout
+                        </button>
+                    </Link>
+                </div>
+            )}
         </main>
     );
 };
