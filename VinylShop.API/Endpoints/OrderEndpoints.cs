@@ -22,7 +22,7 @@ public static class OrderEndpoints
         endpoints.MapGet("/{orderId:guid}", GetOrderById);
 
         endpoints.MapGet("/", GetOrders);
-        
+
         // endpoints.MapPut("/{orderId:guid}", UpdateOrder);
 
         endpoints.MapDelete("/{orderId:guid}", DeleteOrder);
@@ -56,6 +56,9 @@ public static class OrderEndpoints
         return Results.Ok(order);
 
     }
+
+    //todo fix null shipment and payment handling
+    //todo decide should it send a response with modals or only id
     private static async Task<IResult> GetOrderById(
         [FromRoute] Guid orderId,
         [FromServices] OrderService orderService,
@@ -66,38 +69,39 @@ public static class OrderEndpoints
         [FromServices] VinylService vinylService)
     {
         var order = await orderService.GetOrderById(orderId);
-
         if (order == null) return Results.NotFound();
 
         var orderItems = await orderItemService.GetOrderItemByOrderId(orderId);
-        var payment = await paymentService.GetPaymentByOrderId(orderId);
-        var shipment = await shipmentService.GetShipmentByOrderId(orderId);
+        var payment = await paymentService.GetPaymentByOrderId(orderId); // May be null
+        var shipment = await shipmentService.GetShipmentByOrderId(orderId); // May be null
         var user = await userService.GetUserById(order.UserId);
+        if (user == null) return Results.NotFound();
 
         var orderItemResponses = new List<GetOrderItemResponse>();
-
         foreach (var orderItem in orderItems)
         {
             var vinyl = await vinylService.GetVinylById(orderItem.VinylId);
-
-            orderItemResponses.Add(new GetOrderItemResponse(
-                orderItem.Id,
-                orderItem.OrderId,
-                orderItem.VinylId,
-                orderItem.Quantity,
-                orderItem.UnitPrice,
-                new GetVinylResponse(
-                    vinyl.Id,
-                    vinyl.Title,
-                    vinyl.Artist,
-                    vinyl.Genre,
-                    vinyl.ReleaseYear,
-                    vinyl.Price,
-                    vinyl.Stock,
-                    vinyl.Description,
-                    vinyl.IsAvailable,
-                    Convert.ToBase64String(vinyl.Image))
-            ));
+            if (vinyl != null)
+            {
+                orderItemResponses.Add(new GetOrderItemResponse(
+                    orderItem.Id,
+                    orderItem.OrderId,
+                    orderItem.VinylId,
+                    orderItem.Quantity,
+                    orderItem.UnitPrice,
+                    new GetVinylResponse(
+                        vinyl.Id,
+                        vinyl.Title,
+                        vinyl.Artist,
+                        vinyl.Genre,
+                        vinyl.ReleaseYear,
+                        vinyl.Price,
+                        vinyl.Stock,
+                        vinyl.Description,
+                        vinyl.IsAvailable,
+                        Convert.ToBase64String(vinyl.Image))
+                ));
+            }
         }
 
         var response = new GetOrderResponse(
@@ -107,20 +111,24 @@ public static class OrderEndpoints
             order.OrderDate,
             order.TotalAmount,
             orderItemResponses,
-            new GetPaymentResponse(
-                payment.PaymentId,
-                payment.OrderId,
-                payment.PaymentDate,
-                payment.Amount,
-                payment.PaymentMethod
-            ),
-            new GetShipmentResponse(
-                shipment.ShipmentId,
-                shipment.OrderId,
-                shipment.ShipmentDate,
-                shipment.TrackingNumber,
-                shipment.ShipmentStatus
-            )
+            payment != null
+                ? new GetPaymentResponse(
+                    payment.PaymentId,
+                    payment.OrderId,
+                    payment.PaymentDate,
+                    payment.Amount,
+                    payment.PaymentMethod
+                )
+                : null, // Set to null if no payment exists
+            shipment != null
+                ? new GetShipmentResponse(
+                    shipment.ShipmentId,
+                    shipment.OrderId,
+                    shipment.ShipmentDate,
+                    shipment.TrackingNumber,
+                    shipment.ShipmentStatus
+                )
+                : null // Set to null if no shipment exists
         );
 
         return Results.Ok(response);
@@ -143,9 +151,9 @@ public static class OrderEndpoints
 
         return Results.Ok(response);
     }
-    
+
     //todo updateorder addorderstatus
-    
+
     private static async Task<IResult> DeleteOrder(
             [FromRoute] Guid orderId,
             OrderService orderService
