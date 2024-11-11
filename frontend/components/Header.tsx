@@ -2,11 +2,26 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Cookies from "js-cookie";
+import {jwtDecode} from "jwt-decode";
+import { useRouter } from "next/navigation";
 import SearchVinyl from "@/components/SearchVinyl";
+import { FaUser } from "react-icons/fa";
+import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+
+interface DecodedToken {
+    userId: string;
+    Admin: string;
+    exp: number;
+    email?: string;
+}
 
 function Header() {
     const [cart, setCart] = useState<any[]>([]);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -19,7 +34,7 @@ function Header() {
     useEffect(() => {
         const calculateTotalPrice = () => {
             const price = cart.reduce((total: number, item: any) => {
-                return total + (item.unitPrice * item.quantity);
+                return total + item.unitPrice * item.quantity;
             }, 0);
             setTotalPrice(price);
         };
@@ -27,9 +42,25 @@ function Header() {
         calculateTotalPrice();
     }, [cart]);
 
+    useEffect(() => {
+        const token = Cookies.get("secretCookie");
+        if (token) {
+            const decoded: DecodedToken = jwtDecode(token);
+            setIsLoggedIn(!!decoded);
+        }
+    }, []);
+
+    const handleLogout = () => {
+        Cookies.remove("secretCookie");
+        setIsLoggedIn(false);
+        setDropdownOpen(false);
+        router.refresh();
+    };
+
     return (
         <header className="bg-light-gray">
-            <div className="hidden sm:grid container mx-auto grid-cols-12 items-center py-4 ">
+            {/* Top header with contact info and user controls */}
+            <div className="hidden sm:grid container mx-auto grid-cols-12 items-center py-4">
                 <div className="col-span-6 flex items-center">
                     <p className="text-gray-600 text-sm">
                         <i className="fa fa-map-marker"></i> Store Location: Kraków - ul. Floriańska 12, 31-021
@@ -51,9 +82,40 @@ function Header() {
                             <option>EUR</option>
                         </select>
                     </div>
-                    <div>
+                    {isLoggedIn ? (
+                        <div className="relative">
+                            <button
+                                onClick={() => setDropdownOpen(!dropdownOpen)}
+                                className="flex items-center space-x-2 text-sm"
+                            >
+                                <FaUser size={20} />
+                                {dropdownOpen ? (
+                                    <FiChevronUp size={20} />
+                                ) : (
+                                    <FiChevronDown size={20} />
+                                )}
+                            </button>
+                            {dropdownOpen && (
+                                <div
+                                    className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-md"
+                                    style={{ zIndex: 50 }}
+                                >
+                                    //todo userInfo page
+                                    <div className="px-4 py-2 text-sm text-gray-700">
+                                        <p>User Info</p>
+                                    </div>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
                         <Link href="/login" className="text-sm">Sign In / Sign Up</Link>
-                    </div>
+                    )}
                 </div>
             </div>
 
