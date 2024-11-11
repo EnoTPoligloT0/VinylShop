@@ -12,7 +12,8 @@ public static class OrderItemsEnpoints
     {
         var endpoits = app.MapGroup("orderItems");
 
-        endpoits.MapPost("orderItem/{orderId:guid}", CreateOrderItem);
+        endpoits.MapPost("orderItem/{orderId:guid}", CreateOrderItem)
+            .AllowAnonymous();
 
         endpoits.MapGet("orderItem/order/{orderId:guid}", GetOrderItemByOrderId);
 
@@ -31,6 +32,13 @@ public static class OrderItemsEnpoints
         HttpContext context,
         OrderItemService orderItemsServices)
     {
+        var userId = context.User.FindFirst("userId")?.Value;
+        
+        if (userId == null)
+        {
+            return Results.Unauthorized();
+        }
+        
         var orderItemResult = OrderItem.Create(
             Guid.NewGuid(),
             orderId,
