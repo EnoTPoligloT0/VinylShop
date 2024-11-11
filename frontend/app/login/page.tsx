@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import api from '../../utils/api'; // Adjust the path as needed
 import { useRouter } from 'next/navigation';
 import {jwtDecode} from "jwt-decode";
+import Link from "next/link";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -62,6 +63,7 @@ const LoginPage = () => {
                             required
                         />
                     </div>
+
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                             Password
@@ -76,12 +78,32 @@ const LoginPage = () => {
                             required
                         />
                     </div>
+
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                            <input id="remember" type="checkbox" className="mr-2 leading-tight"/>
+                            <label className="text-sm text-gray-600" htmlFor="remember">
+                                Remember me
+                            </label>
+                        </div>
+                        <Link href="#" className="text-sm text-gray-600 hover:underline">
+                            Forgot Password?
+                        </Link>
+                    </div>
+
                     <button
                         type="submit"
-                        className="mt-4 w-full bg-purple-600 text-white p-4 rounded-lg font-semibold hover:bg-deep-purple"
-                    >
+                        className="mt-4 w-full bg-purple-600 text-white p-4 rounded-lg font-semibold hover:bg-deep-purple">
                         Login
                     </button>
+
+                    <div className="mt-4 text-center">
+                        Don’t have an account?{" "}
+                        <Link href="/register" className="text-purple-600 hover:underline">
+                            Register
+                        </Link>
+                    </div>
+
                 </form>
             </div>
         </main>
