@@ -5,6 +5,7 @@ import { Vinyl } from "@/types/vinyl";
 import Link from 'next/link';
 import Cookies from "js-cookie";
 
+//todo make axios use api.ts
 const Cart = () => {
     const [cart, setCart] = useState<CartItem[]>([]);
     const [vinylDetails, setVinylDetails] = useState<Vinyl[]>([]);
@@ -20,7 +21,7 @@ const Cart = () => {
 
     useEffect(() => {
         const token = Cookies.get('secretCookie');
-        console.log("Token from cookie:", token);
+        console.log("Token received");
         const fetchVinylDetails = async () => {
             const vinylIds = cart.map(item => item.vinylId);
             const promises = vinylIds.map(id => axios.get(`https://localhost:44372/vinyls/${id}`));
