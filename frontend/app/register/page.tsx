@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
+import api from '../../utils/api';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
@@ -23,14 +24,14 @@ const RegisterPage = () => {
         }
 
         try {
-            const response = await axios.post('https://localhost:44372/register', {
+            const response = await api.post('/register', {
                 email,
                 password,
             });
 
             console.log('Registration successful.');
 
-            const loginResponse = await axios.post('https://localhost:44372/login', {
+            const loginResponse = await api.post('/login', {
                 email,
                 password,
             });
