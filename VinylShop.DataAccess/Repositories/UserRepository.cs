@@ -64,12 +64,12 @@ public class UserRepository : IUserRepository
         return _mapper.Map<User>(userEntity);
     }
 
-    public async Task<User> GetByEmail(string email)
+    public async Task<User?> GetByEmail(string email)
     {
         var userEntity = await _context.Users
             .AsNoTracking()
-            .SingleOrDefaultAsync(u => u.Email == email) ?? throw new Exception(); 
-        return _mapper.Map<User>(userEntity);
+            .FirstOrDefaultAsync(u => u.Email == email);
+        return _mapper.Map<User?>(userEntity);
     }
     
     public async Task Update(Guid id, string firstName, string lastName, string? phoneNumber, string? addressLine1,
