@@ -5,17 +5,23 @@ import { Vinyl } from "@/types/vinyl";
 import Link from 'next/link';
 import Cookies from "js-cookie";
 
+//todo make axios use api.ts
 const Cart = () => {
-    const [cart, setCart] = useState<CartItem[]>(() => {
-        const storedCart = localStorage.getItem('cart');
-        return storedCart ? JSON.parse(storedCart) : [];
-    });
+    const [cart, setCart] = useState<CartItem[]>([]);
     const [vinylDetails, setVinylDetails] = useState<Vinyl[]>([]);
 
     useEffect(() => {
-        const token = Cookies.get('secretCookie');
+        if (typeof window !== "undefined") {
+            const storedCart = localStorage.getItem('cart');
+            if (storedCart) {
+                setCart(JSON.parse(storedCart));
+            }
+        }
+    }, []);
 
-        console.log("Token from cookie:", token);
+    useEffect(() => {
+        const token = Cookies.get('secretCookie');
+        console.log("Token received");
         const fetchVinylDetails = async () => {
             const vinylIds = cart.map(item => item.vinylId);
             const promises = vinylIds.map(id => axios.get(`https://localhost:44372/vinyls/${id}`));
@@ -34,13 +40,15 @@ const Cart = () => {
     const handleRemoveFromCart = (vinylId: string) => {
         const updatedCart = cart.filter(item => item.vinylId !== vinylId);
         setCart(updatedCart);
-        localStorage.setItem('cart', JSON.stringify(updatedCart));
+        if (typeof window !== "undefined") {
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+        }
 
         const updatedVinylDetails = vinylDetails.filter(vinyl => vinyl.id !== vinylId);
         setVinylDetails(updatedVinylDetails);
     };
 
-    const  handleCheckout = async () => {
+    const handleCheckout = async () => {
         try {
             const totalAmount = cart.reduce(
                 (total, item) => total + item.unitPrice * item.quantity, 0
@@ -86,7 +94,9 @@ const Cart = () => {
             }
 
             setCart([]);
-            localStorage.removeItem('cart');
+            if (typeof window !== "undefined") {
+                localStorage.removeItem('cart');
+            }
             setVinylDetails([]);
         } catch (error) {
             console.error('Checkout failed:', error);

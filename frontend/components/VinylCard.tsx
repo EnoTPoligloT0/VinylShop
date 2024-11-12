@@ -1,9 +1,9 @@
-// VinylCard.tsx
 "use client";
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { VinylCardProps } from '@/types/vinyl';
+import { useRouter } from 'next/navigation';  // Corrected import
 
 const VinylCard: React.FC<VinylCardProps> = ({
                                                  id,
@@ -13,13 +13,20 @@ const VinylCard: React.FC<VinylCardProps> = ({
                                                  artist,
                                                  addToCart
                                              }) => {
+    const router = useRouter();  // Use the hook to get the router
+
     const imageSrc = imageBase64 ? `data:image/jpeg;base64,${imageBase64}` : '/default-image.jpg';
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (id) {
+            addToCart && addToCart(id, price);
+        }
+    };
 
     return (
         <Link href={`/vinyl/${id}`} passHref>
-            <div
-                className="relative bg-white shadow-lg rounded-lg overflow-hidden w-full sm:w-64 transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer"
-            >
+            <div className="relative bg-white shadow-lg rounded-lg overflow-hidden w-full sm:w-64 transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer">
                 <div className="relative w-full h-48 sm:h-64">
                     <Image src={imageSrc} alt={title} layout="fill" objectFit="cover" />
                 </div>
@@ -31,12 +38,7 @@ const VinylCard: React.FC<VinylCardProps> = ({
                 </div>
 
                 <div className="absolute bottom-4 right-4">
-                    <button onClick={(e) => {
-                        e.preventDefault(); // Prevent the Link from firing
-                        if (id) {
-                            addToCart && addToCart(id, price); // Call the addToCart function with the vinyl ID
-                        }
-                    }}>
+                    <button onClick={handleAddToCart}>
                         <Image src="/bag.svg" alt="Add to Cart" width={24} height={24} />
                     </button>
                 </div>

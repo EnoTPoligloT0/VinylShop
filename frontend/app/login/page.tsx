@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import Cookies from 'js-cookie';
-import api from '../../utils/api'; // Adjust the path as needed
+import api from '../../utils/api';
 import { useRouter } from 'next/navigation';
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import Link from "next/link";
 
 const LoginPage = () => {
@@ -18,19 +18,20 @@ const LoginPage = () => {
         try {
             const response = await api.post('/login', { email, password });
 
-            console.log("Login API response:", response);
+            console.log("Login API response.");
 
             const token = response.data;
             if (token) {
                 Cookies.remove('secretCookie');
 
                 Cookies.set('secretCookie', token, { expires: 1, path: '/', sameSite: 'Lax' });
-                console.log('Token set in cookie:', token);
+                console.log('Token set in cookie.');
 
                 const decodedToken: any = jwtDecode(token);
-                console.log("Decoded Token:", decodedToken);
+                console.log("Decoded Token.");
                 if (decodedToken?.userId) {
                     router.push('/');
+                    router.refresh();
                 } else {
                     setError('Failed to retrieve userId from token');
                 }
@@ -103,7 +104,6 @@ const LoginPage = () => {
                             Register
                         </Link>
                     </div>
-
                 </form>
             </div>
         </main>

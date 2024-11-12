@@ -1,3 +1,4 @@
+using CSharpFunctionalExtensions;
 using VinylShop.Application.Auth;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Interfaces.Services;
@@ -11,7 +12,7 @@ public class UserService : IUserService
     private readonly IPasswordHasher _passwordHasher;
     private readonly IUserRepository _userRepository;
     private readonly IJwtProvider _jwtProvider;
-    
+
     public UserService(IPasswordHasher passwordHasher, IUserRepository userRepository, IJwtProvider jwtProvider)
     {
         _passwordHasher = passwordHasher;
@@ -34,11 +35,17 @@ public class UserService : IUserService
         var token = _jwtProvider.Generate(user);
 
         return token;
-        
+
     }
-    
-    public async Task Register( string email, string password)
+
+    public async Task<Result> Register(string email, string password)
     {
+        var existingUser = await _userRepository.GetByEmail(email);
+        if (existingUser != null)
+        {
+            return Result.Failure("A user with this email already exists.");
+        }
+
         var hashedPassword = _passwordHasher.Generate(password);
 
         var userResult = User.CreateForRegistration(
@@ -51,10 +58,12 @@ public class UserService : IUserService
             var user = userResult.Value;
 
             await _userRepository.Add(user);
+
+            return Result.Success();
         }
         else
         {
-            throw new Exception($"User creation failed:{userResult.Error}");
+            return Result.Failure($"User creation failed: {userResult.Error}");
         }
     }
 

@@ -40,7 +40,12 @@ public static class UsersEnpoints
         [FromBody] RegisterUserRequest request,
         UserService usersService)
     {
-        await usersService.Register(request.Email, request.Password);
+       var result = await usersService.Register(request.Email, request.Password);
+
+        if (result.IsFailure)
+        {
+            return Results.BadRequest(result.Error);
+        }
 
         return Results.Ok();
     }
