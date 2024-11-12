@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import Cookies from 'js-cookie';
 import api from '../../utils/api'; // Adjust the path as needed
 import { useRouter } from 'next/navigation';
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import Link from "next/link";
 
 const LoginPage = () => {
@@ -31,6 +31,7 @@ const LoginPage = () => {
                 console.log("Decoded Token:", decodedToken);
                 if (decodedToken?.userId) {
                     router.push('/');
+                    router.refresh();
                 } else {
                     setError('Failed to retrieve userId from token');
                 }
@@ -103,7 +104,6 @@ const LoginPage = () => {
                             Register
                         </Link>
                     </div>
-
                 </form>
             </div>
         </main>
