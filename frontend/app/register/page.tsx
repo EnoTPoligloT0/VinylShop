@@ -1,18 +1,21 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const router = useRouter();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log({ email, password, confirmPassword }); 
 
         if (password !== confirmPassword) {
             setError('Passwords do not match.');
@@ -24,17 +27,41 @@ const RegisterPage = () => {
                 email,
                 password,
             });
-            console.log('Registration successful:', response.data);
+
+            console.log('Registration successful.');
+
+            const loginResponse = await axios.post('https://localhost:44372/login', {
+                email,
+                password,
+            });
+
+            console.log('Login successful.');
+
+            const token = loginResponse.data;
+            if (token) {
+                console.log('Token received.');
+
+                Cookies.set('secretCookie', token, { expires: 1, path: '/', sameSite: 'Lax' });
+
+                const decodedToken: any = jwtDecode(token);
+                console.log("Token Decoded.");
+
+                if (decodedToken?.userId) {
+                    router.replace('/');
+                    router.refresh();
+                } else {
+                    setError('Failed to retrieve userId from token');
+                }
+            } else {
+                setError('No token received. Login failed.');
+            }
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
-                console.error('Error during registration:', error.response.data);
-                console.error('Error status:', error.response.status);
-                if (error.response.status === 400) {
-                    setError('Invalid input. Please check your details.');
-                } else if (error.response.status === 409) {
+                console.error('Error during registration or login:', error.response.data);
+                if (error.response.status === 400 && error.response.data === 'A user with this email already exists.') {
                     setError('Email already in use. Please try another one.');
                 } else {
-                    setError('Registration failed. Please try again.');
+                    setError('Registration or login failed. Please try again.');
                 }
             } else {
                 console.error('Unexpected error:', error);
