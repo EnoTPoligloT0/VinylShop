@@ -15,6 +15,9 @@ public static class UsersEnpoints
         app.MapPost("login", Login)
             .AllowAnonymous();
 
+        app.MapPost("login/google", LoginWithGoogle)
+            .AllowAnonymous();
+
         app.MapGet("users/email/{email}", GetByEmail);
 
         app.MapGet("users/{id:guid}", GetById);
@@ -36,6 +39,17 @@ public static class UsersEnpoints
         return Results.Ok(token);
     }
 
+    private static async Task<IResult> LoginWithGoogle(
+        [FromBody] GoogleLoginRequest request,
+        UserService userService,
+        HttpContext context)
+    {
+        var token = await userService.LoginWithGoogle(request.GoogleToken);
+        context.Response.Cookies.Append("secretCookie", token);
+
+        return Results.Ok(token);
+    }
+
     private static async Task<IResult> Register(
         [FromBody] RegisterUserRequest request,
         UserService usersService)
@@ -49,6 +63,7 @@ public static class UsersEnpoints
 
         return Results.Ok();
     }
+
 
     private static async Task<IResult> GetByEmail(
         [FromRoute] string email,
