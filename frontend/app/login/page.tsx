@@ -6,21 +6,54 @@ import api from '../../utils/api';
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from "jwt-decode";
 import Link from "next/link";
+import { GoogleLogin } from "@react-oauth/google";
+import { CredentialResponse } from "@react-oauth/google";
 
+//todo redundant code
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState('');
     const router = useRouter();
 
+    const handleGoogleLogin = async (response: CredentialResponse) => {
+        try {
+            const googleToken = response.credential;  // Explicitly typed as string
+            const loginResponse = await api.post('/login/google', { googleToken });
+
+            console.log("Google Login API response.");
+
+            const token = loginResponse.data;
+            if (token) {
+                Cookies.remove('secretCookie');
+
+                Cookies.set('secretCookie', token, { expires: 1, path: '/', sameSite: 'Lax' });
+                console.log('Token set in cookie.');
+
+                const decodedToken: any = jwtDecode(token);
+                console.log("Decoded Token.");
+                if (decodedToken?.userId) {
+                    router.push('/');
+                    router.refresh();
+                } else {
+                    setError('Failed to retrieve userId from token');
+                }
+            } else {
+                setError('Failed to retrieve token from the API response');
+            }
+        } catch (err) {
+            console.error("Google login error:", err);
+            setError('Failed to authenticate with Google');
+        }
+    };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await api.post('/login', { email, password });
+            const loginResponse = await api.post('/login', { email, password });
 
             console.log("Login API response.");
 
-            const token = response.data;
+            const token = loginResponse.data;
             if (token) {
                 Cookies.remove('secretCookie');
 
@@ -105,6 +138,13 @@ const LoginPage = () => {
                         </Link>
                     </div>
                 </form>
+
+                <div className="mt-6">
+                    <GoogleLogin
+                        onSuccess={handleGoogleLogin}
+                        onError={() => setError('Google login failed')} // Correct type for error handler
+                    />
+                </div>
             </div>
         </main>
     );
