@@ -29,6 +29,8 @@ builder.Services.AddControllers();
 var services = builder.Services;
 var configuration = builder.Configuration;
 
+DotNetEnv.Env.Load();
+
 services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontEnd",
@@ -67,6 +69,8 @@ builder.Services.AddDbContext<VinylShopDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetSection("Database:ConnectionStrings:VinylShopDbContext").Value)
         .UseLoggerFactory(LoggerFactory.Create(config => config.AddConsole()))
         .EnableSensitiveDataLogging());
+
+services.AddHttpClient();
 
 services.AddAuthorization();
 services.AddAuthentication();

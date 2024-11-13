@@ -60,14 +60,13 @@ public static class ApiExtensions
                         return Task.CompletedTask;
                     }
                 };
+            })
+            .AddGoogle(options =>
+            {
+                options.ClientId = configuration["Authentication:Google:ClientId"];
+                options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                options.CallbackPath = new PathString("/signin-google");
             });
-            // .AddCookie("Cookies") 
-            // .AddGoogle(options =>
-            // {
-            //     options.ClientId = configuration["Authentication:Google:ClientId"];
-            //     options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-            //     options.CallbackPath = new PathString("/signin-google");
-            // });
 
         services.AddAuthorization();
 
