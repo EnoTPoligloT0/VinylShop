@@ -10,7 +10,7 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.11" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
@@ -19,6 +19,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
         <PackageReference Include="Serilog.Extensions" Version="8.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.0" />
