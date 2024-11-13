@@ -68,6 +68,8 @@ builder.Services.AddDbContext<VinylShopDbContext>(options =>
         .UseLoggerFactory(LoggerFactory.Create(config => config.AddConsole()))
         .EnableSensitiveDataLogging());
 
+services.AddHttpClient();
+
 services.AddAuthorization();
 services.AddAuthentication();
 
