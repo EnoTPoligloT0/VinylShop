@@ -29,6 +29,8 @@ builder.Services.AddControllers();
 var services = builder.Services;
 var configuration = builder.Configuration;
 
+DotNetEnv.Env.Load();
+
 services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontEnd",
