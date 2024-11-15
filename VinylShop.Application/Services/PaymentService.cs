@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using Microsoft.Extensions.Configuration;
 using Stripe;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Interfaces.Services;
@@ -9,10 +10,16 @@ namespace VinylShop.Application.Services;
 public class PaymentService : IPaymentService
 {
     private readonly IPaymentRepository _paymentRepository;
+    private readonly string _stripeSecretKey;
+    private readonly string _stripePublicKey;
 
-    public PaymentService(IPaymentRepository paymentRepository)
+    public PaymentService(IPaymentRepository paymentRepository, IConfiguration configuration)
     {
         _paymentRepository = paymentRepository;
+        _stripeSecretKey = configuration["Stripe:SecretKey"];
+        _stripePublicKey = configuration["Stripe:PublicKey"];
+
+        StripeConfiguration.ApiKey = _stripeSecretKey;
     }
 
     public async Task CreatePayment(Payment payment)
