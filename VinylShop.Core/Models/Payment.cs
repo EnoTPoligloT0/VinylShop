@@ -5,13 +5,14 @@ namespace VinylShop.Core.Models;
 public class Payment
 {
     private Payment(Guid paymentId, Guid orderId, DateTime paymentDate, decimal amount,
-        string paymentMethod)
+        string paymentMethod, string stripePaymentId)
     {
         PaymentId = paymentId;
         OrderId = orderId;
         PaymentDate = paymentDate;
         Amount = amount;
         PaymentMethod = paymentMethod;
+        StripePaymentId = stripePaymentId;
     }
 
     public Guid PaymentId { get; }
@@ -22,10 +23,12 @@ public class Payment
     public decimal Amount { get; }
     public string PaymentMethod { get; } = string.Empty;
 
+    public string StripePaymentId { get; } = string.Empty;
+
 
     //todo ValidationMethod
     public static Result<Payment> Create(Guid paymentId, Guid orderId,
-        DateTime paymentDate, decimal amount, string paymentMethod)
+        DateTime paymentDate, decimal amount, string paymentMethod, string stripePaymentId)
     {
         if (string.IsNullOrEmpty(paymentMethod))
         {
@@ -37,7 +40,7 @@ public class Payment
             return Result.Failure<Payment>("Amount must be greater than zero");
         }
 
-        var payment = new Payment(paymentId, orderId, paymentDate, amount, paymentMethod);
+        var payment = new Payment(paymentId, orderId, paymentDate, amount, paymentMethod, stripePaymentId);
 
         return Result.Success(payment);
     }
