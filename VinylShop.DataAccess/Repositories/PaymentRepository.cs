@@ -25,7 +25,8 @@ public class PaymentRepository : IPaymentRepository
             OrderId = payment.OrderId,
             PaymentDate = payment.PaymentDate,
             Amount = payment.Amount,
-            PaymentMethod = payment.PaymentMethod
+            PaymentMethod = payment.PaymentMethod,
+            StripePaymentId = payment.StripePaymentId
         };
         await _context.Payment.AddAsync(paymentEntity);
         await _context.SaveChangesAsync();
