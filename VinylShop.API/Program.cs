@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Stripe;
 using VinylShop.API;
 using VinylShop.API.Extensions;
 using VinylShop.API.Infrastructure;
@@ -18,7 +19,6 @@ using VinylShop.Infrastructure;
 using VinylShop.DataAccess;
 using VinylShop.DataAccess.Repositories;
 using VinylShop.DataAccess.Mappings;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +30,20 @@ var services = builder.Services;
 var configuration = builder.Configuration;
 
 DotNetEnv.Env.Load();
+
+var stripeKey = configuration["Stripe:SecretKey"];
+if (string.IsNullOrEmpty(stripeKey))
+{
+    Log.Error("Stripe Secret Key is not set or is empty");
+}
+else
+{
+    Log.Information("Stripe Secret Key successfully loaded");
+}
+
+configuration["Stripe:SecretKey"] = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+configuration["Stripe:PublicKey"] = Environment.GetEnvironmentVariable("STRIPE_PUBLIC_KEY");
+
 
 services.AddCors(options =>
 {
@@ -126,6 +140,13 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 app.UseSerilogRequestLogging();
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("Cross-Origin-Opener-Policy", "same-origin");
+    context.Response.Headers.Add("Cross-Origin-Embedder-Policy", "require-corp");
+    await next();
+});
 
 app.UseHttpsRedirection();
 
