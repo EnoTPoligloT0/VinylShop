@@ -1,6 +1,7 @@
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Configuration;
 using Stripe;
+using Stripe.Checkout;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Interfaces.Services;
 using VinylShop.Core.Models;
@@ -50,6 +51,37 @@ public class PaymentService : IPaymentService
         return paymentResult;
     }
 
+
+    public async Task<string> CreateCheckoutSessionAsync(decimal amount, string currency, string successUrl, string cancelUrl)
+    {
+        var options = new SessionCreateOptions
+        {
+            PaymentMethodTypes = new List<string> { "card" },
+            LineItems = new List<SessionLineItemOptions>
+            {
+                new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = "Vinyl Record",
+                        },
+                        UnitAmount = 100, // Price in cents
+                    },
+                    Quantity = 1,
+                },
+            },
+            Mode = "payment",
+            SuccessUrl = successUrl,  // Pass the correct success URL here
+            CancelUrl = cancelUrl,
+        };
+        var service = new SessionService();
+        Session session = await service.CreateAsync(options);
+
+        return session.Url;
+    }
 
     public async Task<List<Payment>> GetPayments()
     {
