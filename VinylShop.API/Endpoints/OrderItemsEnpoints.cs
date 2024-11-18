@@ -15,13 +15,17 @@ public static class OrderItemsEnpoints
         endpoits.MapPost("orderItem/{orderId:guid}", CreateOrderItem)
             .AllowAnonymous();
 
-        endpoits.MapGet("orderItem/order/{orderId:guid}", GetOrderItemByOrderId);
+        endpoits.MapGet("orderItem/order/{orderId:guid}", GetOrderItemByOrderId)
+            .AllowAnonymous();
 
-        endpoits.MapGet("orderItem/{id:guid}", GetOrderItemById);
+        endpoits.MapGet("orderItem/{id:guid}", GetOrderItemById)
+            .AllowAnonymous();
 
-        endpoits.MapPut("orderItem/{id:guid}", UpdateOrderItem);
+        endpoits.MapPut("orderItem/{id:guid}", UpdateOrderItem)
+            .AllowAnonymous();
 
-        endpoits.MapDelete("orderItem/{id:guid}", DeleteOrderItem);
+        endpoits.MapDelete("orderItem/{id:guid}", DeleteOrderItem)
+            .AllowAnonymous();
 
         return endpoits;
     }
