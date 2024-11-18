@@ -44,14 +44,16 @@ else
 configuration["Stripe:SecretKey"] = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
 configuration["Stripe:PublicKey"] = Environment.GetEnvironmentVariable("STRIPE_PUBLIC_KEY");
 
+builder.Logging.AddFilter("Microsoft.AspNetCore.Cors.Infrastructure.CorsService", LogLevel.Debug);
 
 services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontEnd",
         corsPolicyBuilder => corsPolicyBuilder
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:3000", "https://checkout.stripe.com", "*")
             .AllowAnyMethod()
-            .AllowAnyHeader()   
+            .AllowAnyHeader()
+            .SetIsOriginAllowedToAllowWildcardSubdomains()
             .AllowCredentials());
 });
 
@@ -143,10 +145,14 @@ app.UseSerilogRequestLogging();
 
 app.Use(async (context, next) =>
 {
+    context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000"); // Add your frontend URL here
+    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
     context.Response.Headers.Add("Cross-Origin-Opener-Policy", "same-origin");
     context.Response.Headers.Add("Cross-Origin-Embedder-Policy", "require-corp");
-    await next();
+    await next.Invoke();
 });
+
 
 app.UseHttpsRedirection();
 
