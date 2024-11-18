@@ -91,6 +91,10 @@ namespace VinylShop.DataAccess.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<string>("StripePaymentId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("PaymentId");
 
                     b.HasIndex("OrderId");
