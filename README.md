@@ -19,7 +19,7 @@ AmberVinyl is a sleek e-commerce platform for vinyl enthusiasts, offering an int
 
 **DevOps:** Docker, Docker Compose
 
-**Other Tools:** Postman, Stripe, oAuth
+**Other Tools:** Postman, Stripe, Google oAuth
 ## Features
 
 - Light/dark mode toggle
