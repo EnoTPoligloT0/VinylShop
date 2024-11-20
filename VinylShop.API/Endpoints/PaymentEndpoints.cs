@@ -1,8 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
+using VinylShop.API.Contracts.OrderItems;
 using VinylShop.API.Contracts.Payments;
 using VinylShop.API.Contracts.Shipments;
 using VinylShop.Application.Services;
 using VinylShop.Core.Models;
+using Exception = System.Exception;
 
 namespace VinylShop.API.Endpoints;
 
@@ -13,6 +18,7 @@ public static class PaymentEndpoints
         var endpoints = app.MapGroup("payments");
 
         endpoints.MapPost("/{orderId:guid}", CreatePayment);
+        endpoints.MapPost("/create-checkout-session", CreateCheckoutSession);
         endpoints.MapGet("/{id:guid}", GetPaymentById);
         endpoints.MapGet("/order/{orderId:guid}", GetPaymentByOrderId);
         endpoints.MapPut("/{id:guid}", UpdatePayment);
@@ -22,26 +28,73 @@ public static class PaymentEndpoints
     }
 
     private static async Task<IResult> CreatePayment(
-        [FromRoute] Guid orderId,
-        [FromBody] CreatePaymentRequest request,
+        Guid orderId,
         [FromServices] PaymentService paymentService)
     {
-        var paymentResult = Payment.Create(
-            Guid.NewGuid(),
-            orderId,
-            request.PaymentDate,
-            request.Amount,
-            request.PaymentMethod
-            
-        );
+        try
+        {
+            var successUrl = "https://localhost:3000/success";
+            var cancelUrl = "https://localhost:3000/cancel";
 
-        if (!paymentResult.IsSuccess) return Results.BadRequest(paymentResult.Error);
+            // Create the checkout session
+            var sessionUrl = await paymentService.CreateCheckoutSessionAsync(100.00M, "usd", successUrl, cancelUrl);
 
-        await paymentService.CreatePayment(paymentResult.Value);
-
-        return Results.Ok(paymentResult.Value);
+            // Return the redirect URL as part of the response (HTTP 303)
+            return Results.Redirect(sessionUrl, true);
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem(detail: ex.Message, statusCode: 500);
+        }
     }
 
+    private static async Task<IResult> CreateCheckoutSession(
+        [FromBody] TotalAmountRequest totalAmountRequest,
+        [FromServices] PaymentService paymentService)
+    {
+        if (totalAmountRequest == null || totalAmountRequest.TotalAmount <= 0)
+        {
+            return Results.BadRequest("Total amount is required and must be greater than 0.");
+        }
+
+        try
+        {
+            var lineItems = new List<SessionLineItemOptions>
+            {
+                new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = "Order Total",
+                        },
+                        UnitAmount = (long)(totalAmountRequest.TotalAmount * 100), // Convert to cents
+                    },
+                    Quantity = 1,
+                }
+            };
+
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = lineItems,
+                Mode = "payment",
+                SuccessUrl = "https://localhost:3000/success",
+                CancelUrl = "https://localhost:3000/cancel",
+            };
+
+            var service = new SessionService();
+            var session = await service.CreateAsync(options);
+
+            return Results.Json(new { sessionId = session.Id });
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem(detail: ex.Message, statusCode: 500);
+        }
+    }
 
     private static async Task<IResult> GetPaymentById(
         [FromRoute] Guid id,
