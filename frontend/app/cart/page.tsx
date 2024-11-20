@@ -1,16 +1,15 @@
-// app/cart/page.tsx
-"use client"
+"use client";
+
 import React from 'react';
 import Cart from '../../components/Cart';
-import {CartProvider} from "@/context/CartContext";
-import VinylList from "@/components/VinylList"; // Adjust the import path based on your project structure
+import { CartProvider } from "@/context/CartContext";
 
 const CartPage = () => {
     return (
         <div>
-            <CartProvider>
-             <Cart />
-            </CartProvider>
+                <CartProvider>
+                    <Cart />
+                </CartProvider>
         </div>
     );
 };
