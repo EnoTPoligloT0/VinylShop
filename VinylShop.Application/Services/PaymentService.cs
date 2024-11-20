@@ -1,3 +1,7 @@
+using CSharpFunctionalExtensions;
+using Microsoft.Extensions.Configuration;
+using Stripe;
+using Stripe.Checkout;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Interfaces.Services;
 using VinylShop.Core.Models;
@@ -7,10 +11,16 @@ namespace VinylShop.Application.Services;
 public class PaymentService : IPaymentService
 {
     private readonly IPaymentRepository _paymentRepository;
+    private readonly string _stripeSecretKey;
+    private readonly string _stripePublicKey;
 
-    public PaymentService(IPaymentRepository paymentRepository)
+    public PaymentService(IPaymentRepository paymentRepository, IConfiguration configuration)
     {
         _paymentRepository = paymentRepository;
+        _stripeSecretKey = configuration["Stripe:SecretKey"];
+        _stripePublicKey = configuration["Stripe:PublicKey"];
+
+        StripeConfiguration.ApiKey = _stripeSecretKey;
     }
 
     public async Task CreatePayment(Payment payment)
@@ -18,6 +28,60 @@ public class PaymentService : IPaymentService
         await _paymentRepository.Create(payment);
     }
 
+    public async Task<Result<Payment>> ProcessStripePayment(Guid orderId, decimal amount, string paymentMethod, string currency = "usd")
+    {
+        var options = new PaymentIntentCreateOptions
+        {
+            Amount = Convert.ToInt64(amount * 100),
+            Currency = currency,
+            PaymentMethod = paymentMethod,
+            Confirm = true
+        };
+
+        var service = new PaymentIntentService();
+        var intent = await service.CreateAsync(options);
+
+        var paymentResult = Payment.Create(Guid.NewGuid(), orderId, DateTime.UtcNow, amount, paymentMethod, intent.Id);
+
+        if (!paymentResult.IsSuccess)
+            return Result.Failure<Payment>(paymentResult.Error);
+
+        await _paymentRepository.Create(paymentResult.Value);
+
+        return paymentResult;
+    }
+
+
+    public async Task<string> CreateCheckoutSessionAsync(decimal amount, string currency, string successUrl, string cancelUrl)
+    {
+        var options = new SessionCreateOptions
+        {
+            PaymentMethodTypes = new List<string> { "card" },
+            LineItems = new List<SessionLineItemOptions>
+            {
+                new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = "Vinyl Record",
+                        },
+                        UnitAmount = 100, // Price in cents
+                    },
+                    Quantity = 1,
+                },
+            },
+            Mode = "payment",
+            SuccessUrl = successUrl,  // Pass the correct success URL here
+            CancelUrl = cancelUrl,
+        };
+        var service = new SessionService();
+        Session session = await service.CreateAsync(options);
+
+        return session.Url;
+    }
 
     public async Task<List<Payment>> GetPayments()
     {

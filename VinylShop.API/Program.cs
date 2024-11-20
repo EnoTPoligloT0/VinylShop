@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Stripe;
 using VinylShop.API;
 using VinylShop.API.Extensions;
 using VinylShop.API.Infrastructure;
@@ -18,7 +19,6 @@ using VinylShop.Infrastructure;
 using VinylShop.DataAccess;
 using VinylShop.DataAccess.Repositories;
 using VinylShop.DataAccess.Mappings;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,13 +31,29 @@ var configuration = builder.Configuration;
 
 DotNetEnv.Env.Load();
 
+var stripeKey = configuration["Stripe:SecretKey"];
+if (string.IsNullOrEmpty(stripeKey))
+{
+    Log.Error("Stripe Secret Key is not set or is empty");
+}
+else
+{
+    Log.Information("Stripe Secret Key successfully loaded");
+}
+
+configuration["Stripe:SecretKey"] = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+configuration["Stripe:PublicKey"] = Environment.GetEnvironmentVariable("STRIPE_PUBLIC_KEY");
+
+builder.Logging.AddFilter("Microsoft.AspNetCore.Cors.Infrastructure.CorsService", LogLevel.Debug);
+
 services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontEnd",
         corsPolicyBuilder => corsPolicyBuilder
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:3000", "https://checkout.stripe.com", "*")
             .AllowAnyMethod()
-            .AllowAnyHeader()   
+            .AllowAnyHeader()
+            .SetIsOriginAllowedToAllowWildcardSubdomains()
             .AllowCredentials());
 });
 
@@ -126,6 +142,17 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 app.UseSerilogRequestLogging();
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000"); // Add your frontend URL here
+    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    context.Response.Headers.Add("Cross-Origin-Opener-Policy", "same-origin");
+    context.Response.Headers.Add("Cross-Origin-Embedder-Policy", "require-corp");
+    await next.Invoke();
+});
+
 
 app.UseHttpsRedirection();
 
