@@ -6,7 +6,7 @@ AmberVinyl is a sleek e-commerce platform for vinyl enthusiasts, offering an int
 
 ## Screenshots
 
-![App Screenshot](https://github.com/EnoTPoligloT0/VinylShop/blob/main/screenshot.png?raw=true)
+![App Screenshot](https://github.com/EnoTPoligloT0/VinylShop/blob/main/screenshot2.png?raw=true)
 
 
 ## Tech Stack
