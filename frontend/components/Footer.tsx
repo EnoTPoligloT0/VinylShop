@@ -10,7 +10,7 @@
                     <div className="col-span-3">
                         <Link href="/" className="flex items-center">
                             <Image src="/vinyl-icon.svg" alt="Logo" width={30} height={30} />
-                            <span className="ml-2  font-semibold text-3xl">Vinyl Shop</span>
+                            <span className="ml-2  font-semibold text-3xl">AmberVinyl Store</span>
                         </Link>
                         <p className="mt-4 text-sm">
                             Discover a world of vinyl treasures. Explore our wide collection and find the perfect record to complete your collection.

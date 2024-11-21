@@ -140,10 +140,10 @@ function Header() {
             </div>
 
             <div className="container mx-auto grid grid-cols-12 items-center py-4">
-                <div className="col-span-2 flex items-center">
+                <div className="col-span-3 flex items-center">
                     <Link href="/" className="flex items-center">
                         <Image src="/vinyl-icon.svg" alt="Logo" width={30} height={30}/>
-                        <span className="ml-2 text-black font-semibold text-3xl">Vinyl Shop</span>
+                        <span className="ml-2 text-black font-semibold text-3xl">AmberVinyl Store</span>
                     </Link>
                 </div>
 
