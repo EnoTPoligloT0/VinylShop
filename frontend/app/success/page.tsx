@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from "next/navigation";
+import {useEffect, useState} from 'react';
+import {useRouter, useSearchParams} from "next/navigation";
 import axios from "axios";
 import Cookies from "js-cookie";
 
 const Success = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const session_id = searchParams.get("session_id"); // Get session_id from query params
-    const token = Cookies.get("secretCookie"); // Get token from cookies
+    const session_id = searchParams.get("session_id");
+    const token = Cookies.get("secretCookie");
     const [orderId, setOrderId] = useState<string | null>(null);
     const [paymentProcessed, setPaymentProcessed] = useState(false);
 
@@ -18,7 +18,7 @@ const Success = () => {
             if (paymentProcessed) return;
 
             try {
-                const storedOrderId = localStorage.getItem("orderId"); // Retrieve the stored order ID from localStorage
+                const storedOrderId = localStorage.getItem("orderId");
                 if (storedOrderId) {
                     setOrderId(storedOrderId);
                 } else {
@@ -35,7 +35,7 @@ const Success = () => {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`,
                         },
-                        body: JSON.stringify({ orderId }),
+                        body: JSON.stringify({orderId}),
                     }
                 );
 
@@ -59,12 +59,11 @@ const Success = () => {
                             stripePaymentId: session_id,
                         },
                         {
-                            headers: { Authorization: `Bearer ${token}` },
+                            headers: {Authorization: `Bearer ${token}`},
                             withCredentials: true,
                         }
                     );
 
-                    console.log("Payment recorded successfully!");
                     setPaymentProcessed(true);
                     router.push("/order-complete");
                 } else {
@@ -76,7 +75,7 @@ const Success = () => {
         };
 
         verifyPayment();
-    }, [session_id, orderId, router, token, paymentProcessed]); // Include paymentProcessed to track if payment has been processed
+    }, [session_id, orderId, router, token, paymentProcessed]);
 
     return <div>Processing your payment...</div>;
 };
