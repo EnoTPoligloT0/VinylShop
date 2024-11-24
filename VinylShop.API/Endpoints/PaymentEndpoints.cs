@@ -19,6 +19,7 @@ public static class PaymentEndpoints
 
         endpoints.MapPost("/{orderId:guid}", CreatePayment);
         endpoints.MapPost("/create-checkout-session", CreateCheckoutSession);
+        endpoints.MapPost("/verify-payment/{sessionId}", VerifyPayment);
         endpoints.MapGet("/{id:guid}", GetPaymentById);
         endpoints.MapGet("/order/{orderId:guid}", GetPaymentByOrderId);
         endpoints.MapPut("/{id:guid}", UpdatePayment);
@@ -28,26 +29,25 @@ public static class PaymentEndpoints
     }
 
     private static async Task<IResult> CreatePayment(
-        Guid orderId,
+        [FromRoute] Guid orderId,
+        [FromBody] CreatePaymentRequest request,
         [FromServices] PaymentService paymentService)
     {
-        try
-        {
-            var successUrl = "https://localhost:3000/success";
-            var cancelUrl = "https://localhost:3000/cancel";
+        var paymentResult = Payment.Create(
+            Guid.NewGuid(),
+            orderId,
+            request.PaymentDate,
+            request.Amount,
+            request.PaymentMethod,
+            request.StripePaymentId
+        );
 
-            // Create the checkout session
-            var sessionUrl = await paymentService.CreateCheckoutSessionAsync(100.00M, "usd", successUrl, cancelUrl);
+        if (!paymentResult.IsSuccess) return Results.BadRequest(paymentResult.Error);
 
-            // Return the redirect URL as part of the response (HTTP 303)
-            return Results.Redirect(sessionUrl, true);
-        }
-        catch (Exception ex)
-        {
-            return Results.Problem(detail: ex.Message, statusCode: 500);
-        }
+        await paymentService.CreatePayment(paymentResult.Value);
+
+        return Results.Ok(paymentResult.Value);
     }
-
     private static async Task<IResult> CreateCheckoutSession(
         [FromBody] TotalAmountRequest totalAmountRequest,
         [FromServices] PaymentService paymentService)
@@ -70,7 +70,7 @@ public static class PaymentEndpoints
                         {
                             Name = "Order Total",
                         },
-                        UnitAmount = (long)(totalAmountRequest.TotalAmount * 100), // Convert to cents
+                        UnitAmount = (long)(totalAmountRequest.TotalAmount * 100),
                     },
                     Quantity = 1,
                 }
@@ -81,8 +81,8 @@ public static class PaymentEndpoints
                 PaymentMethodTypes = new List<string> { "card" },
                 LineItems = lineItems,
                 Mode = "payment",
-                SuccessUrl = "https://localhost:3000/success",
-                CancelUrl = "https://localhost:3000/cancel",
+                SuccessUrl = "http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}",
+                CancelUrl = "http://localhost:3000/cancel",
             };
 
             var service = new SessionService();
@@ -92,6 +92,64 @@ public static class PaymentEndpoints
         }
         catch (Exception ex)
         {
+            return Results.Problem(detail: ex.Message, statusCode: 500);
+        }
+    }
+
+    private static async Task<IResult> VerifyPayment(
+        [FromRoute] string sessionId,
+        [FromServices] PaymentService paymentService)
+    {
+        Console.WriteLine($"VerifyPayment called with sessionId: {sessionId}");
+        try
+        {
+            var service = new SessionService();
+            var session = await service.GetAsync(sessionId);
+
+            if (session.PaymentStatus != "paid")
+            {
+                return Results.BadRequest("Payment was not successful.");
+            }
+
+            if (string.IsNullOrWhiteSpace(session.ClientReferenceId))
+            {
+                return Results.BadRequest("Order ID is missing in the payment session.");
+            }
+
+            if (!Guid.TryParse(session.ClientReferenceId, out var orderId))
+            {
+                return Results.BadRequest("Invalid Order ID format.");
+            }
+
+            var amount = session.AmountTotal / 100m; // Convert cents to dollars
+
+            var paymentResult = Payment.Create(
+                Guid.NewGuid(),
+                orderId,
+                DateTime.UtcNow,
+                (decimal)amount!,
+                "card",
+                sessionId
+            );
+
+            if (!paymentResult.IsSuccess)
+            {
+                return Results.BadRequest(paymentResult.Error);
+            }
+
+            await paymentService.CreatePayment(paymentResult.Value);
+
+            return Results.Ok(new
+            {
+                success = true,
+                message = "Payment verified and saved successfully.",
+                orderId,
+                amount,
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"VerifyPayment failed: {ex.Message}");
             return Results.Problem(detail: ex.Message, statusCode: 500);
         }
     }
