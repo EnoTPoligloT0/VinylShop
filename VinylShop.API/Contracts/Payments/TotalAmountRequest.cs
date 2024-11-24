@@ -6,4 +6,6 @@ public class TotalAmountRequest
 {
     [Required]
     public decimal TotalAmount { get; set; }
+
+    public Guid OrderId { get;}
 }
