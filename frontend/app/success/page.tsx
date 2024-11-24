@@ -11,28 +11,24 @@ const Success = () => {
     const session_id = searchParams.get("session_id"); // Get session_id from query params
     const token = Cookies.get("secretCookie"); // Get token from cookies
     const [orderId, setOrderId] = useState<string | null>(null);
+    const [paymentProcessed, setPaymentProcessed] = useState(false);
 
     useEffect(() => {
         const verifyPayment = async () => {
+            if (paymentProcessed) return;
+
             try {
                 const storedOrderId = localStorage.getItem("orderId"); // Retrieve the stored order ID from localStorage
                 if (storedOrderId) {
                     setOrderId(storedOrderId);
                 } else {
-                    return;
-                }
-
-                if (!session_id) {
-                    console.error("Session ID  is missing.");
-                    return;
-                }
-                if (!orderId) {
                     console.error("Order ID is missing.");
                     return;
                 }
 
+
                 const paymentResponse = await fetch(
-                    `https://localhost:44372/payments/verify-payment/${session_id}`, // Backend endpoint for payment verification
+                    `https://localhost:44372/payments/verify-payment/${session_id}`,
                     {
                         method: 'POST',
                         headers: {
@@ -69,6 +65,7 @@ const Success = () => {
                     );
 
                     console.log("Payment recorded successfully!");
+                    setPaymentProcessed(true);
                     router.push("/order-complete");
                 } else {
                     console.error("Payment verification failed:", data.message);
@@ -79,7 +76,7 @@ const Success = () => {
         };
 
         verifyPayment();
-    }, [session_id, orderId, router, token]);
+    }, [session_id, orderId, router, token, paymentProcessed]); // Include paymentProcessed to track if payment has been processed
 
     return <div>Processing your payment...</div>;
 };
