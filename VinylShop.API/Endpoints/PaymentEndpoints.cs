@@ -83,6 +83,7 @@ public static class PaymentEndpoints
                 Mode = "payment",
                 SuccessUrl = "http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}",
                 CancelUrl = "http://localhost:3000/cancel",
+                ClientReferenceId = totalAmountRequest.OrderId.ToString()
             };
 
             var service = new SessionService();
