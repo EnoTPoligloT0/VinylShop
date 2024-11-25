@@ -1,89 +1,78 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
-import { CartItem } from "@/types/cart";
-import { Vinyl } from "@/types/vinyl";
-import { loadStripe } from "@stripe/stripe-js";
+import {CartItem} from "@/types/cart";
+import {Vinyl} from "@/types/vinyl";
+import {loadStripe} from "@stripe/stripe-js";
 import Cookies from "js-cookie";
 
 //todo refactoring
 const stripePromise = loadStripe("pk_test_51QKsJJHqGo0KeykHjiMci68gs5tv5Ym5wgt2WXb4zRHaID0V3AsQbjXSiuRJKD0FWBi9kH0LPtt6aZ37jac8azFa00OFZkimTs");
+localStorage.removeItem("orderId")
 
 const Cart = () => {
+
     const [cart, setCart] = useState<CartItem[]>([]);
     const [vinylDetails, setVinylDetails] = useState<Vinyl[]>([]);
     const [loading, setLoading] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
-    const [orderId, setOrderId] = useState<string | null>(null); // Order ID state
-    const [token, setToken] = useState<string | null>(null); // User ID state
+    const [orderId, setOrderId] = useState<string | null>(null);
+    const [token, setToken] = useState<string | null>(null);
 
     useEffect(() => {
         const storedCart = typeof window !== "undefined" ? localStorage.getItem("cart") : null;
         if (storedCart) {
             setCart(JSON.parse(storedCart));
-            console.log("Loaded cart from localStorage:", storedCart);
         }
 
         const token = Cookies.get("secretCookie");
         if (token) {
             setToken(token);
-            console.log("Token received from cookies:", token);
         }
     }, []);
 
     useEffect(() => {
         const fetchVinylDetails = async () => {
             try {
+                if (cart.length === 0) {
+                    setVinylDetails([]);
+                    setTotalAmount(0);
+                    return;
+                }
+
                 const vinylIds = cart.map((item) => item.vinylId);
-                console.log("Fetching vinyl details for IDs:", vinylIds);
-
-                const promises =
+                const vinylsData = await Promise.all(
                     vinylIds.map((id) =>
-                        axios.get<Vinyl>(`https://localhost:44372/vinyls/${id}`));
+                        axios.get<Vinyl>(`https://localhost:44372/vinyls/${id}`)
+                    )
+                );
 
-                const responses = await Promise.all(promises);
-                console.log("Vinyl details response:", responses);
-
-                const details = responses.map((res) => res.data);
-                console.log("Vinyl details:", details);
-                setVinylDetails(details);
+                const vinyls = vinylsData.map((response) => response.data);
+                setVinylDetails(vinyls);
 
                 const total = cart.reduce((sum, item) => {
-                    const vinyl = details.find((v) => v.id === item.vinylId);
+                    const vinyl = vinyls.find((v) => v.id === item.vinylId);
                     return sum + (vinyl?.price || 0) * item.quantity;
                 }, 0);
-                console.log("Total amount calculated:", total);
-                setTotalAmount(total);
 
+                setTotalAmount(total);
             } catch (error) {
                 console.error("Error fetching vinyl details:", error);
             }
         };
 
-        if (cart.length > 0) {
-            fetchVinylDetails();
-        } else {
-            setVinylDetails([]);
-            setTotalAmount(0);
-        }
+        fetchVinylDetails();
     }, [cart]);
 
-    // Remove item from cart
     const handleRemoveFromCart = (vinylId: string) => {
-        console.log("Removing item from cart with vinylId:", vinylId);
         const updatedCart = cart.filter((item) => item.vinylId !== vinylId);
         setCart(updatedCart);
         localStorage.setItem("cart", JSON.stringify(updatedCart));
     };
 
-    // Create an order and generate order ID
     const createOrder = async () => {
         try {
-            if (!token) {
-                throw new Error("User not logged in.");
-            }
+            if (!token) throw new Error("User not logged in.");
 
-            // Call your API to create the order and get an order ID
-            console.log("Creating order with total amount:", totalAmount);
             const response = await axios.post(
                 "https://localhost:44372/orders",
                 {
@@ -92,35 +81,30 @@ const Cart = () => {
                 },
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${token}`
                     },
                     withCredentials: true,
                 }
             );
-            console.log("Order creation response:", response.data);
-            const orderId = response.data.id;
 
+            const orderId = response.data.id;
+            localStorage.setItem('orderId', orderId);
             for (const item of cart) {
-                const orderItemResponse = await axios.post(
+                await axios.post(
                     `https://localhost:44372/orderItems/orderItem/${orderId}`,
                     {
                         vinylId: item.vinylId,
                         quantity: item.quantity,
-                        unitPrice: item.unitPrice,
+                        unitPrice: item.unitPrice
                     },
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+                        headers: {Authorization: `Bearer ${token}`},
                         withCredentials: true,
                     }
                 );
-                console.log("Order item created:", orderItemResponse.data);
             }
 
             setOrderId(orderId);
-            console.log("Order ID set:", orderId);
-
             return orderId;
         } catch (error) {
             console.error("Error creating order:", error);
@@ -131,46 +115,38 @@ const Cart = () => {
     const handleCheckout = async () => {
         setLoading(true);
         try {
-            if (!orderId) {
-                console.log("No order ID found. Creating order...");
-                const generatedOrderId = await createOrder(); // Create order if not exists
-                if (!generatedOrderId) {
-                    throw new Error("Failed to create order");
-                }
-                console.log("Order created with ID:", generatedOrderId);
+            const currentOrderId = orderId || (await createOrder());
+            if (!currentOrderId) {
+                throw new Error("Failed to create an order.");
             }
 
-            console.log("Proceeding to checkout with orderId:", orderId);
-
-            const response = await fetch("https://localhost:44372/payments/create-checkout-session", {
+            const sessionResponse = await fetch("https://localhost:44372/payments/create-checkout-session", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    totalAmount: totalAmount, // Only send the total amount here
+                    totalAmount: totalAmount,
+                    orderId: currentOrderId,
                 }),
             });
 
-            console.log("Checkout session response:", response);
-
-            if (!response.ok) {
-                throw new Error("Failed to create checkout session");
+            if (!sessionResponse.ok) {
+                throw new Error("Failed to create checkout session.");
             }
 
-            const { sessionId } = await response.json();
-            console.log("Received session ID from response:", sessionId);
+            const {sessionId} = await sessionResponse.json();
 
             const stripe = await stripePromise;
-
             if (!stripe) {
                 throw new Error("Stripe.js failed to load.");
             }
 
-            const { error } = await stripe.redirectToCheckout({ sessionId });
+            const {error} = await stripe.redirectToCheckout({sessionId});
             if (error) {
-                console.error("Error redirecting to Stripe Checkout:", error.message);
+                throw new Error(`Stripe Checkout error: ${error.message}`);
             }
+
         } catch (error) {
             console.error("Error during checkout:", error);
         } finally {
@@ -187,8 +163,7 @@ const Cart = () => {
                     return (
                         <li
                             key={vinyl.id}
-                            className="bg-white rounded-lg shadow-lg p-4 flex justify-between items-center"
-                        >
+                            className="bg-white rounded-lg shadow-lg p-4 flex justify-between items-center">
                             <div className="flex items-center">
                                 {vinyl.imageBase64 && (
                                     <img

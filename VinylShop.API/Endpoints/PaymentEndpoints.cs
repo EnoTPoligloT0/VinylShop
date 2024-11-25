@@ -83,6 +83,7 @@ public static class PaymentEndpoints
                 Mode = "payment",
                 SuccessUrl = "http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}",
                 CancelUrl = "http://localhost:3000/cancel",
+                ClientReferenceId = totalAmountRequest.OrderId.ToString()
             };
 
             var service = new SessionService();
@@ -98,7 +99,8 @@ public static class PaymentEndpoints
 
     private static async Task<IResult> VerifyPayment(
         [FromRoute] string sessionId,
-        [FromServices] PaymentService paymentService)
+        [FromServices] PaymentService paymentService,
+        [FromServices] OrderService orderService)
     {
         Console.WriteLine($"VerifyPayment called with sessionId: {sessionId}");
         try
@@ -116,35 +118,13 @@ public static class PaymentEndpoints
                 return Results.BadRequest("Order ID is missing in the payment session.");
             }
 
-            if (!Guid.TryParse(session.ClientReferenceId, out var orderId))
-            {
-                return Results.BadRequest("Invalid Order ID format.");
-            }
-
             var amount = session.AmountTotal / 100m; // Convert cents to dollars
-
-            var paymentResult = Payment.Create(
-                Guid.NewGuid(),
-                orderId,
-                DateTime.UtcNow,
-                (decimal)amount!,
-                "card",
-                sessionId
-            );
-
-            if (!paymentResult.IsSuccess)
-            {
-                return Results.BadRequest(paymentResult.Error);
-            }
-
-            await paymentService.CreatePayment(paymentResult.Value);
 
             return Results.Ok(new
             {
                 success = true,
-                message = "Payment verified and saved successfully.",
-                orderId,
-                amount,
+                message = "Payment verified successfully.",
+                amount
             });
         }
         catch (Exception ex)

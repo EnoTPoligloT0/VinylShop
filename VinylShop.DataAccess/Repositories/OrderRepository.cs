@@ -66,6 +66,12 @@ public class OrderRepository : IOrderRepository
             );
     }
 
+    public async Task<bool> OrderExistsAsync(Guid orderId)
+    {
+        return await _context.Orders
+            .AnyAsync(o => o.Id == orderId);
+    }
+
     public async Task Delete(Guid id)
     {
         await _context.Orders

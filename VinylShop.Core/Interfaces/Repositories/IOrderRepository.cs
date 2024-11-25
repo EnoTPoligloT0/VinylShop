@@ -14,4 +14,6 @@ public interface IOrderRepository
     Task<Order> GetById(Guid id);
 
     Task Update(Guid id, DateTime orderDate, decimal totalAmount, List<OrderItem> orderItems);
+
+    Task<bool> OrderExistsAsync(Guid orderId);
 }

@@ -29,6 +29,11 @@ public class OrderService : IOrderService
         return await _orderRepository.GetById(id);
     }
 
+    public async Task<bool> OrderExistsAsync(Guid id)
+    {
+        return await _orderRepository.OrderExistsAsync(id);
+    }
+
     public async Task UpdateOrder(Guid id, DateTime orderDate, decimal totalAmount, List<OrderItem> orderItems)
     {
         await _orderRepository.Update(id, orderDate, totalAmount, orderItems);
