@@ -18,23 +18,33 @@ public static class VinylsEnpoints
             .RequirePermissions(Permission.Create)
             .AllowAnonymous()
             .DisableAntiforgery();
+
         endpoints.MapGet("/", GetVinyls)
             .RequirePermissions(Permission.Read)
             .AllowAnonymous();
+
         endpoints.MapGet("/{id:guid}", GetVinylById)
             .RequirePermissions(Permission.Read)
             .AllowAnonymous();
+
         endpoints.MapGet("orderItems/{orderItemId:guid}", GetVinylByOrderItemId)
             .RequirePermissions(Permission.Read);
+
         endpoints.MapPut("/{id:guid}", UpdateVinyl)
             .RequirePermissions(Permission.Update);
+
         endpoints.MapDelete("/{id:guid}", DeleteVinyl)
             .RequirePermissions(Permission.Delete)
             .AllowAnonymous();
+
         endpoints.MapPost("/{vinylId:guid}/upload-image", UploadVinylImage)
             .AllowAnonymous()
             .DisableAntiforgery();
+
         endpoints.MapGet("/search", SearchVinyls)
+            .AllowAnonymous();
+
+        endpoints.MapGet("/filter", GetFilteredVinyls)
             .AllowAnonymous();
 
         return endpoints;
@@ -212,6 +222,31 @@ public static class VinylsEnpoints
 
         return Results.Ok(response);
     }
+    private static async Task<IResult> GetFilteredVinyls(
+        [FromQuery] string? genre,
+        [FromQuery] int? decade,
+        [FromQuery] string? sortOption,
+        VinylService vinylService)
+    {
+        var vinyls = await vinylService.GetFilteredVinyls(genre, decade, sortOption);
+
+        var response = vinyls.Select(v => new GetVinylResponse
+        (
+            v.Id,
+            v.Title,
+            v.Artist,
+            v.Genre,
+            v.ReleaseYear,
+            v.Price,
+            v.Stock,
+            v.Description,
+            v.IsAvailable,
+            Convert.ToBase64String(v.Image)
+        ));
+
+        return Results.Ok(response);
+    }
+
 
     // //todo decision
     // [HttpGet("orders/{orderId:guid}/vinyls")]
