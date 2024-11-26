@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import VinylList from '@/components/VinylList'; // Adjust the import path based on your folder structure
+import VinylList from '@/components/VinylList';
 
 const ShopPage = () => {
     const [filter, setFilter] = useState("Latest");
@@ -12,38 +12,37 @@ const ShopPage = () => {
     return (
         <main className="container mx-auto">
             <div className="flex mt-8">
-                {/* Sidebar */}
                 <aside className="w-1/4 pr-6">
                     <div className="bg-white p-4 shadow-md rounded-lg">
                         <h2 className="text-lg font-semibold mb-4">All Categories</h2>
                         <ul>
                             <li className="mb-2">
                                 <input type="checkbox" id="rock"/>
-                                <label htmlFor="rock" className="ml-2">Rock (125)</label>
+                                <label htmlFor="rock" className="ml-2">Rock</label>
                             </li>
                             <li className="mb-2">
                                 <input type="checkbox" id="pop"/>
-                                <label htmlFor="pop" className="ml-2">Pop (90)</label>
+                                <label htmlFor="pop" className="ml-2">Pop</label>
                             </li>
                             <li className="mb-2">
                                 <input type="checkbox" id="jazz"/>
-                                <label htmlFor="jazz" className="ml-2">Jazz (60)</label>
+                                <label htmlFor="jazz" className="ml-2">Jazz </label>
                             </li>
                             <li className="mb-2">
                                 <input type="checkbox" id="classical"/>
-                                <label htmlFor="classical" className="ml-2">Classical (45)</label>
+                                <label htmlFor="classical" className="ml-2">Classical</label>
                             </li>
                             <li className="mb-2">
                                 <input type="checkbox" id="hip-hop"/>
-                                <label htmlFor="hip-hop" className="ml-2">Hip-Hop (80)</label>
+                                <label htmlFor="hip-hop" className="ml-2">Hip-Hop</label>
                             </li>
                             <li className="mb-2">
                                 <input type="checkbox" id="electronic"/>
-                                <label htmlFor="electronic" className="ml-2">Electronic (70)</label>
+                                <label htmlFor="electronic" className="ml-2">Electronic </label>
                             </li>
                             <li className="mb-2">
                                 <input type="checkbox" id="country"/>
-                                <label htmlFor="country" className="ml-2">Country (55)</label>
+                                <label htmlFor="country" className="ml-2">Country </label>
                             </li>
                         </ul>
 
@@ -52,31 +51,31 @@ const ShopPage = () => {
                             <ul>
                                 <li className="mb-2">
                                     <input type="checkbox" id="2020s"/>
-                                    <label htmlFor="2020s" className="ml-2">2020s (30)</label>
+                                    <label htmlFor="2020s" className="ml-2">2020s</label>
                                 </li>
                                 <li className="mb-2">
                                     <input type="checkbox" id="2010s"/>
-                                    <label htmlFor="2010s" className="ml-2">2010s (50)</label>
+                                    <label htmlFor="2010s" className="ml-2">2010s</label>
                                 </li>
                                 <li className="mb-2">
                                     <input type="checkbox" id="2000s"/>
-                                    <label htmlFor="2000s" className="ml-2">2000s (65)</label>
+                                    <label htmlFor="2000s" className="ml-2">2000s</label>
                                 </li>
                                 <li className="mb-2">
                                     <input type="checkbox" id="1990s"/>
-                                    <label htmlFor="1990s" className="ml-2">1990s (70)</label>
+                                    <label htmlFor="1990s" className="ml-2">1990s</label>
                                 </li>
                                 <li className="mb-2">
                                     <input type="checkbox" id="1980s"/>
-                                    <label htmlFor="1980s" className="ml-2">1980s (85)</label>
+                                    <label htmlFor="1980s" className="ml-2">1980s</label>
                                 </li>
                                 <li className="mb-2">
                                     <input type="checkbox" id="1970s"/>
-                                    <label htmlFor="1970s" className="ml-2">1970s (90)</label>
+                                    <label htmlFor="1970s" className="ml-2">1970s</label>
                                 </li>
                                 <li className="mb-2">
                                     <input type="checkbox" id="1960s"/>
-                                    <label htmlFor="1960s" className="ml-2">1960s (100)</label>
+                                    <label htmlFor="1960s" className="ml-2">1960s </label>
                                 </li>
                             </ul>
                         </div>
