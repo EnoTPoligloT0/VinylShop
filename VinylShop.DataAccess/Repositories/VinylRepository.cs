@@ -81,6 +81,37 @@ public class VinylRepository : IVinylRepository
         return _mapper.Map<List<Vinyl>>(vinylEntities);
     }
 
+    public async Task<List<Vinyl>> GetFiltered(string? genre, int? decade, string? sortOption)
+    {
+        var query = _context.Vinyls.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(genre))
+        {
+            genre = genre.ToLower();
+            query = query.Where(v => v.Genre.ToLower().Contains(genre.ToLower()));
+        }
+
+        if (decade.HasValue)
+        {
+            int startYear = decade.Value;
+            int endYear = startYear + 9;
+            query = query.Where(v => v.ReleaseYear >= startYear && v.ReleaseYear <= endYear);
+        }
+
+        query = sortOption switch
+        {
+            "ReleaseYearLowToHigh" => query.OrderBy(v => v.ReleaseYear),
+            "ReleaseYearHighToLow" => query.OrderByDescending(v => v.ReleaseYear),
+            "PriceLowToHigh" => query.OrderBy(v => v.Price),
+            "PriceHighToLow" => query.OrderByDescending(v => v.Price),
+            _ => query.OrderBy(v => v.Title),
+        };
+
+        var vinylEntities = await query.ToListAsync();
+        return _mapper.Map<List<Vinyl>>(vinylEntities);
+    }
+
+
     public async Task Update(Guid id, string title, string artist, string genre, int releaseYear, decimal price, int stock,
         string description, bool isAvailable)
     {
