@@ -14,3 +14,8 @@ export interface Vinyl {
 export interface VinylCardProps extends Vinyl {
     addToCart?: (id: string, price: number) => void;
 }
+export interface FilterVinylListProps {
+    genres: string[];
+    years: string[];
+    sortOption: string;
+}
