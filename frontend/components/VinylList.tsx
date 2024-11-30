@@ -1,12 +1,12 @@
 // VinylList.tsx
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import VinylCard from './VinylCard';
-import { Vinyl } from '@/types/vinyl';
-import { CartItem } from '@/types/cart'; // Import CartItem type
+import {Vinyl, FilterVinylListProps} from '@/types/vinyl';
+import {CartItem} from '@/types/cart'; // Import CartItem type
 import Popup from "@/components/Popup";
 
-const VinylList = () => {
+const VinylList: React.FC<FilterVinylListProps> = ({genres = [], years = [], sortOption = ""}) => {
     const [vinyls, setVinyls] = useState<Vinyl[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -17,7 +17,14 @@ const VinylList = () => {
     useEffect(() => {
         const fetchVinyls = async () => {
             try {
-                const response = await fetch('https://localhost:44372/vinyls/', {
+                setLoading(true);
+
+                const params = new URLSearchParams();
+                if (genres.length) params.append('genre', genres.join(','));
+                if (years.length) params.append('decade', years.join(','));
+                params.append('sortOption', sortOption);
+
+                const response = await fetch(`https://localhost:44372/vinyls/filter?${params.toString()}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
@@ -37,8 +44,6 @@ const VinylList = () => {
                 setLoading(false);
             }
         };
-
-        // Load cart from local storage when the component mounts
         const loadCartFromLocalStorage = () => {
             const storedCart = localStorage.getItem('cart');
             if (storedCart) {
@@ -48,7 +53,7 @@ const VinylList = () => {
 
         loadCartFromLocalStorage();
         fetchVinyls();
-    }, []);
+    }, [genres, years, sortOption]);
 
     const addToCart = (vinylId: string, price: number) => {
         const newCartItem: CartItem = {
@@ -58,7 +63,6 @@ const VinylList = () => {
             unitPrice: price,
         };
 
-        // Update cart and save to local storage
         const updatedCart = [...cart, newCartItem];
         setCart(updatedCart);
         localStorage.setItem('cart', JSON.stringify(updatedCart)); // Save to local storage
@@ -89,7 +93,7 @@ const VinylList = () => {
                 />
             ))}
 
-            {showPopup && <Popup message={popupMessage} onClose={closePopup} />}
+            {showPopup && <Popup message={popupMessage} onClose={closePopup}/>}
         </div>
     );
 };
