@@ -35,7 +35,7 @@ public class VinylRepository : IVinylRepository
         await _context.Vinyls.AddAsync(vinylEntity);
         await _context.SaveChangesAsync();
     }
-    
+
     public async Task UpdateImage(Guid vinylId, byte[] imageData)
     {
         var vinylEntity = await _context.Vinyls.SingleOrDefaultAsync(v => v.Id == vinylId);
@@ -61,7 +61,7 @@ public class VinylRepository : IVinylRepository
             .SingleOrDefaultAsync(v => v.Id == id);
         return _mapper.Map<Vinyl>(vinylEntity);
     }
-    
+
     public async Task<List<Vinyl>> Search(string searchTerm)
     {
         searchTerm = searchTerm.ToLower();
@@ -73,13 +73,59 @@ public class VinylRepository : IVinylRepository
                     v.Genre.ToLower().Contains(searchTerm) ||
                     v.Description.ToLower().Contains(searchTerm) ||
                     v.ReleaseYear.ToString().Contains(searchTerm) || // Handle year as string
-                    v.Price.ToString().Contains(searchTerm)           // Handle price as string
+                    v.Price.ToString().Contains(searchTerm) // Handle price as string
             );
 
         var vinylEntities = await query.ToListAsync();
-        
+
         return _mapper.Map<List<Vinyl>>(vinylEntities);
     }
+
+    public async Task<List<Vinyl>> GetFiltered(string? genre, int? decade, string? sortOption)
+    {
+        var query = _context.Vinyls.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(genre))
+        {
+            genre = genre.ToLower();
+            query = query.Where(v => v.Genre.ToLower().Contains(genre.ToLower()));
+        }
+
+        if (decade.HasValue)
+        {
+            int startYear = decade.Value;
+            int endYear = startYear + 9;
+            query = query.Where(v => v.ReleaseYear >= startYear && v.ReleaseYear <= endYear);
+        }
+
+        if (!string.IsNullOrWhiteSpace(sortOption))
+        {
+            if (sortOption.Contains("Price"))
+            {
+                query = sortOption.Contains("Low to High")
+                    ? query.OrderBy(v => v.Price)
+                    : query.OrderByDescending(v => v.Price);
+            }
+            else if (sortOption.Contains("ReleaseYear"))
+            {
+                query = sortOption.Contains("LowtoHigh")
+                    ? query.OrderBy(v => v.ReleaseYear)
+                    : query.OrderByDescending(v => v.ReleaseYear);
+            }
+            else
+            {
+                query = query.OrderBy(v => v.Title);
+            }
+        }
+        else
+        {
+            query = query.OrderBy(v => v.Title);
+        }
+
+        var vinylEntities = await query.ToListAsync();
+        return _mapper.Map<List<Vinyl>>(vinylEntities);
+    }
+
 
     public async Task Update(Guid id, string title, string artist, string genre, int releaseYear, decimal price, int stock,
         string description, bool isAvailable)
