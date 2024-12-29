@@ -1,29 +1,23 @@
-import React, {useEffect, useState} from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {CartItem} from "@/types/cart";
-import {Vinyl} from "@/types/vinyl";
-import {loadStripe} from "@stripe/stripe-js";
+import { CartItem } from "@/types/cart";
+import { Vinyl } from "@/types/vinyl";
+import { loadStripe } from "@stripe/stripe-js";
 import Cookies from "js-cookie";
+import { useCartContext } from "@/context/CartContext"; // Adjust the import based on your file structure
 
-//todo refactoring
 const stripePromise = loadStripe("pk_test_51QKsJJHqGo0KeykHjiMci68gs5tv5Ym5wgt2WXb4zRHaID0V3AsQbjXSiuRJKD0FWBi9kH0LPtt6aZ37jac8azFa00OFZkimTs");
-localStorage.removeItem("orderId")
+localStorage.removeItem("orderId");
 
 const Cart = () => {
-
-    const [cart, setCart] = useState<CartItem[]>([]);
+    const { cart, setCart, totalAmount } = useCartContext(); // Accessing cart and totalAmount from context
     const [vinylDetails, setVinylDetails] = useState<Vinyl[]>([]);
     const [loading, setLoading] = useState(false);
-    const [totalAmount, setTotalAmount] = useState(0);
     const [orderId, setOrderId] = useState<string | null>(null);
     const [token, setToken] = useState<string | null>(null);
 
     useEffect(() => {
-        const storedCart = typeof window !== "undefined" ? localStorage.getItem("cart") : null;
-        if (storedCart) {
-            setCart(JSON.parse(storedCart));
-        }
-
         const token = Cookies.get("secretCookie");
         if (token) {
             setToken(token);
@@ -35,26 +29,16 @@ const Cart = () => {
             try {
                 if (cart.length === 0) {
                     setVinylDetails([]);
-                    setTotalAmount(0);
                     return;
                 }
-
                 const vinylIds = cart.map((item) => item.vinylId);
                 const vinylsData = await Promise.all(
                     vinylIds.map((id) =>
                         axios.get<Vinyl>(`https://localhost:44372/vinyls/${id}`)
                     )
                 );
-
                 const vinyls = vinylsData.map((response) => response.data);
                 setVinylDetails(vinyls);
-
-                const total = cart.reduce((sum, item) => {
-                    const vinyl = vinyls.find((v) => v.id === item.vinylId);
-                    return sum + (vinyl?.price || 0) * item.quantity;
-                }, 0);
-
-                setTotalAmount(total);
             } catch (error) {
                 console.error("Error fetching vinyl details:", error);
             }
@@ -77,28 +61,28 @@ const Cart = () => {
                 "https://localhost:44372/orders",
                 {
                     orderDate: new Date(),
-                    totalAmount
+                    totalAmount,
                 },
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${token}`,
                     },
                     withCredentials: true,
                 }
             );
 
             const orderId = response.data.id;
-            localStorage.setItem('orderId', orderId);
+            localStorage.setItem("orderId", orderId);
             for (const item of cart) {
                 await axios.post(
                     `https://localhost:44372/orderItems/orderItem/${orderId}`,
                     {
                         vinylId: item.vinylId,
                         quantity: item.quantity,
-                        unitPrice: item.unitPrice
+                        unitPrice: item.unitPrice,
                     },
                     {
-                        headers: {Authorization: `Bearer ${token}`},
+                        headers: { Authorization: `Bearer ${token}` },
                         withCredentials: true,
                     }
                 );
@@ -135,18 +119,17 @@ const Cart = () => {
                 throw new Error("Failed to create checkout session.");
             }
 
-            const {sessionId} = await sessionResponse.json();
+            const { sessionId } = await sessionResponse.json();
 
             const stripe = await stripePromise;
             if (!stripe) {
                 throw new Error("Stripe.js failed to load.");
             }
 
-            const {error} = await stripe.redirectToCheckout({sessionId});
+            const { error } = await stripe.redirectToCheckout({ sessionId });
             if (error) {
                 throw new Error(`Stripe Checkout error: ${error.message}`);
             }
-
         } catch (error) {
             console.error("Error during checkout:", error);
         } finally {
@@ -196,8 +179,7 @@ const Cart = () => {
                     <button
                         className="bg-purple-700 text-white font-bold py-2 px-4 rounded"
                         onClick={handleCheckout}
-                        disabled={loading}
-                    >
+                        disabled={loading}>
                         {loading ? "Processing..." : "Proceed to Checkout"}
                     </button>
                 </div>
