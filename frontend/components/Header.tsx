@@ -1,13 +1,14 @@
 "use client";
-import React, {useEffect, useState, useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Cookies from "js-cookie";
-import {jwtDecode} from "jwt-decode";
-import {useRouter} from "next/navigation";
+import { jwtDecode } from "jwt-decode";
+import { useRouter } from "next/navigation";
 import SearchVinyl from "@/components/SearchVinyl";
-import {FaUser} from "react-icons/fa";
-import {FiChevronDown, FiChevronUp} from "react-icons/fi";
+import { FaUser } from "react-icons/fa";
+import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { useCartContext } from "@/context/CartContext";
 
 interface DecodedToken {
     userId: string;
@@ -17,30 +18,11 @@ interface DecodedToken {
 }
 
 function Header() {
-    const [cart, setCart] = useState<any[]>([]);
-    const [totalPrice, setTotalPrice] = useState(0);
+    const { cart, totalAmount, setCart } = useCartContext(); // Use CartContext for cart and totalAmount
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedCart = localStorage.getItem("cart");
-            const parsedCart = storedCart ? JSON.parse(storedCart) : [];
-            setCart(parsedCart);
-        }
-    }, []);
-
-    useEffect(() => {
-        const calculateTotalPrice = () => {
-            const price = cart.reduce((total: number, item: any) => {
-                return total + item.unitPrice * item.quantity;
-            }, 0);
-            setTotalPrice(price);
-        };
-        calculateTotalPrice();
-    }, [cart]);
 
     useEffect(() => {
         const token = Cookies.get("secretCookie");
@@ -59,14 +41,9 @@ function Header() {
         Cookies.remove("secretCookie");
         setIsLoggedIn(false);
         setDropdownOpen(false);
-        setCart([]);
+        setCart([]); // Clear cart in context
         localStorage.removeItem("cart");
         router.push("/");
-    };
-
-    const handleCartChange = (newCart: any[]) => {
-        setCart(newCart);
-        localStorage.setItem("cart", JSON.stringify(newCart));
     };
 
     useEffect(() => {
@@ -79,10 +56,9 @@ function Header() {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-//todo userInfo page
+
     return (
         <header className="bg-light-gray">
-
             <div className="hidden sm:grid container mx-auto grid-cols-12 items-center py-4">
                 <div className="col-span-6 flex items-center">
                     <p className="text-gray-600 text-sm">
@@ -120,14 +96,13 @@ function Header() {
                             {dropdownOpen && (
                                 <div
                                     className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-md"
-                                    style={{zIndex: 50}}>
+                                    style={{ zIndex: 50 }}>
                                     <div className="px-4 py-2 text-sm text-gray-700">
                                         <p>User Info</p>
                                     </div>
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                    >
+                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                         Logout
                                     </button>
                                 </div>
@@ -170,7 +145,7 @@ function Header() {
                                 <p>{cart.length}</p>
                             </span>
                         </Link>
-                        <p className="ml-2 hidden md:block">Total: ${totalPrice.toFixed(2)}</p>
+                        <p className="ml-2 hidden md:block">Total: ${totalAmount.toFixed(2)}</p>
                     </div>
                 </div>
             </div>
