@@ -14,7 +14,7 @@ export interface Order {
     items: OrderItem[];
 }
 export interface CartItem {
-    id: string; 
+    id?: string;
     vinylId: string; 
     quantity: number; 
     unitPrice: number;
