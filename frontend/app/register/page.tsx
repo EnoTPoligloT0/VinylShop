@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import axios from 'axios';
-import api from '../../utils/api';
-import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
-import { jwtDecode } from 'jwt-decode';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useAuthContext } from "@/context/AuthContext";  // Import AuthContext
+import api from "../../utils/api";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { AxiosError } from "axios";
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('');
@@ -14,6 +15,7 @@ const RegisterPage = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
+    const { login } = useAuthContext();  // Get login function from AuthContext
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -24,32 +26,18 @@ const RegisterPage = () => {
         }
 
         try {
-            const response = await api.post('/register', {
-                email,
-                password,
-            });
+            await api.post('/register', { email, password });
 
-            console.log('Registration successful.');
-
-            const loginResponse = await api.post('/login', {
-                email,
-                password,
-            });
-
-            console.log('Login successful.');
+            const loginResponse = await api.post('/login', { email, password });
 
             const token = loginResponse.data;
             if (token) {
-                console.log('Token received.');
-
                 Cookies.set('secretCookie', token, { expires: 1, path: '/', sameSite: 'Lax' });
 
                 const decodedToken: any = jwtDecode(token);
-                console.log("Token Decoded.");
-
                 if (decodedToken?.userId) {
+                    login(token);
                     router.replace('/');
-                    router.refresh();
                 } else {
                     setError('Failed to retrieve userId from token');
                 }
@@ -57,15 +45,9 @@ const RegisterPage = () => {
                 setError('No token received. Login failed.');
             }
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                console.error('Error during registration or login:', error.response.data);
-                if (error.response.status === 400 && error.response.data === 'A user with this email already exists.') {
-                    setError('Email already in use. Please try another one.');
-                } else {
-                    setError('Registration or login failed. Please try again.');
-                }
+            if (error instanceof AxiosError) {
+                setError('Registration or login failed. Please try again.');
             } else {
-                console.error('Unexpected error:', error);
                 setError('An unexpected error occurred. Please try again later.');
             }
         }
@@ -78,9 +60,7 @@ const RegisterPage = () => {
                 {error && <p className="text-red-500 text-center mb-4">{error}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                            Email
-                        </label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email</label>
                         <input
                             id="email"
                             type="email"
@@ -93,9 +73,7 @@ const RegisterPage = () => {
                     </div>
 
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                            Password
-                        </label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label>
                         <input
                             id="password"
                             type="password"
@@ -108,9 +86,7 @@ const RegisterPage = () => {
                     </div>
 
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirm-password">
-                            Confirm Password
-                        </label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirm-password">Confirm Password</label>
                         <input
                             id="confirm-password"
                             type="password"
@@ -131,9 +107,7 @@ const RegisterPage = () => {
 
                     <div className="mt-4 text-center">
                         Already have an account?{" "}
-                        <Link href="/login" className="text-purple-600 hover:underline">
-                            Sign In
-                        </Link>
+                        <Link href="/login" className="text-purple-600 hover:underline">Sign In</Link>
                     </div>
                 </form>
             </div>

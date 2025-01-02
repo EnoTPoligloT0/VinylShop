@@ -1,49 +1,27 @@
-"use client";
+'use client';
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import SearchVinyl from "@/components/SearchVinyl";
 import { FaUser } from "react-icons/fa";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { useCartContext } from "@/context/CartContext";
-
-interface DecodedToken {
-    userId: string;
-    Admin: string;
-    exp: number;
-    email?: string;
-}
+import { useAuthContext } from "@/context/AuthContext";
 
 function Header() {
     const { cart, totalAmount, setCart } = useCartContext(); // Use CartContext for cart and totalAmount
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { user, isLoggedIn, logout } = useAuthContext(); // Get auth context values
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const token = Cookies.get("secretCookie");
-        if (token) {
-            try {
-                const decoded: DecodedToken = jwtDecode(token);
-                setIsLoggedIn(!!decoded);
-            } catch (error) {
-                console.error("Error decoding token:", error);
-                setIsLoggedIn(false);
-            }
-        }
-    }, []);
-
     const handleLogout = () => {
-        Cookies.remove("secretCookie");
-        setIsLoggedIn(false);
+        logout(); // Use logout from AuthContext
         setDropdownOpen(false);
-        setCart([]); // Clear cart in context
+        setCart([]); // Clear cart
         localStorage.removeItem("cart");
-        router.push("/");
+        router.push("/"); // Redirect to homepage
     };
 
     useEffect(() => {
@@ -86,11 +64,11 @@ function Header() {
                             <button
                                 onClick={() => setDropdownOpen(!dropdownOpen)}
                                 className="flex items-center space-x-2 text-sm">
-                                <FaUser size={20}/>
+                                <FaUser size={20} />
                                 {dropdownOpen ? (
-                                    <FiChevronUp size={20}/>
+                                    <FiChevronUp size={20} />
                                 ) : (
-                                    <FiChevronDown size={20}/>
+                                    <FiChevronDown size={20} />
                                 )}
                             </button>
                             {dropdownOpen && (
@@ -99,6 +77,7 @@ function Header() {
                                     style={{ zIndex: 50 }}>
                                     <div className="px-4 py-2 text-sm text-gray-700">
                                         <p>User Info</p>
+                                        <p>{user?.email}</p>
                                     </div>
                                     <button
                                         onClick={handleLogout}
@@ -117,29 +96,29 @@ function Header() {
             <div className="container mx-auto grid grid-cols-12 items-center py-4">
                 <div className="col-span-3 flex items-center">
                     <Link href="/" className="flex items-center">
-                        <Image src="/vinyl-icon.svg" alt="Logo" width={30} height={30}/>
+                        <Image src="/vinyl-icon.svg" alt="Logo" width={30} height={30} />
                         <span className="ml-2 text-black font-semibold text-3xl">AmberVinyl Store</span>
                     </Link>
                 </div>
 
                 <div className="col-start-4 col-span-6">
-                    <SearchVinyl/>
+                    <SearchVinyl />
                 </div>
 
                 <div className="col-start-11 col-span-2 flex justify-end items-center space-x-4">
                     <div>
                         <Link href="/wishlist">
-                            <Image src="/heart.svg" alt="Heart" width={28} height={24}/>
+                            <Image src="/heart.svg" alt="Heart" width={28} height={24} />
                         </Link>
                     </div>
 
                     <div>
-                        <Image src="/divider.svg" alt="Divider" width={1} height={24}/>
+                        <Image src="/divider.svg" alt="Divider" width={1} height={24} />
                     </div>
 
                     <div className="relative flex items-center">
                         <Link href="/cart" className="relative">
-                            <Image src="/bag.svg" alt="Bag" width={26} height={26}/>
+                            <Image src="/bag.svg" alt="Bag" width={26} height={26} />
                             <span
                                 className="absolute -top-2 -right-2 bg-purple-600 text-white rounded-full px-2 py-1 text-xs flex items-center justify-center">
                                 <p>{cart.length}</p>
@@ -167,8 +146,7 @@ function Header() {
                         </li>
                         <li className="flex-1 text-center">
                             <Link href="/about"
-                                  className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105">About
-                                Us</Link>
+                                  className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105">About Us</Link>
                         </li>
                         <li className="flex-1 text-center">
                             <Link href="/contact"
