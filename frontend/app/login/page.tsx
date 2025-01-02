@@ -4,37 +4,33 @@ import { useState } from "react";
 import Cookies from 'js-cookie';
 import api from '../../utils/api';
 import { useRouter } from 'next/navigation';
+import { useAuthContext } from "@/context/AuthContext";  // Import AuthContext
 import { jwtDecode } from "jwt-decode";
 import Link from "next/link";
 import { GoogleLogin } from "@react-oauth/google";
 import { CredentialResponse } from "@react-oauth/google";
 
-//todo redundant code
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState('');
     const router = useRouter();
+    const { login } = useAuthContext();  // Get login function from AuthContext
 
     const handleGoogleLogin = async (response: CredentialResponse) => {
         try {
             const googleToken = response.credential;  // Explicitly typed as string
             const loginResponse = await api.post('/login/google', { googleToken });
 
-            console.log("Google Login API response.");
-
             const token = loginResponse.data;
             if (token) {
                 Cookies.remove('secretCookie');
-
                 Cookies.set('secretCookie', token, { expires: 1, path: '/', sameSite: 'Lax' });
-                console.log('Token set in cookie.');
 
                 const decodedToken: any = jwtDecode(token);
-                console.log("Decoded Token.");
                 if (decodedToken?.userId) {
+                    login(token);  // Log the user in using the AuthContext login function
                     router.push('/');
-                    router.refresh();
                 } else {
                     setError('Failed to retrieve userId from token');
                 }
@@ -46,47 +42,40 @@ const LoginPage = () => {
             setError('Failed to authenticate with Google');
         }
     };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const loginResponse = await api.post('/login', { email, password });
 
-            console.log("Login API response.");
-
             const token = loginResponse.data;
             if (token) {
                 Cookies.remove('secretCookie');
-
                 Cookies.set('secretCookie', token, { expires: 1, path: '/', sameSite: 'Lax' });
-                console.log('Token set in cookie.');
 
                 const decodedToken: any = jwtDecode(token);
-                console.log("Decoded Token.");
                 if (decodedToken?.userId) {
+                    login(token);
                     router.push('/');
-                    router.refresh();
                 } else {
                     setError('Failed to retrieve userId from token');
                 }
             } else {
-                setError('Failed to retrieve token from the API response');
+                setError('Failed to authenticate. Please check your credentials.');
             }
         } catch (err) {
-            console.error("Login error:", err);
-            setError('Invalid email or password');
+            setError('An error occurred during login. Please try again later.');
         }
     };
 
     return (
         <main className="flex-grow flex items-center justify-center">
             <div className="bg-white p-10 rounded-lg shadow-md max-w-xl w-full my-20 mx-4">
-                <h2 className="text-3xl font-bold text-center mb-6">Sign In</h2>
-                {error && <p className="text-red-500 text-center">{error}</p>}
+                <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
+                {error && <p className="text-red-500 text-center mb-4">{error}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                            Email
-                        </label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email</label>
                         <input
                             id="email"
                             type="email"
@@ -99,9 +88,7 @@ const LoginPage = () => {
                     </div>
 
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                            Password
-                        </label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label>
                         <input
                             id="password"
                             type="password"
@@ -113,38 +100,22 @@ const LoginPage = () => {
                         />
                     </div>
 
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center">
-                            <input id="remember" type="checkbox" className="mr-2 leading-tight"/>
-                            <label className="text-sm text-gray-600" htmlFor="remember">
-                                Remember me
-                            </label>
-                        </div>
-                        <Link href="#" className="text-sm text-gray-600 hover:underline">
-                            Forgot Password?
-                        </Link>
-                    </div>
-
                     <button
                         type="submit"
-                        className="mt-4 w-full bg-purple-600 text-white p-4 rounded-lg font-semibold hover:bg-deep-purple">
+                        className="mt-4 w-full bg-purple-600 text-white p-4 rounded-lg font-semibold hover:bg-purple-700">
                         Login
                     </button>
 
                     <div className="mt-4 text-center">
-                        Don’t have an account?{" "}
-                        <Link href="/register" className="text-purple-600 hover:underline">
-                            Register
-                        </Link>
+                        Don't have an account?{" "}
+                        <Link href="/register" className="text-purple-600 hover:underline">Register</Link>
                     </div>
-                </form>
 
-                <div className="mt-6">
                     <GoogleLogin
                         onSuccess={handleGoogleLogin}
-                        onError={() => setError('Google login failed')} // Correct type for error handler
+                        onError={() => setError("Google login failed.")}
                     />
-                </div>
+                </form>
             </div>
         </main>
     );

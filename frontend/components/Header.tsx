@@ -1,72 +1,27 @@
-"use client";
-import React, {useEffect, useState, useRef} from "react";
+'use client';
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Cookies from "js-cookie";
-import {jwtDecode} from "jwt-decode";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import SearchVinyl from "@/components/SearchVinyl";
-import {FaUser} from "react-icons/fa";
-import {FiChevronDown, FiChevronUp} from "react-icons/fi";
-
-interface DecodedToken {
-    userId: string;
-    Admin: string;
-    exp: number;
-    email?: string;
-}
+import { FaUser } from "react-icons/fa";
+import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { useCartContext } from "@/context/CartContext";
+import { useAuthContext } from "@/context/AuthContext";
 
 function Header() {
-    const [cart, setCart] = useState<any[]>([]);
-    const [totalPrice, setTotalPrice] = useState(0);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { cart, totalAmount, setCart } = useCartContext(); // Use CartContext for cart and totalAmount
+    const { user, isLoggedIn, logout } = useAuthContext(); // Get auth context values
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedCart = localStorage.getItem("cart");
-            const parsedCart = storedCart ? JSON.parse(storedCart) : [];
-            setCart(parsedCart);
-        }
-    }, []);
-
-    useEffect(() => {
-        const calculateTotalPrice = () => {
-            const price = cart.reduce((total: number, item: any) => {
-                return total + item.unitPrice * item.quantity;
-            }, 0);
-            setTotalPrice(price);
-        };
-        calculateTotalPrice();
-    }, [cart]);
-
-    useEffect(() => {
-        const token = Cookies.get("secretCookie");
-        if (token) {
-            try {
-                const decoded: DecodedToken = jwtDecode(token);
-                setIsLoggedIn(!!decoded);
-            } catch (error) {
-                console.error("Error decoding token:", error);
-                setIsLoggedIn(false);
-            }
-        }
-    }, []);
-
     const handleLogout = () => {
-        Cookies.remove("secretCookie");
-        setIsLoggedIn(false);
+        logout(); // Use logout from AuthContext
         setDropdownOpen(false);
-        setCart([]);
+        setCart([]); // Clear cart
         localStorage.removeItem("cart");
-        router.push("/");
-    };
-
-    const handleCartChange = (newCart: any[]) => {
-        setCart(newCart);
-        localStorage.setItem("cart", JSON.stringify(newCart));
+        router.push("/"); // Redirect to homepage
     };
 
     useEffect(() => {
@@ -79,10 +34,9 @@ function Header() {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-//todo userInfo page
+
     return (
         <header className="bg-light-gray">
-
             <div className="hidden sm:grid container mx-auto grid-cols-12 items-center py-4">
                 <div className="col-span-6 flex items-center">
                     <p className="text-gray-600 text-sm">
@@ -110,24 +64,24 @@ function Header() {
                             <button
                                 onClick={() => setDropdownOpen(!dropdownOpen)}
                                 className="flex items-center space-x-2 text-sm">
-                                <FaUser size={20}/>
+                                <FaUser size={20} />
                                 {dropdownOpen ? (
-                                    <FiChevronUp size={20}/>
+                                    <FiChevronUp size={20} />
                                 ) : (
-                                    <FiChevronDown size={20}/>
+                                    <FiChevronDown size={20} />
                                 )}
                             </button>
                             {dropdownOpen && (
                                 <div
                                     className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-md"
-                                    style={{zIndex: 50}}>
+                                    style={{ zIndex: 50 }}>
                                     <div className="px-4 py-2 text-sm text-gray-700">
                                         <p>User Info</p>
+                                        <p>{user?.email}</p>
                                     </div>
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                    >
+                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                         Logout
                                     </button>
                                 </div>
@@ -142,35 +96,35 @@ function Header() {
             <div className="container mx-auto grid grid-cols-12 items-center py-4">
                 <div className="col-span-3 flex items-center">
                     <Link href="/" className="flex items-center">
-                        <Image src="/vinyl-icon.svg" alt="Logo" width={30} height={30}/>
+                        <Image src="/vinyl-icon.svg" alt="Logo" width={30} height={30} />
                         <span className="ml-2 text-black font-semibold text-3xl">AmberVinyl Store</span>
                     </Link>
                 </div>
 
                 <div className="col-start-4 col-span-6">
-                    <SearchVinyl/>
+                    <SearchVinyl />
                 </div>
 
                 <div className="col-start-11 col-span-2 flex justify-end items-center space-x-4">
                     <div>
                         <Link href="/wishlist">
-                            <Image src="/heart.svg" alt="Heart" width={28} height={24}/>
+                            <Image src="/heart.svg" alt="Heart" width={28} height={24} />
                         </Link>
                     </div>
 
                     <div>
-                        <Image src="/divider.svg" alt="Divider" width={1} height={24}/>
+                        <Image src="/divider.svg" alt="Divider" width={1} height={24} />
                     </div>
 
                     <div className="relative flex items-center">
                         <Link href="/cart" className="relative">
-                            <Image src="/bag.svg" alt="Bag" width={26} height={26}/>
+                            <Image src="/bag.svg" alt="Bag" width={26} height={26} />
                             <span
                                 className="absolute -top-2 -right-2 bg-purple-600 text-white rounded-full px-2 py-1 text-xs flex items-center justify-center">
                                 <p>{cart.length}</p>
                             </span>
                         </Link>
-                        <p className="ml-2 hidden md:block">Total: ${totalPrice.toFixed(2)}</p>
+                        <p className="ml-2 hidden md:block">Total: ${totalAmount.toFixed(2)}</p>
                     </div>
                 </div>
             </div>
@@ -192,8 +146,7 @@ function Header() {
                         </li>
                         <li className="flex-1 text-center">
                             <Link href="/about"
-                                  className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105">About
-                                Us</Link>
+                                  className="text-black block hover:text-royal-purple transition duration-300 ease-in-out transform hover:scale-105">About Us</Link>
                         </li>
                         <li className="flex-1 text-center">
                             <Link href="/contact"

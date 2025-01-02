@@ -4,23 +4,28 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { VinylCardProps } from '@/types/vinyl';
 import { useRouter } from 'next/navigation';  // Corrected import
+import { useCartContext } from "@/context/CartContext"; // Import CartContext
 
 const VinylCard: React.FC<VinylCardProps> = ({
                                                  id,
                                                  imageBase64,
                                                  title,
                                                  price,
-                                                 artist,
-                                                 addToCart
+                                                 artist
                                              }) => {
-    const router = useRouter();  // Use the hook to get the router
+    const { addToCart } = useCartContext();  // Use addToCart from CartContext
 
     const imageSrc = imageBase64 ? `data:image/jpeg;base64,${imageBase64}` : '/default-image.jpg';
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
         if (id) {
-            addToCart && addToCart(id, price);
+            const cartItem = {
+                vinylId: id,
+                quantity: 1,
+                unitPrice: price
+            };
+            addToCart(cartItem);
         }
     };
 

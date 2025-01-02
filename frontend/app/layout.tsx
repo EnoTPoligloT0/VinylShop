@@ -6,6 +6,7 @@ import {CartProvider} from "@/context/CartContext";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 import {Elements} from "@stripe/react-stripe-js";
 import {loadStripe} from "@stripe/stripe-js";
+import {AuthProvider} from "@/context/AuthContext";
 
 const stripePromise = loadStripe("pk_test_51QKsJJHqGo0KeykHjiMci68gs5tv5Ym5wgt2WXb4zRHaID0V3AsQbjXSiuRJKD0FWBi9kH0LPtt6aZ37jac8azFa00OFZkimTs");
 
@@ -29,13 +30,15 @@ export default function RootLayout({
         <body className="font-poppins antialiased">
 
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
-            <Elements stripe={stripePromise}>
-                <CartProvider>
-                    <Header/>
-                    <main>{children}</main>
-                    <Footer/>
-                </CartProvider>
-            </Elements>
+            <AuthProvider>
+                <Elements stripe={stripePromise}>
+                    <CartProvider>
+                        <Header/>
+                        <main>{children}</main>
+                        <Footer/>
+                    </CartProvider>
+                </Elements>
+            </AuthProvider>
         </GoogleOAuthProvider>
         </body>
 
