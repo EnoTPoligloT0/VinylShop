@@ -9,9 +9,16 @@ public class OrderConfiguration : IEntityTypeConfiguration<OrderEntity>
     public void Configure(EntityTypeBuilder<OrderEntity> orderBuilder)
     {
         orderBuilder.ToTable("Orders").HasKey(o => o.Id);
-        orderBuilder.Property(o => o.UserId).IsRequired();
-        orderBuilder.Property(o => o.OrderDate).IsRequired();
-        orderBuilder.Property(o => o.TotalAmount).IsRequired().HasColumnType("decimal(18,2)");
+        orderBuilder.Property(o => o.UserId)
+            .IsRequired();
+        orderBuilder.Property(o => o.OrderDate)
+            .IsRequired();
+        orderBuilder.Property(o => o.TotalAmount)
+            .IsRequired()
+            .HasColumnType("decimal(18,2)");
+        orderBuilder.Property(o => o.Status)
+            .IsRequired()
+            .HasConversion<int>();
 
         orderBuilder.HasOne(o => o.User)
             .WithMany(u => u.Orders)
