@@ -1,4 +1,4 @@
-using VinylShop.Core.Models;
+using VinylShop.Core.Enums;
 
 namespace VinylShop.DataAccess.Entities;
 
@@ -11,8 +11,9 @@ public class OrderEntity
     public DateTime OrderDate { get; set; }
     public decimal TotalAmount { get;  set;}
 
+    public Status Status { get; set; }
+
     public List<OrderItemEntity> OrderItems { get; set; }
-    
     public List<ShipmentEntity> Shipments { get; set; }
     public List<PaymentEntity> Payments { get; set; }
 }
