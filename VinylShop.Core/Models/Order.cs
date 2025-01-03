@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using VinylShop.Core.Enums;
 
 namespace VinylShop.Core.Models;
 
@@ -15,10 +16,10 @@ public class Order
 
     public Guid Id { get; }
     public Guid UserId { get; }
-
     public User User { get; }
     public DateTime OrderDate { get; }
     public decimal TotalAmount { get; }
+    public Status Status { get; private set; }
 
     public IReadOnlyList<OrderItem>? OrderItems => _orderItems;
     
@@ -28,5 +29,10 @@ public class Order
         var order = new Order(id, userId, orderDate, totalAmount);
 
         return Result.Success(order);
+    }
+
+    public void UpdateStatus(Status status)
+    {
+        Status = status;
     }
 }
