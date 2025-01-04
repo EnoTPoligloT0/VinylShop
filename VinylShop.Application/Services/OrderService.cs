@@ -1,3 +1,4 @@
+using VinylShop.Core.Enums;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Interfaces.Services;
 using VinylShop.Core.Models;
@@ -37,6 +38,11 @@ public class OrderService : IOrderService
     public async Task UpdateOrder(Guid id, DateTime orderDate, decimal totalAmount, List<OrderItem> orderItems)
     {
         await _orderRepository.Update(id, orderDate, totalAmount, orderItems);
+    }
+
+    public async Task UpdateStatus(Guid id, Status status)
+    {
+        await _orderRepository.UpdateStatusAsync(id, status);
     }
     public async Task DeleteOrder(Guid id)
     {
