@@ -6,6 +6,7 @@ using VinylShop.API.Contracts.Shipments;
 using VinylShop.API.Contracts.Users;
 using VinylShop.API.Contracts.Vinyls;
 using VinylShop.Application.Services;
+using VinylShop.Core.Enums;
 using VinylShop.Core.Models;
 
 namespace VinylShop.API.Endpoints;
@@ -45,7 +46,8 @@ public static class OrderEndpoints
             Guid.NewGuid(),
             userId,
             request.OrderDate,
-            request.TotalAmount
+            request.TotalAmount,
+            Status.Pending
         );
         if (!orderResult.IsSuccess) return Results.BadRequest(orderResult.Error);
 
@@ -72,8 +74,8 @@ public static class OrderEndpoints
         if (order == null) return Results.NotFound();
 
         var orderItems = await orderItemService.GetOrderItemByOrderId(orderId);
-        var payment = await paymentService.GetPaymentByOrderId(orderId); // May be null
-        var shipment = await shipmentService.GetShipmentByOrderId(orderId); // May be null
+        var payment = await paymentService.GetPaymentByOrderId(orderId);
+        var shipment = await shipmentService.GetShipmentByOrderId(orderId);
         var user = await userService.GetUserById(order.UserId);
         if (user == null) return Results.NotFound();
 

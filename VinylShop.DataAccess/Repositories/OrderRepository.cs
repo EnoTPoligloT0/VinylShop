@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using VinylShop.Core.Enums;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Models;
 using VinylShop.DataAccess.Entities;
@@ -64,6 +65,14 @@ public class OrderRepository : IOrderRepository
                     .SetProperty(c => c.OrderDate, orderDate)
                     .SetProperty(c => c.TotalAmount, totalAmount)
             );
+    }
+
+    public async Task UpdateStatusAsync(Guid id, Status status)
+    {
+        await _context.Orders
+            .Where(c => c.Id == id)
+            .ExecuteUpdateAsync(u =>
+                u.SetProperty(s => s.Status, status));
     }
 
     public async Task<bool> OrderExistsAsync(Guid orderId)
