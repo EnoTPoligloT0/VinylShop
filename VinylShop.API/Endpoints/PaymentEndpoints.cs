@@ -6,6 +6,7 @@ using VinylShop.API.Contracts.OrderItems;
 using VinylShop.API.Contracts.Payments;
 using VinylShop.API.Contracts.Shipments;
 using VinylShop.Application.Services;
+using VinylShop.Core.Enums;
 using VinylShop.Core.Models;
 using Exception = System.Exception;
 
@@ -31,7 +32,8 @@ public static class PaymentEndpoints
     private static async Task<IResult> CreatePayment(
         [FromRoute] Guid orderId,
         [FromBody] CreatePaymentRequest request,
-        [FromServices] PaymentService paymentService)
+        [FromServices] PaymentService paymentService,
+        [FromServices] OrderService orderService)
     {
         var paymentResult = Payment.Create(
             Guid.NewGuid(),
@@ -45,6 +47,8 @@ public static class PaymentEndpoints
         if (!paymentResult.IsSuccess) return Results.BadRequest(paymentResult.Error);
 
         await paymentService.CreatePayment(paymentResult.Value);
+
+        await orderService.UpdateStatus(orderId, Status.Paid);
 
         return Results.Ok(paymentResult.Value);
     }

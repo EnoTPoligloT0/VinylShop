@@ -31,6 +31,9 @@ namespace VinylShop.DataAccess.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 

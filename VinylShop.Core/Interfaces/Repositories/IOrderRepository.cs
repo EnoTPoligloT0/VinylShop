@@ -1,3 +1,4 @@
+using VinylShop.Core.Enums;
 using VinylShop.Core.Models;
 
 
@@ -14,6 +15,8 @@ public interface IOrderRepository
     Task<Order> GetById(Guid id);
 
     Task Update(Guid id, DateTime orderDate, decimal totalAmount, List<OrderItem> orderItems);
+
+    Task UpdateStatusAsync(Guid id, Status status);
 
     Task<bool> OrderExistsAsync(Guid orderId);
 }

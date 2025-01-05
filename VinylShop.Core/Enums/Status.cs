@@ -1,14 +1,23 @@
 ﻿namespace VinylShop.Core.Enums;
 
-//todo implement Status in Order,Payment,Shipment 
 public enum Status
 {
-    Pending,        
-    Confirmed,     
-    Shipped,       
-    Delivered,    
-    Canceled,    
+    //Pre-paid
+    Pending,
+    Confirmed,
+    Paid,
+
+    //Processing
+    Processing,
+    Shipped,
+    Transit,
+
+    //Delivery
+    Delivered,
+
+    //Issue
+    Canceled,
     Refunded,      
-    Failed,        
-    Processing    
+    Failed,
+    Lost
 }
