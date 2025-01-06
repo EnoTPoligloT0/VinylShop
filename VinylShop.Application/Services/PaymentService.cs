@@ -4,6 +4,7 @@ using Stripe;
 using Stripe.Checkout;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Interfaces.Services;
+using VinylShop.Core.Interfaces.UnitOfWork;
 using VinylShop.Core.Models;
 
 namespace VinylShop.Application.Services;
@@ -11,12 +12,14 @@ namespace VinylShop.Application.Services;
 public class PaymentService : IPaymentService
 {
     private readonly IPaymentRepository _paymentRepository;
+    private readonly ITransactionManager _transactionManager;
     private readonly string _stripeSecretKey;
     private readonly string _stripePublicKey;
 
-    public PaymentService(IPaymentRepository paymentRepository, IConfiguration configuration)
+    public PaymentService(IPaymentRepository paymentRepository, IConfiguration configuration, ITransactionManager transactionManager)
     {
         _paymentRepository = paymentRepository;
+        _transactionManager = transactionManager;
         _stripeSecretKey = configuration["Stripe:SecretKey"];
         _stripePublicKey = configuration["Stripe:PublicKey"];
 
@@ -25,7 +28,10 @@ public class PaymentService : IPaymentService
 
     public async Task CreatePayment(Payment payment)
     {
-        await _paymentRepository.Create(payment);
+        await _transactionManager.ExecuteInTransactionAsync(async () =>
+        {
+            await _paymentRepository.Create(payment);
+        });
     }
 
     public async Task<Result<Payment>> ProcessStripePayment(Guid orderId, decimal amount, string paymentMethod, string currency = "usd")

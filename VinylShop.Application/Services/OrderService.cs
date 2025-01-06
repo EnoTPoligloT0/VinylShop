@@ -1,6 +1,7 @@
 using VinylShop.Core.Enums;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Interfaces.Services;
+using VinylShop.Core.Interfaces.UnitOfWork;
 using VinylShop.Core.Models;
 
 namespace VinylShop.Application.Services;
@@ -8,15 +9,20 @@ namespace VinylShop.Application.Services;
 public class OrderService : IOrderService
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly ITransactionManager _transactionManager;
 
-    public OrderService(IOrderRepository orderRepository)
+    public OrderService(IOrderRepository orderRepository, ITransactionManager transactionManager)
     {
         _orderRepository = orderRepository;
+        _transactionManager = transactionManager;
     }
 
     public async Task CreateOrder(Order order)
     {
-        await _orderRepository.Create(order);
+        await _transactionManager.ExecuteInTransactionAsync(async () =>
+        {
+            await _orderRepository.Create(order);
+        });
     }
 
 

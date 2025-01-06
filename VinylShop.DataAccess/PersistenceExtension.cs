@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using VinylShop.Application;
 using VinylShop.Core.Interfaces.Repositories;
+using VinylShop.Core.Interfaces.UnitOfWork;
 using VinylShop.DataAccess.Repositories;
 
 namespace VinylShop.DataAccess
@@ -24,6 +26,8 @@ namespace VinylShop.DataAccess
             services.AddScoped<IShipmentRepository, ShipmentRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IVinylRepository, VinylRepository>();
+
+            services.AddScoped<ITransactionManager, TransactionManager>();
 
             return services;
         }
