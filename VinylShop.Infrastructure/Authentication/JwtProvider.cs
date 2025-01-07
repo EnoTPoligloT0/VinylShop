@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using VinylShop.Application.Auth;
+using VinylShop.Core.Interfaces.Services;
 using VinylShop.Core.Models;
 
 namespace VinylShop.Infrastructure.Authentication;
@@ -11,18 +12,25 @@ namespace VinylShop.Infrastructure.Authentication;
 public class JwtProvider : IJwtProvider
 {
     private readonly JwtOptions _options;
+    private readonly IPermissionService _permissionService;
 
-    public JwtProvider(IOptions<JwtOptions> options)
+    public JwtProvider(IOptions<JwtOptions> options, IPermissionService permissionService)
     {
+        _permissionService = permissionService;
         _options = options.Value;
     }
 
     public string Generate(User user)
     {
-        Claim[] claims = 
+        var permissions =  _permissionService.GetPermissionsAsync(user.UserId).Result;
+
+        string role = permissions.Count == 1 ? "User" : "Admin";
+
+
+        Claim[] claims =
         [
             new("userId", user.UserId.ToString()),
-            new ("Admin", "true")
+            new ("Role", role)
         ];
         
         var signingCredentials = new SigningCredentials(
