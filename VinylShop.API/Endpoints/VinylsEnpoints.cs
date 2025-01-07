@@ -16,7 +16,6 @@ public static class VinylsEnpoints
 
         endpoints.MapPost("/", CreateVinyl)
             .RequirePermissions(Permission.Create)
-            .AllowAnonymous()
             .DisableAntiforgery();
 
         endpoints.MapGet("/", GetVinyls)
@@ -34,11 +33,10 @@ public static class VinylsEnpoints
             .RequirePermissions(Permission.Update);
 
         endpoints.MapDelete("/{id:guid}", DeleteVinyl)
-            .RequirePermissions(Permission.Delete)
-            .AllowAnonymous();
+            .RequirePermissions(Permission.Delete);
 
         endpoints.MapPost("/{vinylId:guid}/upload-image", UploadVinylImage)
-            .AllowAnonymous()
+            .RequirePermissions(Permission.Create)
             .DisableAntiforgery();
 
         endpoints.MapGet("/search", SearchVinyls)
