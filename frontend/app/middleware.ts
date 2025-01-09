@@ -1,6 +1,7 @@
 import {NextResponse} from 'next/server';
 import type {NextRequest} from 'next/server';
 import {jwtDecode} from "jwt-decode";
+import {JwtPayload} from "@/types/jwtPayload";
 
 export function middleware(req: NextRequest) {
     const token = req.cookies.get('secretCookie')?.value;
@@ -27,6 +28,6 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/admin/:path*'],
+    matcher: ['/admin/:path*', '/*'],
 };
 
