@@ -10,7 +10,7 @@ public interface IOrderRepository
 
     Task Delete(Guid id);
 
-    Task<List<Order>> Get();
+    Task<List<Order>> Get(int page, int pageSize);
 
     Task<Order> GetById(Guid id);
 
@@ -19,4 +19,6 @@ public interface IOrderRepository
     Task UpdateStatusAsync(Guid id, Status status);
 
     Task<bool> OrderExistsAsync(Guid orderId);
+
+    Task<int> GetTotalOrderCount();
 }

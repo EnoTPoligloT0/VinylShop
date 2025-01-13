@@ -9,11 +9,13 @@ public interface IOrderService
 
     Task DeleteOrder(Guid id);
 
-    Task<List<Order>> GetOrders();
+    Task<List<Order>> GetOrders(int page, int pageSize);
 
     Task<Order> GetOrderById(Guid id);
 
     Task UpdateOrder(Guid id, DateTime orderDate, decimal totalAmount, List<OrderItem> orderItems);
+
+    Task<int> GetTotalOrderCount();
 
     Task UpdateStatus(Guid id, Status status);
 }
