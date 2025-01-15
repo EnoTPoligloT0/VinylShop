@@ -1,8 +1,30 @@
 // lib/apiService.ts
-
+"use server"
 import api from './api';
+import { cookies } from "next/headers";
 
-// User Authentication
+export const getOrders = async (page: number, pageSize: number) => {
+    const cookie = await cookies();
+    const token = cookie.get("secretCookie");
+    console.log("Retrieve token in service:", token);
+
+    if (!token || !token.value.includes('.')) {
+        console.error("Malformed JWT token");
+        throw new Error("Malformed JWT token");
+    }
+
+    const response = await api.get('/orders', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params: {
+            page,
+            pageSize
+        }
+    });
+    return response.data;
+};
+
 export const loginUser = async (credentials: { email: string; password: string }) => {
     return await api.post('/login', credentials);
 };
