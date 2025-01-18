@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using VinylShop.API.Contracts.Pagination;
 using VinylShop.API.Contracts.Vinyls;
 using VinylShop.API.Extensions;
 using VinylShop.Application.Services;
@@ -221,26 +222,35 @@ public static class VinylsEnpoints
         return Results.Ok(response);
     }
     private static async Task<IResult> GetFilteredVinyls(
+        [FromQuery] int page,
+        [FromQuery] int pageSize,
         [FromQuery] string? genre,
         [FromQuery] int? decade,
         [FromQuery] string? sortOption,
         VinylService vinylService)
     {
-        var vinyls = await vinylService.GetFilteredVinyls(genre, decade, sortOption);
-
-        var response = vinyls.Select(v => new GetVinylResponse
-        (
-            v.Id,
-            v.Title,
-            v.Artist,
-            v.Genre,
-            v.ReleaseYear,
-            v.Price,
-            v.Stock,
-            v.Description,
-            v.IsAvailable,
-            Convert.ToBase64String(v.Image)
-        ));
+        var vinyls = await vinylService.GetFilteredVinyls(genre, decade, sortOption, page, pageSize);
+        var totalVinyls = await vinylService.GetTotalVinylCount();
+        var response = new GetVinylsResponsePagination(
+            vinyls.Select(v => new GetVinylResponse
+            (
+                v.Id,
+                v.Title,
+                v.Artist,
+                v.Genre,
+                v.ReleaseYear,
+                v.Price,
+                v.Stock,
+                v.Description,
+                v.IsAvailable,
+                Convert.ToBase64String(v.Image)
+            )),
+            new PaginationInfo(
+                page,
+                pageSize,
+                totalVinyls,
+                (int)Math.Ceiling(totalVinyls / (double)pageSize)
+            ));
 
         return Results.Ok(response);
     }
