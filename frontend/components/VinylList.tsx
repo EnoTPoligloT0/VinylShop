@@ -3,57 +3,46 @@
 import React, {useEffect, useState} from 'react';
 import VinylCard from './VinylCard';
 import {Vinyl, FilterVinylListProps} from '@/types/vinyl';
-import {CartItem} from '@/types/cart'; // Import CartItem type
+import {CartItem} from '@/types/cart';
+import {getVinyls} from "@/utils/apiService";
 import Popup from "@/components/Popup";
 
-const VinylList: React.FC<FilterVinylListProps> = ({genres = [], years = [], sortOption = ""}) => {
+const VinylList: React.FC<FilterVinylListProps> = ({
+                                                       genres = [],
+                                                       years = [],
+                                                       sortOption = ""
+                                                   }) => {
     const [vinyls, setVinyls] = useState<Vinyl[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [cart, setCart] = useState<CartItem[]>([]);
     const [popupMessage, setPopupMessage] = useState<string>('');
     const [showPopup, setShowPopup] = useState<boolean>(false);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
+    const fetchVinyls = async () => {
+        try {
+            setLoading(true);
+
+            const filters = {
+                genre: genres,
+                decade: years.map(Number),
+                sortOption,
+            };
+
+            const data = await getVinyls(page, pageSize, filters);
+            setVinyls(data.vinyls);
+        } catch (error) {
+            setError('Failed to fetch vinyls. Please try again.');
+            console.error("Fetch error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
     useEffect(() => {
-        const fetchVinyls = async () => {
-            try {
-                setLoading(true);
-
-                const params = new URLSearchParams();
-                if (genres.length) params.append('genre', genres.join(','));
-                if (years.length) params.append('decade', years.join(','));
-                params.append('sortOption', sortOption);
-
-                const response = await fetch(`https://localhost:44372/vinyls/filter?${params.toString()}`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const data = await response.json();
-                setVinyls(data);
-            } catch (error) {
-                setError('Failed to fetch vinyls. Please try again.');
-                console.error("Fetch error:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        const loadCartFromLocalStorage = () => {
-            const storedCart = localStorage.getItem('cart');
-            if (storedCart) {
-                setCart(JSON.parse(storedCart));
-            }
-        };
-
-        loadCartFromLocalStorage();
         fetchVinyls();
-    }, [genres, years, sortOption]);
+    }, [genres, years, sortOption, page, pageSize]);
 
     const addToCart = (vinylId: string, price: number) => {
         const newCartItem: CartItem = {
@@ -65,7 +54,7 @@ const VinylList: React.FC<FilterVinylListProps> = ({genres = [], years = [], sor
 
         const updatedCart = [...cart, newCartItem];
         setCart(updatedCart);
-        localStorage.setItem('cart', JSON.stringify(updatedCart)); // Save to local storage
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
 
         setPopupMessage(`Vinyl added to cart!`);
         setShowPopup(true);
