@@ -1,7 +1,8 @@
 // /apiService.ts
 "use server"
 import api from './api';
-import { cookies } from 'next/headers';
+import {cookies} from 'next/headers';
+//todo ssl sertificates
 export const getOrders = async (page: number, pageSize: number) => {
     const cookieStore = await cookies();
     const token = await cookieStore.get("secretCookie")?.value;
@@ -21,6 +22,36 @@ export const getOrders = async (page: number, pageSize: number) => {
         withCredentials: true,
     });
     return response.data;
+};
+
+export const getVinyls = async (
+    page: number,
+    pageSize: number,
+    filters: {
+        genre?: string[],
+        decade?: number[],
+        sortOption?: string
+    }) => {
+
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+    try {
+        const response = await api.get('/vinyls/filter', {
+            params: {
+                page,
+                pageSize,
+                genre: filters.genre?.join(','),
+                decade: filters.decade?.join(','),
+                sortOption: filters.sortOption,
+            },
+            withCredentials: true,
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching vinyls:", error);
+        throw new Error("Failed to fetch vinyls");
+    }
 };
 
 export const loginUser = async (credentials: { email: string; password: string }) => {
@@ -122,16 +153,13 @@ export const fetchVinylById = async (id: string) => {
 };
 
 export const searchVinyls = async (query: string) => {
-    return await api.get(`/vinyls/search`, { params: { q: query } });
+    return await api.get(`/vinyls/search`, {params: {q: query}});
 };
 
 export const updateVinyl = async (id: string, vinylData: any) => {
     return await api.put(`/vinyls/${id}`, vinylData);
 };
 
-export const deleteVinyl = async (id: string) => {
-    return await api.delete(`/vinyls/${id}`);
-};
 
 // Vinyl Order Items
 export const fetchVinylOrderItemsByOrderItemId = async (orderItemId: string) => {
