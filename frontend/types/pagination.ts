@@ -6,3 +6,12 @@ export interface PaginationInfo {
     totalPages: number;
 }
 
+interface OrdersPaginationProps {
+    initialOrdersData: {
+        orders: any[];
+        pagination: {
+            currentPage: number;
+            totalPages: number;
+        };
+    };
+}
