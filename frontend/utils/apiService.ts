@@ -1,17 +1,14 @@
-// lib/apiService.ts
+// /apiService.ts
 "use server"
 import api from './api';
-import { cookies } from "next/headers";
-
+import { cookies } from 'next/headers';
 export const getOrders = async (page: number, pageSize: number) => {
-    const cookie = await cookies();
-    const token = cookie.get("secretCookie");
-    console.log("Retrieve token in service:", token);
-
-    if (!token || !token.value.includes('.')) {
-        console.error("Malformed JWT token");
-        throw new Error("Malformed JWT token");
+    const cookieStore = await cookies();
+    const token = await cookieStore.get("secretCookie")?.value;
+    if (!token) {
+        throw new Error("Token is required to fetch orders");
     }
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
     const response = await api.get('/orders', {
         headers: {
@@ -20,7 +17,8 @@ export const getOrders = async (page: number, pageSize: number) => {
         params: {
             page,
             pageSize
-        }
+        },
+        withCredentials: true,
     });
     return response.data;
 };
