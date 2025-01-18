@@ -81,9 +81,12 @@ public class VinylRepository : IVinylRepository
         return _mapper.Map<List<Vinyl>>(vinylEntities);
     }
 
-    public async Task<List<Vinyl>> GetFiltered(string? genre, int? decade, string? sortOption)
+    public async Task<List<Vinyl>> GetFiltered(string? genre, int? decade, string? sortOption, int page, int pageSize)
     {
-        var query = _context.Vinyls.AsQueryable();
+        var query = _context.Vinyls
+            .AsQueryable()
+            .Skip((page-1) * pageSize)
+            .Take(pageSize);
 
         if (!string.IsNullOrWhiteSpace(genre))
         {
@@ -126,6 +129,10 @@ public class VinylRepository : IVinylRepository
         return _mapper.Map<List<Vinyl>>(vinylEntities);
     }
 
+    public async Task<int> GetTotalVinylCount()
+    {
+        return await _context.Vinyls.CountAsync();
+    }
 
     public async Task Update(Guid id, string title, string artist, string genre, int releaseYear, decimal price, int stock,
         string description, bool isAvailable)
