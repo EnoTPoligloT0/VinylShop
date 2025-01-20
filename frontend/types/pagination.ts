@@ -15,3 +15,13 @@ interface OrdersPaginationProps {
         };
     };
 }
+
+interface VinylPaginationProps {
+    initialVinylsData: {
+        vinyls: any[];
+        pagination: {
+            currentPage: number;
+            totalPages: number;
+        };
+    };
+}

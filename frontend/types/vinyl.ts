@@ -1,3 +1,6 @@
+import {PaginationInfo} from "@/types/pagination";
+import {Order} from "@/types/cart";
+
 export interface Vinyl {
     id?: string; 
     title: string;
@@ -13,6 +16,15 @@ export interface Vinyl {
 }
 export interface VinylCardProps extends Vinyl {
     addToCart?: (id: string, price: number) => void;
+}
+
+export interface VinylResponse {
+    vinyls: Vinyl[];
+    pagination: PaginationInfo;
+}
+
+interface VinylPaginationProps {
+    initialVinylsData: VinylResponse;
 }
 export interface FilterVinylListProps {
     genres: string[];
