@@ -26,9 +26,9 @@ public class OrderService : IOrderService
     }
 
 
-    public async Task<List<Order>> GetOrders()
+    public async Task<List<Order>> GetOrders(int page, int pageSize)
     {
-        return await _orderRepository.Get();
+        return await _orderRepository.Get(page, pageSize);
     }
 
     public async Task<Order> GetOrderById(Guid id)
@@ -49,6 +49,11 @@ public class OrderService : IOrderService
     public async Task UpdateStatus(Guid id, Status status)
     {
         await _orderRepository.UpdateStatusAsync(id, status);
+    }
+
+    public async Task<int> GetTotalOrderCount()
+    {
+        return await _orderRepository.GetTotalOrderCount();
     }
     public async Task DeleteOrder(Guid id)
     {

@@ -9,7 +9,8 @@ public interface IVinylRepository
     Task<List<Vinyl>> Get();
     Task<Vinyl> GetById(Guid id);
     Task<List<Vinyl>> Search(string searchTerm);
-    Task<List<Vinyl>> GetFiltered(string? genre, int? decade, string? sortOption);
+    Task<List<Vinyl>> GetFiltered(string? genre, int? decade, string? sortOption, int page, int pageSize);
+    Task<int> GetTotalVinylCount();
     Task Update(Guid id, string title, string artist, string genre, int releaseYear, decimal price, int stock,
         string description, bool isAvailable);
     Task UpdateImage(Guid vinylId, byte[] imageData);

@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using VinylShop.API.Contracts.OrderItems;
 using VinylShop.API.Contracts.Orders;
+using VinylShop.API.Contracts.Pagination;
 using VinylShop.API.Contracts.Payments;
 using VinylShop.API.Contracts.Shipments;
 using VinylShop.API.Contracts.Users;
 using VinylShop.API.Contracts.Vinyls;
+using VinylShop.API.Extensions;
 using VinylShop.Application.Services;
 using VinylShop.Core.Enums;
 using VinylShop.Core.Models;
@@ -22,7 +24,10 @@ public static class OrderEndpoints
 
         endpoints.MapGet("/{orderId:guid}", GetOrderById);
 
-        endpoints.MapGet("/", GetOrders);
+        endpoints.MapGet("/", GetOrders)
+            .RequirePermissions(Permission.Create);
+
+        //todo get order by user id
 
         // endpoints.MapPut("/{orderId:guid}", UpdateOrder);
 
@@ -137,19 +142,29 @@ public static class OrderEndpoints
     }
 
     private static async Task<IResult> GetOrders(
-            OrderService orderService
+            [FromQuery] int page,
+            [FromQuery] int pageSize,
+            OrderService orderService,
+            OrderItemService orderItemService
         )
     {
-        var orders = await orderService.GetOrders();
+        var orders = await orderService.GetOrders(page, pageSize);
+        var totalOrders = await orderService.GetTotalOrderCount();
 
-        var response = orders
-            .Select(o => new GetOrdersResponse
-            (
+        var response = new GetOrdersResponsePagination(
+            orders.Select(o => new GetOrdersResponse(
                 o.Id,
                 o.UserId,
                 o.OrderDate,
                 o.TotalAmount
-            ));
+            )),
+            new PaginationInfo(
+                page,
+                pageSize,
+                totalOrders,
+                (int)Math.Ceiling(totalOrders / (double)pageSize)
+            )
+        );
 
         return Results.Ok(response);
     }

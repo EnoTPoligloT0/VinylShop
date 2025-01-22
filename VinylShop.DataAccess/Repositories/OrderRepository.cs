@@ -32,10 +32,12 @@ public class OrderRepository : IOrderRepository
     }
 
 
-    public async Task<List<Order>> Get()
+    public async Task<List<Order>> Get(int page, int pageSize)
     {
         var orderEntities = await _context.Orders
             .AsNoTracking()
+            .Skip((page-1) * pageSize)
+            .Take(pageSize)
             .Include(c=> c.User)
             .Include(c => c.OrderItems)
             .ToListAsync();
@@ -79,6 +81,10 @@ public class OrderRepository : IOrderRepository
     {
         return await _context.Orders
             .AnyAsync(o => o.Id == orderId);
+    }
+    public async Task<int> GetTotalOrderCount()
+    {
+        return await _context.Orders.CountAsync();
     }
 
     public async Task Delete(Guid id)

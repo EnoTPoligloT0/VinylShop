@@ -34,9 +34,9 @@ public class VinylService : IVinylService
         return await _vinylRepository.Search(searchTerm);
     }
 
-    public async Task<List<Vinyl>> GetFilteredVinyls(string? genre, int? decade, string? sortOption)
+    public async Task<List<Vinyl>> GetFilteredVinyls(string? genre, int? decade, string? sortOption, int page, int pageSize)
     {
-        return await _vinylRepository.GetFiltered(genre, decade, sortOption);
+        return await _vinylRepository.GetFiltered(genre, decade, sortOption, page, pageSize);
     }
 
 
@@ -63,7 +63,10 @@ public class VinylService : IVinylService
         return Result.Success();
     }
 
-
+    public async Task<int> GetTotalVinylCount()
+    {
+        return await _vinylRepository.GetTotalVinylCount();
+    }
 
     public async Task DeleteVinyl(Guid id)
     {

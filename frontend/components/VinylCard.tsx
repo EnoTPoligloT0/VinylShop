@@ -3,8 +3,9 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { VinylCardProps } from '@/types/vinyl';
-import { useRouter } from 'next/navigation';  // Corrected import
 import { useCartContext } from "@/context/CartContext"; // Import CartContext
+import { useAuthContext } from "@/context/AuthContext";
+import {deleteVinyl} from "@/utils/apiService";
 
 const VinylCard: React.FC<VinylCardProps> = ({
                                                  id,
@@ -13,8 +14,8 @@ const VinylCard: React.FC<VinylCardProps> = ({
                                                  price,
                                                  artist
                                              }) => {
-    const { addToCart } = useCartContext();  // Use addToCart from CartContext
-
+    const { addToCart } = useCartContext();
+    const { isAdmin } = useAuthContext();
     const imageSrc = imageBase64 ? `data:image/jpeg;base64,${imageBase64}` : '/default-image.jpg';
 
     const handleAddToCart = (e: React.MouseEvent) => {
@@ -26,6 +27,15 @@ const VinylCard: React.FC<VinylCardProps> = ({
                 unitPrice: price
             };
             addToCart(cartItem);
+        }
+    };
+
+    const handleDelete = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (id) {
+            await deleteVinyl(id);
+        } else {
+            console.error("ID is undefined. Cannot delete vinyl.");
         }
     };
 
@@ -47,6 +57,15 @@ const VinylCard: React.FC<VinylCardProps> = ({
                         <Image src="/bag.svg" alt="Add to Cart" width={24} height={24} />
                     </button>
                 </div>
+
+                {isAdmin && (
+                    <button
+                        onClick={handleDelete}
+                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                        Delete
+                    </button>
+                )}
+
             </div>
         </Link>
     );
