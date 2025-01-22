@@ -1,5 +1,3 @@
-using VinylShop.Core.Models;
-
 namespace VinylShop.DataAccess.Entities;
 
 public class VinylEntity

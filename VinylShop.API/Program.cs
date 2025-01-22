@@ -1,17 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using VinylShop.API.Endpoints;
-using VinylShop.Application.Services;
 using VinylShop.Core.Interfaces.Repositories;
-using VinylShop.Core.Interfaces.Services;
 using VinylShop.Application;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using Stripe;
 using VinylShop.API;
 using VinylShop.API.Extensions;
 using VinylShop.API.Infrastructure;
@@ -19,6 +12,7 @@ using VinylShop.Infrastructure;
 using VinylShop.DataAccess;
 using VinylShop.DataAccess.Repositories;
 using VinylShop.DataAccess.Mappings;
+using VinylShop.Infrastructure.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 

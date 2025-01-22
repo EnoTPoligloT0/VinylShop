@@ -14,6 +14,6 @@ public class DataBaseMappings : Profile
         CreateMap<ShipmentEntity, Shipment>();
         CreateMap<UserEntity, User>();
         CreateMap<VinylEntity, Vinyl>()
-            .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image));;
+            .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image));
     }
 }

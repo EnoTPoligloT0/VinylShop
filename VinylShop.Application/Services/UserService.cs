@@ -3,7 +3,6 @@ using VinylShop.Application.Auth;
 using VinylShop.Core.Interfaces.Repositories;
 using VinylShop.Core.Interfaces.Services;
 using VinylShop.Core.Models;
-using VinylShop.Infrastructure;
 using Newtonsoft.Json;
 
 namespace VinylShop.Application.Services;
