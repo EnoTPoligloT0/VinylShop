@@ -1,3 +1,5 @@
+using VinylShop.Application.Auth;
+
 namespace VinylShop.Infrastructure.Authentication;
 
 public class PasswordHasher : IPasswordHasher

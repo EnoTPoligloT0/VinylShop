@@ -1,4 +1,4 @@
-namespace VinylShop.Infrastructure;
+namespace VinylShop.Application.Auth;
 
 public interface IPasswordHasher
 {
