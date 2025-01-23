@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
-import { JwtPayload } from "@/types/jwtPayload";
 
 interface AuthContextType {
     user: { userId: string; email?: string; Role?: string } | null;
@@ -11,7 +10,7 @@ interface AuthContextType {
     login: (token: string) => void;
     logout: () => void;
 }
-
+//todo fix redundant
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -32,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setIsAdmin(false);
             }
         }
-        setLoading(false); // Once the check is done, set loading to false
+        setLoading(false);
     }, []);
 
     const login = (token: string) => {
