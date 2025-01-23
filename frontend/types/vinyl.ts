@@ -1,5 +1,4 @@
 import {PaginationInfo} from "@/types/pagination";
-import {Order} from "@/types/cart";
 
 export interface Vinyl {
     id?: string; 
