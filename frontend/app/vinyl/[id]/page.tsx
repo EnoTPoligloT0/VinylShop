@@ -3,36 +3,26 @@
 import React, {useEffect, useState} from 'react';
 import {Vinyl} from '@/types/vinyl';
 import Image from 'next/image';
+import {getVinylById} from "@/utils/apiService";
+import { useParams } from "next/navigation";
 
 //todo list of tracks after the additional information
-const VinylDetail = ({params}: { params: { id: string } }) => {
+const VinylDetail = () => {
+    const params = useParams();
+    const id = params?.id as string;
+
     const [vinyl, setVinyl] = useState<Vinyl | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    const id = params.id;
-
     useEffect(() => {
         if (!id) return;
-
         const fetchVinyl = async () => {
             try {
-                const response = await fetch(`https://localhost:44372/vinyls/${id}`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch vinyl details');
-                }
-
-                const data = await response.json();
+                const data = await getVinylById(id);
                 setVinyl(data);
-            } catch (error) {
-                setError('Failed to fetch vinyl details. Please try again.');
-                console.error('Error fetching vinyl:', error);
+            } catch (err) {
+                setError("Failed to fetch vinyl details.");
             } finally {
                 setLoading(false);
             }
