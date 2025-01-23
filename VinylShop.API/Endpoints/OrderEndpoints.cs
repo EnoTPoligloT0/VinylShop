@@ -117,6 +117,7 @@ public static class OrderEndpoints
             new GetUserResponse(user.UserId, user.Email, user.PasswordHash),
             order.OrderDate,
             order.TotalAmount,
+            order.Status.ToString(),
             orderItemResponses,
             payment != null
                 ? new GetPaymentResponse(
@@ -156,7 +157,8 @@ public static class OrderEndpoints
                 o.Id,
                 o.UserId,
                 o.OrderDate,
-                o.TotalAmount
+                o.TotalAmount,
+                o.Status.ToString()
             )),
             new PaginationInfo(
                 page,
