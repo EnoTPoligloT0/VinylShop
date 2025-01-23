@@ -1,11 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { CartItem } from "@/types/cart";
 import { Vinyl } from "@/types/vinyl";
 import { loadStripe } from "@stripe/stripe-js";
 import Cookies from "js-cookie";
-import { useCartContext } from "@/context/CartContext"; // Adjust the import based on your file structure
+import { useCartContext } from "@/context/CartContext";
 
 const stripePromise = loadStripe("pk_test_51QKsJJHqGo0KeykHjiMci68gs5tv5Ym5wgt2WXb4zRHaID0V3AsQbjXSiuRJKD0FWBi9kH0LPtt6aZ37jac8azFa00OFZkimTs");
 localStorage.removeItem("orderId");
