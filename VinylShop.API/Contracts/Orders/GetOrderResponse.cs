@@ -11,6 +11,7 @@ public record GetOrderResponse(
     GetUserResponse GetUser,
     DateTime OrderDate,
     decimal TotalAmount,
+    string Status,
     List<GetOrderItemResponse>? OrderItems,
     GetPaymentResponse? Payment,
     GetShipmentResponse? Shipment
