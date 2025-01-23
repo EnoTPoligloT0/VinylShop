@@ -53,12 +53,23 @@ export const getVinyls = async (
     }
 
     try {
-        const response = await api.get('/vinyls/filter', { params, withCredentials: true });
+        const response = await api.get('/vinyls/filter', {params, withCredentials: true});
         return response.data;
     } catch (error) {
         console.error("Error fetching vinyls:", error);
         throw new Error("Failed to fetch vinyls");
     }
+};
+
+export const getVinylById = async (id: string) => {
+    const response = await api.get(`/vinyls/${id}`,
+        {
+            headers: {
+                'Accept': 'application/json',
+            },
+        });
+
+    return response.data
 };
 export const deleteVinyl = async (id: string) => {
     const cookieStore = await cookies();
