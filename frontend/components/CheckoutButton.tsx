@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { loadStripe, StripeError } from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
 const stripePromise = loadStripe("pk_test_51QKsJJHqGo0KeykHjiMci68gs5tv5Ym5wgt2WXb4zRHaID0V3AsQbjXSiuRJKD0FWBi9kH0LPtt6aZ37jac8azFa00OFZkimTs"); // Replace with your Stripe publishable key
 
