@@ -15,6 +15,7 @@ interface OrdersPaginationProps {
     };
 }
 
+//todo status style
 const OrdersPagination: React.FC<OrdersPaginationProps> = ({ initialOrdersData }) => {
     const { user, isAdmin } = useAuthContext();
     const [ordersData, setOrdersData] = useState(initialOrdersData);
@@ -66,6 +67,9 @@ const OrdersPagination: React.FC<OrdersPaginationProps> = ({ initialOrdersData }
                         </p>
                         <p className="text-md text-golden-yellow font-bold">
                             <span className="font-semibold">Total Amount:</span> ${order.totalAmount}
+                        </p>
+                        <p className="text-md text-golden-yellow font-bold">
+                            <span className="font-semibold">Status:</span> {order.status}
                         </p>
                     </li>
                 ))}
