@@ -8,6 +8,8 @@
 
     <ItemGroup>
       <PackageReference Include="CSharpFunctionalExtensions" Version="2.42.5" />
+      <PackageReference Include="ErrorOr.Extensions" Version="1.3.0" />
+      <PackageReference Include="FluentValidation" Version="12.0.0-preview1" />
     </ItemGroup>
     
     <ItemGroup>
