@@ -40,14 +40,17 @@ AmberVinyl is a sleek e-commerce platform for vinyl enthusiasts, offering an int
 
 To run this project, you will need to add the following environment variables to your .env file
 
-#Frontend:
+# Frontend:
 
-NEXT_PUBLIC_API_URL=http://localhost
+NEXT_PUBLIC_API_URL=http://localhost/ 
+
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
 
-#Backend
+# Backend
 GOOGLE_CLIENT_ID=
+
 GOOGLE_CLIENT_SECRET=
 SENDCLOUD_PUBLIC_KEY=
 SENDCLOUD_SECRET_KEY=
