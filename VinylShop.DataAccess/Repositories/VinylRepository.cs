@@ -36,6 +36,12 @@ public class VinylRepository : IVinylRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task UpdateStock(Vinyl vinyl)
+    {
+        var vinylEntity = _context.Vinyls.FirstOrDefault(v => v.Id == vinyl.Id);
+         _context.Vinyls.Update(vinylEntity);
+    }
+
     public async Task UpdateImage(Guid vinylId, byte[] imageData)
     {
         var vinylEntity = await _context.Vinyls.SingleOrDefaultAsync(v => v.Id == vinylId);
